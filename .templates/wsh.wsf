@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="UTF-16" standalone="yes"?>
+<package xmlns="http://schemas.microsoft.com/WindowsScriptHost">
+  <job id="run">
+    <object id="FileSystemObject" progid="Scripting.FileSystemObject" />
+    <object id="Shell" progid="Shell.Application" />
+    <object id="WshNetwork" progid="WScript.Network" />
+    <object id="WshShell" progid="WScript.Shell" />
+    <script language="JScript">
+      <![CDATA[
+        var args = [];
+        for (var i = 0; i < WScript.Arguments.Length; i++) {
+          args.push(WScript.Arguments.Item(i));
+        }
+        WshShell.CurrentDirectory = FileSystemObject.GetParentFolderName(WScript.ScriptFullName);
+        var files = [
+          'Main.bat',
+          'Main.ps1',
+          'Main.RunAs.bat',
+          'Main.RunAs.ps1',
+          'Main.js'
+        ];
+        for (var i = 0; i < files.length; i++) {
+          var file = files[i];
+          var path = FileSystemObject.BuildPath(WshShell.CurrentDirectory, file);
+          if (!FileSystemObject.FileExists(path)) continue;
+          switch (FileSystemObject.GetFileName(path)) {
+            case 'Main.bat':
+              WshShell.Run('cmd.exe /c "' + file + '"' + (args.length ? ' "' + args.join('" "') + '"' : ''), 0, true);
+              break;
+            case 'Main.ps1':
+              WshShell.Run('pwsh.exe -NoLogo -NoProfile -ExecutionPolicy RemoteSigned -File "' + file + '"' + (args.length ? ' "' + args.join('" "') + '"' : ''), 0, true);
+              break;
+            case 'Main.RunAs.bat':
+              WshShell.Run('sudo.exe --inline cmd.exe /c "' + file + '"' + (args.length ? ' "' + args.join('" "') + '"' : ''), 0, true);
+              break;
+            case 'Main.RunAs.ps1':
+              WshShell.Run('sudo.exe --inline pwsh.exe -NoLogo -NoProfile -ExecutionPolicy RemoteSigned -File "' + file + '"' + (args.length ? ' "' + args.join('" "') + '"' : ''), 0, true);
+              break;
+            case 'Main.js':
+              WshShell.Run('wscript.exe //b //nologo "' + file + '"' + (args.length ? ' "' + args.join('" "') + '"' : ''), 0, true);
+              break;
+          }
+          WScript.Quit(0);
+        }
+      ]]>
+    </script>
+  </job>
+</package>

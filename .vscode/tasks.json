@@ -1,0 +1,73 @@
+{
+  "version": "2.0.0",
+  "options": {},
+  "presentation": {
+    "reveal": "silent",
+    "revealProblems": "onProblem",
+  },
+  "tasks": [
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "pwsh.exe",
+      "args": [
+        "-NoLogo",
+        "-NoProfile",
+        "-File",
+        "Build.ps1",
+      ],
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true,
+      },
+    },
+    {
+      "label": "install",
+      "type": "shell",
+      "command": "${workspaceFolder}\\Install.bat",
+      "problemMatcher": [],
+    },
+    {
+      "label": "pester current file",
+      "type": "shell",
+      "command": "pwsh.exe",
+      "args": [
+        "-NoLogo",
+        "-NoProfile",
+        "-File",
+        "Pester.ps1",
+        "-Path",
+        "${file}",
+      ],
+      "problemMatcher": [
+        "$pester",
+      ],
+      "group": {
+        "kind": "test",
+        "isDefault": true,
+      },
+    },
+    {
+      "label": "pester current line",
+      "type": "shell",
+      "command": "pwsh.exe",
+      "args": [
+        "-NoLogo",
+        "-NoProfile",
+        "-File",
+        ".github/skills/powershell-pester/scripts/Pester.ps1",
+        "-Path",
+        "${file}",
+        "-LineNumber",
+        "${lineNumber}",
+      ],
+      "problemMatcher": [
+        "$pester",
+      ],
+      "group": {
+        "kind": "test",
+      },
+    },
+  ],
+}
