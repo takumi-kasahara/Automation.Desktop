@@ -34,6 +34,10 @@ function Invoke-Robocopy {
       "/LOG+:$log"
     )
     Robocopy.exe $Source $Destination @arguments | Out-Null
+    # https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/robocopy#exit-return-codes
+    if ($LASTEXITCODE -ge 8) {
+      throw "Robocopy failed with exit code $LASTEXITCODE. See log: $log"
+    }
     [PSCustomObject]@{
       Source      = $Source
       Destination = $Destination
