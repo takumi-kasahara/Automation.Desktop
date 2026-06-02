@@ -25,7 +25,6 @@ function Invoke-Robocopy {
       '/TIMFIX'
       '/MIR'
       '/NP'
-      '/XC'
       '/XJ'
       '/COMPRESS'
       '/SPARSE'
