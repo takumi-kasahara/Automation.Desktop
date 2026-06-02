@@ -65,12 +65,14 @@ Where-Object -Property ProcessName -In @(
 ) |
 Stop-Process -Force
 
+$log = $env:TEMP | Join-Path -ChildPath "BleachBit.$(Get-Date -Format 'yyyyMMddHHmmss').log"
 $arguments = @(
   '--clean'
   '--preset'
   '--update-winapp2'
 )
-& bleachbit_console.exe @arguments
+bleachbit_console.exe @arguments | Tee-Object -LiteralPath $log
+Clear-Host
 
 (Import-PowerShellDataFile -LiteralPath 'Directory.psd1').GetEnumerator() |
 Sort-Object -Property Name |
