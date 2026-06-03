@@ -47,6 +47,7 @@
     'Packages\Files_1y0xx7n9077q4'
     'Packages\FilesPreview_1y0xx7n9077q4'
     'Packages\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe'
+    'Packages\Microsoft.IntelligentTerminal_8wekyb3d8bbwe'
     'Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe'
     'Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe'
     'Packages\Microsoft.XAMLStudio_8wekyb3d8bbwe'
