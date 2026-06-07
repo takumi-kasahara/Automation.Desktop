@@ -2,8 +2,6 @@
 <package xmlns="http://schemas.microsoft.com/WindowsScriptHost">
   <job id="run">
     <object id="FileSystemObject" progid="Scripting.FileSystemObject" />
-    <object id="Shell" progid="Shell.Application" />
-    <object id="WshNetwork" progid="WScript.Network" />
     <object id="WshShell" progid="WScript.Shell" />
     <script language="JScript">
       <![CDATA[
