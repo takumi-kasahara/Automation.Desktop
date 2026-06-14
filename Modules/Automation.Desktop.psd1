@@ -48,6 +48,8 @@
     'Remove-ExifDate'
     'Export-PdfDump'
     'Import-PdfDump'
+    'Join-Pdf'
+    'Split-Pdf'
     'ConvertTo-Qdf'
     'ConvertFrom-Qdf'
     'Unblock-Pdf'
