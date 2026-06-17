@@ -3,10 +3,6 @@ using namespace System.Management.Automation
 
 Set-StrictMode -Version Latest
 
-class PdfInfo {
-  [FileInfo]$Item
-  [int]$PageCount
-}
 function Export-PdfDump {
   <#
   .SYNOPSIS

@@ -2,6 +2,10 @@ using namespace System.IO
 
 Set-StrictMode -Version Latest
 
+class PdfInfo {
+  [FileInfo]$Item
+  [int]$PageCount
+}
 function ConvertTo-Qdf {
   <#
   .SYNOPSIS
