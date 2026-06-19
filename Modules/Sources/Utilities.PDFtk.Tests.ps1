@@ -1,11 +1,25 @@
+using namespace System.Diagnostics.CodeAnalysis
+
 [CmdletBinding()]
 param ()
 
 $modulePath = $PSScriptRoot | Join-Path -ChildPath '..\Automation.Desktop.psm1'
 Import-Module -Name $modulePath -Force
 Set-StrictMode -Version Latest
+$WhatIfPreference = $false
 
 InModuleScope 'Utilities.PDFtk' {
+  BeforeAll {
+    function Get-Password {
+      [CmdletBinding()]
+      [OutputType([SecureString])]
+      [SuppressMessage('PSAvoidUsingConvertToSecureStringWithPlainText', '', Justification = 'Used in tests to generate random passwords for verification purposes')]
+      param (
+        [string]$Text
+      )
+      return ConvertTo-SecureString -String $Text -AsPlainText -Force
+    }
+  }
   Describe 'Export-PdfDump' {
     BeforeAll {
       Mock -CommandName pdftk.exe
@@ -68,6 +82,22 @@ InModuleScope 'Utilities.PDFtk' {
         Should -Invoke -CommandName Out-Host -Times 1 -Exactly
       }
     }
+    Context 'Password parameters' {
+      It 'passes owner_pw to pdftk.exe when OwnerPassword is specified' {
+        Export-PdfDump -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\dump.txt' -OwnerPassword (Get-Password -Text 'owner')
+        Should -Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
+          $args -contains 'owner_pw' -and
+          $args -contains 'dump_data_utf8'
+        }
+      }
+      It 'passes user_pw to pdftk.exe when UserPassword is specified' {
+        Export-PdfDump -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\dump.txt' -UserPassword (Get-Password -Text 'user')
+        Should -Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
+          $args -contains 'user_pw' -and
+          $args -contains 'dump_data_utf8'
+        }
+      }
+    }
   }
   Describe 'Import-PdfDump' {
     BeforeAll {
@@ -122,6 +152,22 @@ InModuleScope 'Utilities.PDFtk' {
         Mock -CommandName Get-Content -MockWith { @() }
         Import-PdfDump -Path 'C:\Docs\manual.pdf' -Source 'C:\Temp\dump.txt' -Destination 'C:\Temp\manual.updated.pdf'
         Should -Invoke -CommandName Remove-Item -ParameterFilter { $LiteralPath -like '*PDFtk.*.log' } -Times 1 -Exactly
+      }
+    }
+    Context 'Password parameters' {
+      It 'passes owner_pw to pdftk.exe when OwnerPassword is specified' {
+        Import-PdfDump -Path 'C:\Docs\manual.pdf' -Source 'C:\Temp\dump.txt' -Destination 'C:\Temp\manual.updated.pdf' -OwnerPassword (Get-Password -Text 'owner') -Force
+        Should -Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
+          $args -contains 'owner_pw' -and
+          $args -contains 'update_info_utf8'
+        }
+      }
+      It 'passes user_pw to pdftk.exe when UserPassword is specified' {
+        Import-PdfDump -Path 'C:\Docs\manual.pdf' -Source 'C:\Temp\dump.txt' -Destination 'C:\Temp\manual.updated.pdf' -UserPassword (Get-Password -Text 'user') -Force
+        Should -Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
+          $args -contains 'user_pw' -and
+          $args -contains 'update_info_utf8'
+        }
       }
     }
   }
@@ -284,6 +330,22 @@ InModuleScope 'Utilities.PDFtk' {
         { Join-Pdf -Path 'C:\Docs\manual.pdf' -ErrorAction Stop } | Should -Throw -ErrorId 'DestinationRequired,Join-Pdf'
       }
     }
+    Context 'Password parameters' {
+      It 'passes owner_pw to pdftk.exe when OwnerPassword is specified' {
+        Join-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\merged.pdf' -OwnerPassword (Get-Password -Text 'owner') -Force
+        Should -Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
+          $args -contains 'owner_pw' -and
+          $args -contains 'cat'
+        }
+      }
+      It 'passes user_pw to pdftk.exe when UserPassword is specified' {
+        Join-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\merged.pdf' -UserPassword (Get-Password -Text 'user') -Force
+        Should -Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
+          $args -contains 'user_pw' -and
+          $args -contains 'cat'
+        }
+      }
+    }
   }
   Describe 'Split-Pdf' {
     BeforeAll {
@@ -361,6 +423,22 @@ InModuleScope 'Utilities.PDFtk' {
       }
       It 'throws when source is not a PDF file' {
         { Split-Pdf -Path 'C:\Docs\readme.txt' -Destination 'C:\Temp\page_%04d.pdf' } | Should -Throw
+      }
+    }
+    Context 'Password parameters' {
+      It 'passes owner_pw to pdftk.exe when OwnerPassword is specified' {
+        Split-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\page_%04d.pdf' -OwnerPassword (Get-Password -Text 'owner')
+        Should -Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
+          $args -contains 'owner_pw' -and
+          $args -contains 'burst'
+        }
+      }
+      It 'passes user_pw to pdftk.exe when UserPassword is specified' {
+        Split-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\page_%04d.pdf' -UserPassword (Get-Password -Text 'user')
+        Should -Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
+          $args -contains 'user_pw' -and
+          $args -contains 'burst'
+        }
       }
     }
   }

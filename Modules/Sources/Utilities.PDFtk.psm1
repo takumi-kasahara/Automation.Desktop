@@ -1,5 +1,7 @@
 using namespace System.IO
 using namespace System.Management.Automation
+using namespace System.Net
+using namespace System.Security
 
 Set-StrictMode -Version Latest
 
@@ -26,8 +28,19 @@ function Export-PdfDump {
   .PARAMETER NoClobber
     If specified, the function will fail if the destination file already exists.
 
+  .PARAMETER OwnerPassword
+    Specifies the owner password for the PDF file. Use a SecureString for secure input.
+
+  .PARAMETER UserPassword
+    Specifies the user password for the PDF file. Use a SecureString for secure input.
+
   .EXAMPLE
     Export-PdfDump -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\dump.txt'
+
+  .EXAMPLE
+    $ownerPw = ConvertTo-SecureString -String 'ownerpass' -AsPlainText -Force
+    $userPw = ConvertTo-SecureString -String 'userpass' -AsPlainText -Force
+    Export-PdfDump -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\dump.txt' -OwnerPassword $ownerPw -UserPassword $userPw
 
   .OUTPUTS
     None. Only exports PDF metadata dump.
@@ -50,7 +63,11 @@ function Export-PdfDump {
     [switch]
     $Force,
     [switch]
-    $NoClobber
+    $NoClobber,
+    [SecureString]
+    $OwnerPassword,
+    [SecureString]
+    $UserPassword
   )
   begin {
     $log = $env:TEMP | Join-Path -ChildPath "PDFtk.$(Get-Date -Format 'yyyyMMddHHmmss').log"
@@ -67,8 +84,16 @@ function Export-PdfDump {
     if ($isReadOnly -and $Force) {
       (Get-Item -LiteralPath $Destination -Force).IsReadOnly = $false
     }
+    $passwordArgs = @()
+    if ($PSBoundParameters.ContainsKey('OwnerPassword')) {
+      $passwordArgs += 'owner_pw', [NetworkCredential]::new([string]::Empty, $OwnerPassword).Password
+    }
+    if ($PSBoundParameters.ContainsKey('UserPassword')) {
+      $passwordArgs += 'user_pw', [NetworkCredential]::new([string]::Empty, $UserPassword).Password
+    }
     # https://www.pdflabs.com/docs/pdftk-man-page/#dest-op-dump-data
-    pdftk.exe $item.FullName dump_data_utf8 output $Destination 2>>$log
+    $pdftkArgs = @($item.FullName) + $passwordArgs + @('dump_data_utf8', 'output', $Destination)
+    pdftk.exe @pdftkArgs 2>>$log
     if ($isReadOnly -and $Force) {
       (Get-Item -LiteralPath $Destination -Force).IsReadOnly = $true
     }
@@ -107,8 +132,19 @@ function Import-PdfDump {
   .PARAMETER Force
     If specified, overwrites the destination file if it already exists, including read-only files.
 
+  .PARAMETER OwnerPassword
+    Specifies the owner password for the PDF file. Use a SecureString for secure input.
+
+  .PARAMETER UserPassword
+    Specifies the user password for the PDF file. Use a SecureString for secure input.
+
   .EXAMPLE
     Import-PdfDump -Path 'C:\Docs\manual.pdf' -Source 'C:\Temp\meta.dump' -Destination 'C:\Temp\updated.pdf'
+
+  .EXAMPLE
+    $ownerPw = ConvertTo-SecureString -String 'ownerpass' -AsPlainText -Force
+    $userPw = ConvertTo-SecureString -String 'userpass' -AsPlainText -Force
+    Import-PdfDump -Path 'C:\Docs\manual.pdf' -Source 'C:\Temp\meta.dump' -Destination 'C:\Temp\updated.pdf' -OwnerPassword $ownerPw -UserPassword $userPw
 
   .OUTPUTS
     None. Only imports PDF metadata dump.
@@ -135,7 +171,11 @@ function Import-PdfDump {
     [string]
     $Destination,
     [switch]
-    $Force
+    $Force,
+    [SecureString]
+    $OwnerPassword,
+    [SecureString]
+    $UserPassword
   )
   begin {
     $log = $env:TEMP | Join-Path -ChildPath "PDFtk.$(Get-Date -Format 'yyyyMMddHHmmss').log"
@@ -150,7 +190,14 @@ function Import-PdfDump {
     if ($isReadOnly -and $Force) {
       (Get-Item -LiteralPath $Destination -Force).IsReadOnly = $false
     }
-    pdftk.exe $item.FullName update_info_utf8 $Source output $Destination 2>>$log
+    $passwordArgs = @()
+    if ($PSBoundParameters.ContainsKey('OwnerPassword')) {
+      $passwordArgs += 'owner_pw', [NetworkCredential]::new([string]::Empty, $OwnerPassword).Password
+    }
+    if ($PSBoundParameters.ContainsKey('UserPassword')) {
+      $passwordArgs += 'user_pw', [NetworkCredential]::new([string]::Empty, $UserPassword).Password
+    }
+    pdftk.exe $item.FullName update_info_utf8 $Source @passwordArgs output $Destination 2>>$log
     if ($isReadOnly -and $Force) {
       (Get-Item -LiteralPath $Destination -Force).IsReadOnly = $true
     }
@@ -208,6 +255,12 @@ function Join-Pdf {
   .PARAMETER NoClobber
     If specified, the function throws an error when Destination already exists.
 
+  .PARAMETER OwnerPassword
+    Specifies the owner password for the PDF file. Use a SecureString for secure input.
+
+  .PARAMETER UserPassword
+    Specifies the user password for the PDF file. Use a SecureString for secure input.
+
   .EXAMPLE
     Join-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\merged.pdf'
 
@@ -239,6 +292,12 @@ function Join-Pdf {
     Joins all PDF files under C:\Docs and writes C:\Docs.pdf. Destination is
     omitted because the source is a single directory.
 
+  .EXAMPLE
+    $ownerPw = ConvertTo-SecureString -String 'ownerpass' -AsPlainText -Force
+    Join-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\merged.pdf' -OwnerPassword $ownerPw
+
+    Joins a password-protected PDF file.
+
   .OUTPUTS
     None. Only creates a merged PDF file.
 
@@ -266,7 +325,11 @@ function Join-Pdf {
     [switch]
     $Force,
     [switch]
-    $NoClobber
+    $NoClobber,
+    [SecureString]
+    $OwnerPassword,
+    [SecureString]
+    $UserPassword
   )
   begin {
     $log = $env:TEMP | Join-Path -ChildPath "PDFtk.$(Get-Date -Format 'yyyyMMddHHmmss').log"
@@ -354,8 +417,15 @@ function Join-Pdf {
     if ($isReadOnly -and $Force) {
       (Get-Item -LiteralPath $outputDestination -Force).IsReadOnly = $false
     }
+    $passwordArgs = @()
+    if ($PSBoundParameters.ContainsKey('OwnerPassword')) {
+      $passwordArgs += 'owner_pw', [NetworkCredential]::new([string]::Empty, $OwnerPassword).Password
+    }
+    if ($PSBoundParameters.ContainsKey('UserPassword')) {
+      $passwordArgs += 'user_pw', [NetworkCredential]::new([string]::Empty, $UserPassword).Password
+    }
     # https://www.pdflabs.com/docs/pdftk-man-page/#dest-op-cat
-    pdftk.exe $source cat output $outputDestination verbose 2>>$log
+    pdftk.exe $source cat @passwordArgs output $outputDestination verbose 2>>$log
     if ($isReadOnly -and $Force) {
       (Get-Item -LiteralPath $outputDestination -Force).IsReadOnly = $true
     }
@@ -392,8 +462,18 @@ function Split-Pdf {
     Specifies the printf-styled output filename pattern for burst output.
     The path is not validated for existence because it contains format placeholders.
 
+  .PARAMETER OwnerPassword
+    Specifies the owner password for the PDF file. Use a SecureString for secure input.
+
+  .PARAMETER UserPassword
+    Specifies the user password for the PDF file. Use a SecureString for secure input.
+
   .EXAMPLE
     Split-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\page_%04d.pdf'
+
+  .EXAMPLE
+    $ownerPw = ConvertTo-SecureString -String 'ownerpass' -AsPlainText -Force
+    Split-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\page_%04d.pdf' -OwnerPassword $ownerPw
 
   .OUTPUTS
     None. Only splits the PDF into page files.
@@ -418,7 +498,11 @@ function Split-Pdf {
     [Parameter(Mandatory)]
     [ValidateScript({ Test-Path -LiteralPath $_ -IsValid })]
     [string]
-    $Destination
+    $Destination,
+    [SecureString]
+    $OwnerPassword,
+    [SecureString]
+    $UserPassword
   )
   begin {
     $log = $env:TEMP | Join-Path -ChildPath "PDFtk.$(Get-Date -Format 'yyyyMMddHHmmss').log"
@@ -468,8 +552,15 @@ function Split-Pdf {
     if (-not $PSCmdlet.ShouldProcess($item.FullName, 'Split PDF into pages')) {
       return
     }
+    $passwordArgs = @()
+    if ($PSBoundParameters.ContainsKey('OwnerPassword')) {
+      $passwordArgs += 'owner_pw', [NetworkCredential]::new([string]::Empty, $OwnerPassword).Password
+    }
+    if ($PSBoundParameters.ContainsKey('UserPassword')) {
+      $passwordArgs += 'user_pw', [NetworkCredential]::new([string]::Empty, $UserPassword).Password
+    }
     # https://www.pdflabs.com/docs/pdftk-man-page/#dest-op-burst
-    pdftk.exe $item.FullName burst output $Destination verbose 2>>$log
+    pdftk.exe $item.FullName burst @passwordArgs output $Destination verbose 2>>$log
   }
   clean {
     if (Test-Path -LiteralPath $log) {
