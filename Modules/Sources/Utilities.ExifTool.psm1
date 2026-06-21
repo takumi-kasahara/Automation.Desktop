@@ -75,7 +75,11 @@ function Get-ExifDate {
     $items |
     ForEach-Object {
       $parent = [WildcardPattern]::Escape($_.FullName) | Split-Path -Parent
-      $arguments = @('-AllDates')
+      $arguments = @(
+        '-allDates',
+        '-dateFormat'
+        '%Y:%m:%d %H:%M:%S'
+      )
       if ($Recurse) {
         $arguments += '-recurse'
       }
@@ -92,24 +96,36 @@ function Get-ExifDate {
         if (-not ([Path]::IsPathRooted($_.SourceFile))) {
           $_.SourceFile = $parent | Join-Path -ChildPath $_.SourceFile
         }
-        $fmt = 'yyyy:M:d H:m:sK'
+        $fmt = 'yyyy:MM:dd HH:mm:ss'
         if (@($_ | Get-Member -MemberType NoteProperty) -match 'DateTimeOriginal') {
-          $parsed = Get-Date
-          $_.DateTimeOriginal = ([datetime]::TryParseExact($_.DateTimeOriginal, $fmt, [DateTimeFormatInfo]::InvariantInfo, [DateTimeStyles]::None, [ref]$parsed)) ? $parsed : $null
+          $_.DateTimeOriginal = try {
+            [datetime]::ParseExact($_.DateTimeOriginal, $fmt, [DateTimeFormatInfo]::InvariantInfo, [DateTimeStyles]::None)
+          }
+          catch {
+            $null
+          }
         }
         else {
           $_ | Add-Member -MemberType NoteProperty -Name 'DateTimeOriginal' -Value $null
         }
         if (@($_ | Get-Member -MemberType NoteProperty) -match 'CreateDate') {
-          $parsed = Get-Date
-          $_.CreateDate = ([datetime]::TryParseExact($_.CreateDate, $fmt, [DateTimeFormatInfo]::InvariantInfo, [DateTimeStyles]::None, [ref]$parsed)) ? $parsed : $null
+          $_.CreateDate = try {
+            [datetime]::ParseExact($_.CreateDate, $fmt, [DateTimeFormatInfo]::InvariantInfo, [DateTimeStyles]::None)
+          }
+          catch {
+            $null
+          }
         }
         else {
           $_ | Add-Member -MemberType NoteProperty -Name 'CreateDate' -Value $null
         }
         if (@($_ | Get-Member -MemberType NoteProperty) -match 'ModifyDate') {
-          $parsed = Get-Date
-          $_.ModifyDate = ([datetime]::TryParseExact($_.ModifyDate, $fmt, [DateTimeFormatInfo]::InvariantInfo, [DateTimeStyles]::None, [ref]$parsed)) ? $parsed : $null
+          $_.ModifyDate = try {
+            [datetime]::ParseExact($_.ModifyDate, $fmt, [DateTimeFormatInfo]::InvariantInfo, [DateTimeStyles]::None)
+          }
+          catch {
+            $null
+          }
         }
         else {
           $_ | Add-Member -MemberType NoteProperty -Name 'ModifyDate' -Value $null
