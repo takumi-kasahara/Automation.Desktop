@@ -4,8 +4,8 @@ var WshShell = new ActiveXObject('WScript.Shell');
 var FileSystemObject = new ActiveXObject('Scripting.FileSystemObject');
 var files = [];
 var folders = [];
-for (var i = 0; i < WScript.Arguments.Unnamed.Length; i++) {
-  var path = WScript.Arguments.Unnamed.Item(i);
+for (var i = 0; i < WScript.Arguments.length; i++) {
+  var path = WScript.Arguments.Item(i);
   if (FileSystemObject.FileExists(path))
     files.push(path);
   else if (FileSystemObject.FolderExists(path))
