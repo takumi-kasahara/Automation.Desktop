@@ -78,7 +78,7 @@ function Get-ExifDate {
       $arguments = @(
         '-allDates',
         '-dateFormat'
-        '%Y:%m:%d %H:%M:%S'
+        '%Y-%m-%dT%H:%M:%S%z'
       )
       if ($Recurse) {
         $arguments += '-recurse'
@@ -96,7 +96,7 @@ function Get-ExifDate {
         if (-not ([Path]::IsPathRooted($_.SourceFile))) {
           $_.SourceFile = $parent | Join-Path -ChildPath $_.SourceFile
         }
-        $fmt = 'yyyy:MM:dd HH:mm:ss'
+        $fmt = 'yyyy-MM-ddTHH:mm:sszzz'
         if (@($_ | Get-Member -MemberType NoteProperty) -match 'DateTimeOriginal') {
           $_.DateTimeOriginal = try {
             [datetime]::ParseExact($_.DateTimeOriginal, $fmt, [DateTimeFormatInfo]::InvariantInfo, [DateTimeStyles]::None)

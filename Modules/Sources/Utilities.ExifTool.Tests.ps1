@@ -26,9 +26,9 @@ InModuleScope 'Utilities.ExifTool' {
         Mock -CommandName ExifTool.exe -MockWith {
           [PSCustomObject]@{
             SourceFile       = 'IMG_0001.jpg'
-            DateTimeOriginal = '2025:01:02 03:04:05'
-            CreateDate       = '2025:01:02 03:04:05'
-            ModifyDate       = '2025:01:02 06:07:08'
+            DateTimeOriginal = '2025-01-02T03:04:05+09:00'
+            CreateDate       = '2025-01-02T03:04:05+09:00'
+            ModifyDate       = '2025-01-02T06:07:08+09:00'
           } | ConvertTo-Csv
         }
         $result = Get-ExifDate -Path 'C:\Photos\*.jpg'
@@ -41,9 +41,9 @@ InModuleScope 'Utilities.ExifTool' {
         Mock -CommandName ExifTool.exe -MockWith {
           [PSCustomObject]@{
             SourceFile       = 'IMG_0001.jpg'
-            DateTimeOriginal = '2025:01:02 03:04:05'
-            CreateDate       = '2025:01:02 03:04:05'
-            ModifyDate       = '2025:01:02 06:07:08'
+            DateTimeOriginal = '2025-01-02T03:04:05+09:00'
+            CreateDate       = '2025-01-02T03:04:05+09:00'
+            ModifyDate       = '2025-01-02T06:07:08+09:00'
           } | ConvertTo-Csv
         }
         'C:\Photos\*.jpg' | Get-ExifDate | Should -HaveCount 1
@@ -52,9 +52,9 @@ InModuleScope 'Utilities.ExifTool' {
         Mock -CommandName ExifTool.exe -MockWith {
           [PSCustomObject]@{
             SourceFile       = 'IMG_0001.jpg'
-            DateTimeOriginal = '2025:01:02 03:04:05'
-            CreateDate       = '2025:01:02 03:04:05'
-            ModifyDate       = '2025:01:02 06:07:08'
+            DateTimeOriginal = '2025-01-02T03:04:05+09:00'
+            CreateDate       = '2025-01-02T03:04:05+09:00'
+            ModifyDate       = '2025-01-02T06:07:08+09:00'
           } | ConvertTo-Csv
         }
         [PSCustomObject]@{ Path = 'C:\Photos\*.jpg' } | Get-ExifDate | Should -HaveCount 1
@@ -63,17 +63,17 @@ InModuleScope 'Utilities.ExifTool' {
         Mock -CommandName ExifTool.exe -MockWith {
           [PSCustomObject]@{
             SourceFile       = 'IMG_0001.jpg'
-            DateTimeOriginal = '2025:01:02 03:04:05'
-            CreateDate       = '2025:01:02 03:04:05'
-            ModifyDate       = '2025:01:02 06:07:08'
+            DateTimeOriginal = '2025-01-02T03:04:05+09:00'
+            CreateDate       = '2025-01-02T03:04:05+09:00'
+            ModifyDate       = '2025-01-02T06:07:08+09:00'
           } | ConvertTo-Json -Compress
         }
         Mock -CommandName ConvertFrom-Json -MockWith {
           [PSCustomObject]@{
             SourceFile       = 'IMG_0001.jpg'
-            DateTimeOriginal = '2025:01:02 03:04:05'
-            CreateDate       = '2025:01:02 03:04:05'
-            ModifyDate       = '2025:01:02 06:07:08'
+            DateTimeOriginal = '2025-01-02T03:04:05+09:00'
+            CreateDate       = '2025-01-02T03:04:05+09:00'
+            ModifyDate       = '2025-01-02T06:07:08+09:00'
           }
         }
         $result = Get-ExifDate -LiteralPath 'C:\Photos\IMG_0001.jpg' -AsJson
@@ -84,17 +84,17 @@ InModuleScope 'Utilities.ExifTool' {
         Mock -CommandName ExifTool.exe -MockWith {
           [PSCustomObject]@{
             SourceFile       = 'IMG_0001.jpg'
-            DateTimeOriginal = '2025:01:02 03:04:05'
-            CreateDate       = '2025:01:02 03:04:05'
-            ModifyDate       = '2025:01:02 06:07:08'
+            DateTimeOriginal = '2025-01-02T03:04:05+09:00'
+            CreateDate       = '2025-01-02T03:04:05+09:00'
+            ModifyDate       = '2025-01-02T06:07:08+09:00'
           } | ConvertTo-Json -Compress
         }
         Mock -CommandName ConvertFrom-Json -MockWith {
           [PSCustomObject]@{
             SourceFile       = 'IMG_0001.jpg'
-            DateTimeOriginal = '2025:01:02 03:04:05'
-            CreateDate       = '2025:01:02 03:04:05'
-            ModifyDate       = '2025:01:02 06:07:08'
+            DateTimeOriginal = '2025-01-02T03:04:05+09:00'
+            CreateDate       = '2025-01-02T03:04:05+09:00'
+            ModifyDate       = '2025-01-02T06:07:08+09:00'
           }
         }
         [PSCustomObject]@{ LiteralPath = 'C:\Photos\IMG_0001.jpg' } | Get-ExifDate -AsJson | Should -HaveCount 1
@@ -105,9 +105,9 @@ InModuleScope 'Utilities.ExifTool' {
         Mock -CommandName ExifTool.exe -MockWith {
           [PSCustomObject]@{
             SourceFile       = 'IMG_0001.jpg'
-            DateTimeOriginal = '2025:01:02 03:04:05'
-            CreateDate       = '2025:01:02 03:04:05'
-            ModifyDate       = '2025:01:02 06:07:08'
+            DateTimeOriginal = '2025-01-02T03:04:05+09:00'
+            CreateDate       = '2025-01-02T03:04:05+09:00'
+            ModifyDate       = '2025-01-02T06:07:08+09:00'
           } | ConvertTo-Csv
         }
         Get-ExifDate -Path 'C:\Photos\*.jpg' -Recurse | Out-Null
