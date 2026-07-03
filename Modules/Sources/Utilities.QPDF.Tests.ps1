@@ -35,6 +35,22 @@ InModuleScope 'Utilities.QPDF' {
         Should -Invoke -CommandName qpdf.exe -Times 1 -Exactly
       }
     }
+    Context 'Password parameters' {
+      It 'passes --owner-password to qpdf.exe when OwnerPassword is specified' {
+        ConvertTo-Qdf -Path 'C:\Docs\encrypted.pdf' -Destination 'C:\Temp\manual.qdf' -OwnerPassword 'owner123' -Force -Confirm:$false
+        Should -Invoke -CommandName qpdf.exe -ParameterFilter { $args -contains '--owner-password=owner123' }
+      }
+      It 'passes --password to qpdf.exe when UserPassword is specified' {
+        ConvertTo-Qdf -Path 'C:\Docs\encrypted.pdf' -Destination 'C:\Temp\manual.qdf' -UserPassword 'user123' -Force -Confirm:$false
+        Should -Invoke -CommandName qpdf.exe -ParameterFilter { $args -contains '--password=user123' }
+      }
+      It 'passes both passwords when both are specified' {
+        ConvertTo-Qdf -Path 'C:\Docs\encrypted.pdf' -Destination 'C:\Temp\manual.qdf' -OwnerPassword 'owner123' -UserPassword 'user123' -Force -Confirm:$false
+        Should -Invoke -CommandName qpdf.exe -ParameterFilter {
+          $args -contains '--owner-password=owner123' -and $args -contains '--password=user123'
+        }
+      }
+    }
     Context 'SupportsShouldProcess' {
       It 'does not call qpdf.exe when WhatIf is specified' {
         ConvertTo-Qdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\manual.qdf' -Force -WhatIf
@@ -90,6 +106,22 @@ InModuleScope 'Utilities.QPDF' {
       It 'converts QDF to PDF by Path with ValueFromPipelineByPropertyName' {
         [PSCustomObject]@{ Path = 'C:\Temp\manual.qdf' } | ConvertFrom-Qdf -Destination 'C:\Docs\manual.pdf'
         Should -Invoke -CommandName fix-qdf.exe -Times 1 -Exactly
+      }
+    }
+    Context 'Password parameters' {
+      It 'passes --owner-password to fix-qdf.exe when OwnerPassword is specified' {
+        ConvertFrom-Qdf -Path 'C:\Temp\manual.qdf' -Destination 'C:\Docs\manual.pdf' -OwnerPassword 'owner123' -Force -Confirm:$false
+        Should -Invoke -CommandName fix-qdf.exe -ParameterFilter { $args -contains '--owner-password=owner123' }
+      }
+      It 'passes --password to fix-qdf.exe when UserPassword is specified' {
+        ConvertFrom-Qdf -Path 'C:\Temp\manual.qdf' -Destination 'C:\Docs\manual.pdf' -UserPassword 'user123' -Force -Confirm:$false
+        Should -Invoke -CommandName fix-qdf.exe -ParameterFilter { $args -contains '--password=user123' }
+      }
+      It 'passes both passwords when both are specified' {
+        ConvertFrom-Qdf -Path 'C:\Temp\manual.qdf' -Destination 'C:\Docs\manual.pdf' -OwnerPassword 'owner123' -UserPassword 'user123' -Force -Confirm:$false
+        Should -Invoke -CommandName fix-qdf.exe -ParameterFilter {
+          $args -contains '--owner-password=owner123' -and $args -contains '--password=user123'
+        }
       }
     }
     Context 'SupportsShouldProcess' {
@@ -179,6 +211,34 @@ InModuleScope 'Utilities.QPDF' {
         [PSCustomObject]@{ LiteralPath = 'C:\Docs\manual.pdf' } | Get-PdfPage | Should -Not -BeNullOrEmpty
       }
     }
+    Context 'Password parameters' {
+      It 'passes --owner-password to qpdf.exe when OwnerPassword is specified' {
+        Mock -CommandName qpdf.exe -ParameterFilter { $args -contains '--show-npages' } -MockWith {
+          $global:LASTEXITCODE = 0
+          return 12
+        }
+        Get-PdfPage -LiteralPath 'C:\Docs\encrypted.pdf' -OwnerPassword 'owner123'
+        Should -Invoke -CommandName qpdf.exe -ParameterFilter { $args -contains '--owner-password=owner123' }
+      }
+      It 'passes --password to qpdf.exe when UserPassword is specified' {
+        Mock -CommandName qpdf.exe -ParameterFilter { $args -contains '--show-npages' } -MockWith {
+          $global:LASTEXITCODE = 0
+          return 12
+        }
+        Get-PdfPage -LiteralPath 'C:\Docs\encrypted.pdf' -UserPassword 'user123'
+        Should -Invoke -CommandName qpdf.exe -ParameterFilter { $args -contains '--password=user123' }
+      }
+      It 'passes both passwords when both are specified' {
+        Mock -CommandName qpdf.exe -ParameterFilter { $args -contains '--show-npages' } -MockWith {
+          $global:LASTEXITCODE = 0
+          return 12
+        }
+        Get-PdfPage -LiteralPath 'C:\Docs\encrypted.pdf' -OwnerPassword 'owner123' -UserPassword 'user123'
+        Should -Invoke -CommandName qpdf.exe -ParameterFilter {
+          $args -contains '--owner-password=owner123' -and $args -contains '--password=user123'
+        }
+      }
+    }
     Context 'Edge cases' {
       It 'returns no object when qpdf reports a non-zero exit code' {
         Mock -CommandName qpdf.exe -ParameterFilter { $args -contains '--show-npages' } -MockWith {
@@ -254,6 +314,24 @@ InModuleScope 'Utilities.QPDF' {
         Mock -CommandName qpdf.exe -ParameterFilter { $args -contains '--decrypt' } -MockWith { }
         [PSCustomObject]@{ LiteralPath = 'C:\Docs\manual.pdf' } | Unblock-Pdf -Confirm:$false
         Should -Invoke -CommandName qpdf.exe -ParameterFilter { $args -contains '--decrypt' } -Times 1 -Exactly
+      }
+    }
+    Context 'Password parameters' {
+      It 'passes --owner-password to qpdf.exe when decrypting with OwnerPassword' {
+        Mock -CommandName qpdf.exe -ParameterFilter { $args -contains '--show-encryption' } -MockWith {
+          return 'R = 6'
+        }
+        Mock -CommandName qpdf.exe -ParameterFilter { $args -contains '--decrypt' } -MockWith { }
+        Unblock-Pdf -LiteralPath 'C:\Docs\manual.pdf' -OwnerPassword 'owner123' -Confirm:$false
+        Should -Invoke -CommandName qpdf.exe -ParameterFilter { $args -contains '--owner-password=owner123' }
+      }
+      It 'passes --password to qpdf.exe when decrypting with UserPassword' {
+        Mock -CommandName qpdf.exe -ParameterFilter { $args -contains '--show-encryption' } -MockWith {
+          return 'R = 6'
+        }
+        Mock -CommandName qpdf.exe -ParameterFilter { $args -contains '--decrypt' } -MockWith { }
+        Unblock-Pdf -LiteralPath 'C:\Docs\manual.pdf' -UserPassword 'user123' -Confirm:$false
+        Should -Invoke -CommandName qpdf.exe -ParameterFilter { $args -contains '--password=user123' }
       }
     }
     Context 'SupportsShouldProcess' {

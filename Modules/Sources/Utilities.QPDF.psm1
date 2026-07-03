@@ -1,3 +1,9 @@
+<#
+.SYNOPSIS
+  Provides utility functions for working with PDF files using QPDF.
+.LINK
+  https://qpdf.readthedocs.io/en/stable/cli.html
+#>
 using namespace System.IO
 
 Set-StrictMode -Version Latest
@@ -27,8 +33,17 @@ function ConvertTo-Qdf {
   .PARAMETER NoClobber
     If specified, the function will fail if the destination file already exists.
 
+  .PARAMETER OwnerPassword
+    Specifies the owner password for encrypted PDF files.
+
+  .PARAMETER UserPassword
+    Specifies the user password for encrypted PDF files.
+
   .EXAMPLE
     ConvertTo-Qdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\manual.qdf'
+
+  .EXAMPLE
+    ConvertTo-Qdf -Path 'C:\Docs\encrypted.pdf' -Destination 'C:\Temp\manual.qdf' -OwnerPassword 'owner123'
 
   .OUTPUTS
     None. Only converts PDF to QDF.
@@ -47,7 +62,11 @@ function ConvertTo-Qdf {
     [switch]
     $Force,
     [switch]
-    $NoClobber
+    $NoClobber,
+    [string]
+    $OwnerPassword,
+    [string]
+    $UserPassword
   )
   begin {
     $log = $env:TEMP | Join-Path -ChildPath "QPDF.$(Get-Date -Format 'yyyyMMddHHmmss').log"
@@ -64,8 +83,14 @@ function ConvertTo-Qdf {
     if ($isReadOnly -and $Force) {
       (Get-Item -LiteralPath $Destination -Force).IsReadOnly = $false
     }
-    # https://qpdf.readthedocs.io/en/stable/cli.html
-    qpdf.exe $item.FullName --qdf $Destination 2>>$log
+    $arguments = @($item.FullName, '--qdf', $Destination)
+    if ($OwnerPassword) {
+      $arguments += "--owner-password=$OwnerPassword"
+    }
+    if ($UserPassword) {
+      $arguments += "--user-password=$UserPassword"
+    }
+    qpdf.exe @arguments 2>>$log
     if ($isReadOnly) {
       (Get-Item -LiteralPath $Destination -Force).IsReadOnly = $true
     }
@@ -102,8 +127,17 @@ function ConvertFrom-Qdf {
   .PARAMETER NoClobber
     If specified, the function will fail if the destination file already exists.
 
+  .PARAMETER OwnerPassword
+    Specifies the owner password for encrypted QDF files.
+
+  .PARAMETER UserPassword
+    Specifies the user password for encrypted QDF files.
+
   .EXAMPLE
     ConvertFrom-Qdf -Path 'C:\Temp\manual.qdf' -Destination 'C:\Docs\manual.pdf'
+
+  .EXAMPLE
+    ConvertFrom-Qdf -Path 'C:\Temp\encrypted.qdf' -Destination 'C:\Docs\manual.pdf' -OwnerPassword 'owner123'
 
   .OUTPUTS
     None. Only converts QDF to PDF.
@@ -122,14 +156,17 @@ function ConvertFrom-Qdf {
     [switch]
     $Force,
     [switch]
-    $NoClobber
+    $NoClobber,
+    [string]
+    $OwnerPassword,
+    [string]
+    $UserPassword
   )
   begin {
     $log = $env:TEMP | Join-Path -ChildPath "QPDF.$(Get-Date -Format 'yyyyMMddHHmmss').log"
   }
   process {
     $item = Get-Item -LiteralPath $Path -Force
-    # https://qpdf.readthedocs.io/en/stable/cli.html
     if (-not (($Force -and -not $WhatIfPreference) -or $PSCmdlet.ShouldProcess($item.FullName, 'Convert from QDF'))) {
       return
     }
@@ -140,7 +177,14 @@ function ConvertFrom-Qdf {
     if ($isReadOnly -and $Force) {
       (Get-Item -LiteralPath $Destination -Force).IsReadOnly = $false
     }
-    fix-qdf.exe $item.FullName >$Destination 2>>$log
+    $arguments = @($item.FullName)
+    if ($OwnerPassword) {
+      $arguments += "--owner-password=$OwnerPassword"
+    }
+    if ($UserPassword) {
+      $arguments += "--user-password=$UserPassword"
+    }
+    fix-qdf.exe @arguments >$Destination 2>>$log
     if ($isReadOnly) {
       (Get-Item -LiteralPath $Destination -Force).IsReadOnly = $true
     }
@@ -175,11 +219,21 @@ function Unblock-Pdf {
   .PARAMETER LiteralPath
     Specifies literal PDF file paths to inspect and unblock.
 
+  .PARAMETER OwnerPassword
+    Specifies the owner password for encrypted PDF files.
+
+
+  .PARAMETER UserPassword
+    Specifies the user password for encrypted PDF files.
+
   .EXAMPLE
     Unblock-Pdf -Path 'C:\Docs\*.pdf'
 
   .EXAMPLE
     Unblock-Pdf -LiteralPath 'C:\Docs\manual.pdf' -WhatIf
+
+  .EXAMPLE
+    Unblock-Pdf -LiteralPath 'C:\Docs\encrypted.pdf' -OwnerPassword 'ownerpass'
 
   .OUTPUTS
     None. Only removes PDF encryption.
@@ -198,7 +252,11 @@ function Unblock-Pdf {
     [Alias('PSPath', 'LP')]
     [Parameter(Mandatory, ParameterSetName = 'LiteralPathSet', ValueFromPipelineByPropertyName)]
     [string[]]
-    $LiteralPath
+    $LiteralPath,
+    [string]
+    $OwnerPassword,
+    [string]
+    $UserPassword
   )
   begin {
     $log = $env:TEMP | Join-Path -ChildPath "QPDF.$(Get-Date -Format 'yyyyMMddHHmmss').log"
@@ -216,14 +274,28 @@ function Unblock-Pdf {
     )
     $items |
     ForEach-Object {
-      $stdout = qpdf.exe --show-encryption $_ 2>>$log
+      $showArgs = @('--show-encryption', $_)
+      if ($OwnerPassword) {
+        $showArgs += "--owner-password=$OwnerPassword"
+      }
+      if ($UserPassword) {
+        $showArgs += "--user-password=$UserPassword"
+      }
+      $stdout = qpdf.exe @showArgs 2>>$log
       if ($stdout -eq 'File is not encrypted') {
         return
       }
       if (-not $PSCmdlet.ShouldProcess($_.FullName, 'Decrypt PDF')) {
         return
       }
-      qpdf.exe $_ --decrypt --replace-input 2>>$log
+      $decryptArgs = @($_, '--decrypt', '--replace-input')
+      if ($OwnerPassword) {
+        $decryptArgs += "--owner-password=$OwnerPassword"
+      }
+      if ($UserPassword) {
+        $decryptArgs += "--user-password=$UserPassword"
+      }
+      qpdf.exe @decryptArgs 2>>$log
     }
   }
   clean {
@@ -255,11 +327,20 @@ function Get-PdfPage {
   .PARAMETER LiteralPath
     Specifies literal PDF file paths to inspect.
 
+  .PARAMETER OwnerPassword
+    Specifies the owner password for encrypted PDF files.
+
+  .PARAMETER UserPassword
+    Specifies the user password for encrypted PDF files.
+
   .EXAMPLE
     Get-PdfPage -Path 'C:\Docs\*.pdf'
 
   .EXAMPLE
     Get-PdfPage -LiteralPath 'C:\Docs\manual.pdf'
+
+  .EXAMPLE
+    Get-PdfPage -LiteralPath 'C:\Docs\encrypted.pdf' -OwnerPassword 'owner123'
 
   .OUTPUTS
     PdfInfo
@@ -276,7 +357,11 @@ function Get-PdfPage {
     [Alias('PSPath', 'LP')]
     [Parameter(Mandatory, ParameterSetName = 'LiteralPathSet', ValueFromPipelineByPropertyName)]
     [string[]]
-    $LiteralPath
+    $LiteralPath,
+    [string]
+    $OwnerPassword,
+    [string]
+    $UserPassword
   )
   begin {
     $log = $env:TEMP | Join-Path -ChildPath "QPDF.$(Get-Date -Format 'yyyyMMddHHmmss').log"
@@ -294,7 +379,14 @@ function Get-PdfPage {
     )
     $items |
     ForEach-Object {
-      $page = qpdf.exe --show-npages $_ 2>>$log
+      $arguments = @('--show-npages', $_)
+      if ($OwnerPassword) {
+        $arguments += "--owner-password=$OwnerPassword"
+      }
+      if ($UserPassword) {
+        $arguments += "--user-password=$UserPassword"
+      }
+      $page = qpdf.exe @arguments 2>>$log
       if ($LASTEXITCODE -eq 0) {
         return [PSCustomObject]@{
           Item      = $_
