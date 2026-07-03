@@ -9,6 +9,7 @@
     '.lmstudio'
     '.ollama'
     '.ssh'
+    '.theia-ide'
     '.vscode'
     '.vscode-insiders'
   )
@@ -32,6 +33,7 @@
     'StorageExplorer' # Azure Storage Explorer
     'Subversion'
     'texstudio'
+    'Theia IDE'
     'TortoiseGit'
     'TortoiseSVN'
     'VMware'
