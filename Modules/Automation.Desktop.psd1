@@ -12,6 +12,8 @@
     'Set-ItemDate'
     'Sync-DirectoryDate'
     'Sync-ItemDate'
+    'Export-ItemDate'
+    'Import-ItemDate'
     #endregion
     #region Path.psm1
     'Compress-EnvironmentVariable'

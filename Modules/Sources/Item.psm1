@@ -5,6 +5,12 @@ using namespace System.Text
 Set-StrictMode -Version Latest
 
 #region Private
+class ItemDate {
+  [string]$Path
+  [Nullable[datetime]]$CreationTime
+  [Nullable[datetime]]$LastWriteTime
+  [Nullable[datetime]]$LastAccessTime
+}
 class MeasureDirectoryInfo {
   [FileSystemInfo[]]$RecentCreatedFiles
   [FileSystemInfo[]]$RecentCreatedDirectories
@@ -975,6 +981,206 @@ function Sync-ItemDate {
       }
       catch {
         Write-Warning -Message $_.Exception.Message
+      }
+    }
+  }
+}
+function Export-ItemDate {
+  <#
+  .SYNOPSIS
+    Exports file and directory timestamps to a JSON file.
+
+  .DESCRIPTION
+    Export-ItemDate reads the CreationTime, LastWriteTime, and LastAccessTime of one or more
+    files or directories specified by Path or LiteralPath and writes them to a JSON file
+    specified by Destination. The command supports wildcards via -Path and literal paths via
+    -LiteralPath. The Path property in the JSON output is written as a path relative to the
+    common parent directory of the exported items, so the data can be re-applied on another
+    machine or under a different root. Use -Force to overwrite an existing destination file,
+    or -NoClobber to fail if the destination already exists.
+
+  .PARAMETER Path
+    Path(s) to the target file(s) or directory(ies). Wildcards supported.
+
+  .PARAMETER LiteralPath
+    Literal path(s) to the target file(s) or directory(ies). Wildcards are not interpreted.
+
+  .PARAMETER Destination
+    Specifies the path of the JSON file to write the timestamp data to. Only one
+    output file is produced. The function returns this path as a single-element array.
+
+  .PARAMETER Force
+    If specified, overwrites the destination file if it already exists.
+
+  .PARAMETER NoClobber
+    If specified, the function will fail if the destination file already exists.
+
+  .EXAMPLE
+    Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\Temp\timestamps.json'
+
+  .EXAMPLE
+    Export-ItemDate -LiteralPath 'C:\dir\file.txt' -Destination 'C:\Temp\timestamps.json' -Force
+
+  .OUTPUTS
+    System.String[]. Returns the destination path as a single-element array.
+
+  .NOTES
+    This function supports ShouldProcess and can be used with -WhatIf and -Confirm.
+  #>
+  [CmdletBinding(DefaultParameterSetName = 'PathSet', SupportsShouldProcess)]
+  [OutputType([string[]])]
+  param (
+    [Parameter(Mandatory, ParameterSetName = 'PathSet', Position = 0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+    [SupportsWildcards()]
+    [ValidateScript({ Test-Path -Path $_ })]
+    [string[]]
+    $Path,
+    [Alias('PSPath', 'LP')]
+    [Parameter(Mandatory, ParameterSetName = 'LiteralPathSet', ValueFromPipelineByPropertyName)]
+    [ValidateScript({ Test-Path -LiteralPath $_ })]
+    [string[]]
+    $LiteralPath,
+    [Parameter(Mandatory)]
+    [ValidateScript({ (Test-Path -LiteralPath $_ -IsValid) -and -not (Test-Path -LiteralPath $_ -PathType Container) })]
+    [string]
+    $Destination,
+    [switch]
+    $Force,
+    [switch]
+    $NoClobber
+  )
+  process {
+    $items = @(
+      switch -Exact -CaseSensitive ($PSCmdlet.ParameterSetName) {
+        'PathSet' {
+          Get-Item -Path $Path -Force
+        }
+        'LiteralPathSet' {
+          Get-Item -LiteralPath $LiteralPath -Force
+        }
+      }
+    )
+    $target = if ($PSCmdlet.ParameterSetName -eq 'PathSet') {
+      $Path -join ', '
+    }
+    else {
+      $LiteralPath -join ', '
+    }
+    if (-not (($Force -and -not $WhatIfPreference) -or $PSCmdlet.ShouldProcess($target, 'Export item timestamps to JSON'))) {
+      return
+    }
+    if ((Test-Path -LiteralPath $Destination -PathType Container) -or ((Test-Path -LiteralPath $Destination -PathType Leaf) -and $NoClobber)) {
+      $PSCmdlet.ThrowTerminatingError((New-ErrorRecord -ErrorId 'ItemAlreadyExists' -TargetObject $Destination))
+    }
+    $isReadOnly = (Test-Path -LiteralPath $Destination -PathType Leaf) -and (Get-Item -LiteralPath $Destination -Force).IsReadOnly
+    if ($isReadOnly -and $Force) {
+      (Get-Item -LiteralPath $Destination -Force).IsReadOnly = $false
+    }
+    $baseParts = $items |
+    Select-Object -First 1 |
+    ForEach-Object { [Path]::GetDirectoryName($_.FullName) -split '[\\/]' }
+    foreach ($item in $items) {
+      $parts = [Path]::GetDirectoryName($item.FullName) -split '[\\/]'
+      $shared = @()
+      for ($i = 0; $i -lt [Math]::Min($baseParts.Count, $parts.Count); $i++) {
+        if ($baseParts[$i] -eq $parts[$i]) {
+          $shared += $baseParts[$i]
+        }
+        else {
+          break
+        }
+      }
+      $baseParts = $shared
+    }
+    $baseDirectory = $baseParts -join '\'
+    $records = @(
+      $items |
+      ForEach-Object {
+        [ItemDate]@{
+          Path           = [Path]::GetRelativePath($baseDirectory, $_.FullName)
+          CreationTime   = $_.CreationTime
+          LastWriteTime  = $_.LastWriteTime
+          LastAccessTime = $_.LastAccessTime
+        }
+      }
+    )
+    $json = $records | ConvertTo-Json -Compress
+    $json | Set-Content -LiteralPath $Destination -Encoding UTF8 -Force:$Force -WhatIf:$WhatIfPreference -Confirm:$false
+    if ($isReadOnly -and $Force) {
+      (Get-Item -LiteralPath $Destination -Force).IsReadOnly = $true
+    }
+    return [string[]]@($Destination)
+  }
+}
+function Import-ItemDate {
+  <#
+  .SYNOPSIS
+    Imports file and directory timestamps from a JSON file.
+
+  .DESCRIPTION
+    Import-ItemDate reads one or more JSON files produced by Export-ItemDate and applies the
+    CreationTime, LastWriteTime, and LastAccessTime values to each corresponding
+    file or directory. When a record's Path property is a relative path, it is
+    interpreted as relative to the folder that contains the JSON file, so the data
+    exported by Export-ItemDate can be re-applied under the same relative layout.
+    The command supports -WhatIf and -Confirm via ShouldProcess, and -Force to set
+    timestamps on read-only items.
+
+  .PARAMETER Path
+    Path(s) to the JSON file(s) that contain the timestamp data. Accepts an array of paths.
+
+  .PARAMETER Force
+    If specified, sets timestamps on read-only items.
+
+  .EXAMPLE
+    Import-ItemDate -Path 'C:\Temp\timestamps.json'
+
+  .EXAMPLE
+    Import-ItemDate -Path 'C:\Temp\timestamps.json' -Force
+
+  .EXAMPLE
+    Import-ItemDate -Path @('C:\Temp\a.json', 'C:\Temp\b.json')
+
+  .OUTPUTS
+    None. Only applies timestamp data to target items.
+
+  .NOTES
+    This function supports ShouldProcess and can be used with -WhatIf and -Confirm.
+  #>
+  [CmdletBinding(DefaultParameterSetName = 'PathSet', SupportsShouldProcess)]
+  [OutputType([void])]
+  param (
+    [Alias('FilePath', 'FullName')]
+    [Parameter(Mandatory, Position = 0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+    [ValidateScript({ Test-Path -LiteralPath $_ })]
+    [string[]]
+    $Path,
+    [switch]
+    $Force
+  )
+  process {
+    foreach ($file in $Path) {
+      if (-not (($Force -and -not $WhatIfPreference) -or $PSCmdlet.ShouldProcess($file, 'Import item timestamps from JSON'))) {
+        continue
+      }
+      $records = @(Get-Content -LiteralPath $file -Raw | ConvertFrom-Json)
+      $baseDirectory = [Path]::GetDirectoryName([Path]::GetFullPath($file))
+      foreach ($record in $records) {
+        $targetPath = if ([Path]::IsPathRooted($record.Path)) {
+          $record.Path
+        }
+        else {
+          [Path]::Combine($baseDirectory, $record.Path)
+        }
+        if ($record.CreationTime) {
+          Set-ItemProperty -LiteralPath $targetPath -Name 'CreationTime' -Value $record.CreationTime -Force:$Force -WhatIf:$WhatIfPreference -Confirm:$false
+        }
+        if ($record.LastWriteTime) {
+          Set-ItemProperty -LiteralPath $targetPath -Name 'LastWriteTime' -Value $record.LastWriteTime -Force:$Force -WhatIf:$WhatIfPreference -Confirm:$false
+        }
+        if ($record.LastAccessTime) {
+          Set-ItemProperty -LiteralPath $targetPath -Name 'LastAccessTime' -Value $record.LastAccessTime -Force:$Force -WhatIf:$WhatIfPreference -Confirm:$false
+        }
       }
     }
   }
