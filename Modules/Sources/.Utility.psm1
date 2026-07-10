@@ -14,6 +14,7 @@ function New-ErrorRecord {
       'FileIsReadOnly'
       , 'ItemAlreadyExists'
       , 'ItemNotFound'
+      , 'DestinationRequiredForFile'
     )]
     [string]
     $ErrorId,
@@ -42,6 +43,14 @@ function New-ErrorRecord {
         [ItemNotFoundException]::new("$TargetObject not found.")
         , 'ItemNotFound'
         , [ErrorCategory]::ObjectNotFound
+        , $TargetObject
+      )
+    }
+    'DestinationRequiredForFile' {
+      return [ErrorRecord]::new(
+        [ArgumentException]::new("Destination is required when the input is a file. Specify -Destination or export a directory instead.")
+        , 'DestinationRequiredForFile'
+        , [ErrorCategory]::InvalidArgument
         , $TargetObject
       )
     }

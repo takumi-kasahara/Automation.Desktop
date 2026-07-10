@@ -994,20 +994,28 @@ function Export-ItemDate {
     Export-ItemDate reads the CreationTime, LastWriteTime, and LastAccessTime of one or more
     files or directories specified by Path or LiteralPath and writes them to a JSON file
     specified by Destination. The command supports wildcards via -Path and literal paths via
-    -LiteralPath. The Path property in the JSON output is written as a path relative to the
+    -LiteralPath. When an input item is a directory, the command recursively enumerates every
+    file within it, including files in subfolders, and exports each file's timestamps. The
+    Path property in the JSON output is written as a path relative to the
     common parent directory of the exported items, so the data can be re-applied on another
     machine or under a different root. Use -Force to overwrite an existing destination file,
     or -NoClobber to fail if the destination already exists.
 
   .PARAMETER Path
-    Path(s) to the target file(s) or directory(ies). Wildcards supported.
+    Path(s) to the target file(s) or directory(ies). Wildcards supported. When a directory is
+    specified, all files within it are exported recursively, including files in subfolders.
 
   .PARAMETER LiteralPath
     Literal path(s) to the target file(s) or directory(ies). Wildcards are not interpreted.
+    When a directory is specified, all files within it are exported recursively, including
+    files in subfolders.
 
   .PARAMETER Destination
     Specifies the path of the JSON file to write the timestamp data to. Only one
     output file is produced. The function returns this path as a single-element array.
+    When omitted, the data is written to '{folder name}.json' in the current directory,
+    but only when the input is a directory. If the input is a file, -Destination is
+    mandatory and omitting it throws an error.
 
   .PARAMETER Force
     If specified, overwrites the destination file if it already exists.
@@ -1020,6 +1028,12 @@ function Export-ItemDate {
 
   .EXAMPLE
     Export-ItemDate -LiteralPath 'C:\dir\file.txt' -Destination 'C:\Temp\timestamps.json' -Force
+
+  .EXAMPLE
+    Export-ItemDate -LiteralPath 'C:\dir' -Destination 'C:\Temp\timestamps.json'
+
+    Exports the CreationTime, LastWriteTime, and LastAccessTime of every file under C:\dir,
+    including files in subfolders, to a single JSON file.
 
   .OUTPUTS
     System.String[]. Returns the destination path as a single-element array.
@@ -1040,7 +1054,6 @@ function Export-ItemDate {
     [ValidateScript({ Test-Path -LiteralPath $_ })]
     [string[]]
     $LiteralPath,
-    [Parameter(Mandatory)]
     [ValidateScript({ (Test-Path -LiteralPath $_ -IsValid) -and -not (Test-Path -LiteralPath $_ -PathType Container) })]
     [string]
     $Destination,
@@ -1050,7 +1063,7 @@ function Export-ItemDate {
     $NoClobber
   )
   process {
-    $items = @(
+    $roots = @(
       switch -Exact -CaseSensitive ($PSCmdlet.ParameterSetName) {
         'PathSet' {
           Get-Item -Path $Path -Force
@@ -1060,6 +1073,25 @@ function Export-ItemDate {
         }
       }
     )
+    $items = @(
+      $roots |
+      ForEach-Object {
+        if ($_.PSIsContainer) {
+          $_ | Get-ChildItem -File -Recurse -Force:$Force
+        }
+        else {
+          $_
+        }
+      }
+    )
+    if ([string]::IsNullOrEmpty($Destination)) {
+      if ($roots[0].PSIsContainer) {
+        $Destination = Join-Path -Path $PWD.Path -ChildPath "$($roots[0].Name).json"
+      }
+      else {
+        $PSCmdlet.ThrowTerminatingError((New-ErrorRecord -ErrorId 'DestinationRequiredForFile' -TargetObject $roots[0]))
+      }
+    }
     $target = if ($PSCmdlet.ParameterSetName -eq 'PathSet') {
       $Path -join ', '
     }
