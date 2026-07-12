@@ -19,6 +19,11 @@ function Invoke-Robocopy {
   try {
     $log = $env:TEMP | Join-Path -ChildPath "Robocopy.$(Get-Date -Format 'yyyyMMddHHmmss').log"
     Write-Progress -Activity 'Backup' -Status $Source
+    [PSCustomObject]@{
+      Source      = $Source
+      Destination = $Destination
+      Log         = $log
+    }
     $arguments = @(
       '/COPY:DAT'
       '/DCOPY:DAT'
@@ -34,13 +39,8 @@ function Invoke-Robocopy {
     )
     Robocopy.exe $Source $Destination @arguments | Out-Null
     # https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/robocopy#exit-return-codes
-    if ($LASTEXITCODE -ge 8) {
-      throw "Robocopy failed with exit code $LASTEXITCODE. See log: $log"
-    }
-    [PSCustomObject]@{
-      Source      = $Source
-      Destination = $Destination
-      Log         = $log
+    if ($LASTEXITCODE -ge 0x8) {
+      Write-Warning -Message "Robocopy failed with exit code $LASTEXITCODE."
     }
   }
   finally {
@@ -64,15 +64,6 @@ Where-Object -Property ProcessName -In @(
   'OneDrive'
 ) |
 Stop-Process -Force
-
-$log = $env:TEMP | Join-Path -ChildPath "BleachBit.$(Get-Date -Format 'yyyyMMddHHmmss').log"
-$arguments = @(
-  '--clean'
-  '--preset'
-  '--update-winapp2'
-)
-bleachbit_console.exe @arguments | Tee-Object -LiteralPath $log
-Clear-Host
 
 (Import-PowerShellDataFile -LiteralPath 'Directory.psd1').GetEnumerator() |
 Sort-Object -Property Name |
