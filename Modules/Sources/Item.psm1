@@ -996,10 +996,12 @@ function Export-ItemDate {
     specified by Destination. The command supports wildcards via -Path and literal paths via
     -LiteralPath. When an input item is a directory, the command recursively enumerates every
     file within it, including files in subfolders, and exports each file's timestamps. The
-    Path property in the JSON output is written as a path relative to the
-    common parent directory of the exported items, so the data can be re-applied on another
-    machine or under a different root. Use -Force to overwrite an existing destination file,
-    or -NoClobber to fail if the destination already exists.
+    Path property in the JSON output is written as a path relative to a base directory.
+    When the input is a directory, the base directory is the parent of that directory, so the
+    exported paths include the directory name (for example 'dir\file.txt'). When the input is
+    one or more files, the base directory is their common parent directory, so the data can be
+    re-applied on another machine or under a different root. Use -Force to overwrite an existing
+    destination file, or -NoClobber to fail if the destination already exists.
 
   .PARAMETER Path
     Path(s) to the target file(s) or directory(ies). Wildcards supported. When a directory is
@@ -1108,23 +1110,28 @@ function Export-ItemDate {
     if ($isReadOnly -and $Force) {
       (Get-Item -LiteralPath $Destination -Force).IsReadOnly = $false
     }
-    $baseParts = $items |
-    Select-Object -First 1 |
-    ForEach-Object { [Path]::GetDirectoryName($_.FullName) -split '[\\/]' }
-    foreach ($item in $items) {
-      $parts = [Path]::GetDirectoryName($item.FullName) -split '[\\/]'
-      $shared = @()
-      for ($i = 0; $i -lt [Math]::Min($baseParts.Count, $parts.Count); $i++) {
-        if ($baseParts[$i] -eq $parts[$i]) {
-          $shared += $baseParts[$i]
-        }
-        else {
-          break
-        }
-      }
-      $baseParts = $shared
+    if ($roots[0].PSIsContainer) {
+      $baseDirectory = [Path]::GetDirectoryName($roots[0].FullName)
     }
-    $baseDirectory = $baseParts -join '\'
+    else {
+      $baseParts = $items |
+      Select-Object -First 1 |
+      ForEach-Object { [Path]::GetDirectoryName($_.FullName) -split '[\\/]' }
+      foreach ($item in $items) {
+        $parts = [Path]::GetDirectoryName($item.FullName) -split '[\\/]'
+        $shared = @()
+        for ($i = 0; $i -lt [Math]::Min($baseParts.Count, $parts.Count); $i++) {
+          if ($baseParts[$i] -eq $parts[$i]) {
+            $shared += $baseParts[$i]
+          }
+          else {
+            break
+          }
+        }
+        $baseParts = $shared
+      }
+      $baseDirectory = $baseParts -join '\'
+    }
     $records = @(
       $items |
       ForEach-Object {

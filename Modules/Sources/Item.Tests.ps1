@@ -1074,8 +1074,8 @@ InModuleScope 'Item' {
       }
       Mock -CommandName Get-Item -ParameterFilter { ($LiteralPath -eq 'C:\dir' -or $PSPath -eq 'C:\dir') } -MockWith {
         [PSCustomObject]@{
-          FullName     = 'C:\dir'
-          Name         = 'dir'
+          FullName      = 'C:\dir'
+          Name          = 'dir'
           PSIsContainer = $true
         }
       }
@@ -1111,9 +1111,27 @@ InModuleScope 'Item' {
         [PSCustomObject]@{ Path = 'C:\dir\*' } | Export-ItemDate -Destination 'C:\Temp\timestamps.json'
         Should -Invoke -CommandName Set-Content -Times 1 -Exactly
       }
-      It 'exports timestamps by LiteralPath' {
+      It 'exports timestamps by LiteralPath for a file' {
         Export-ItemDate -LiteralPath 'C:\dir\file.txt' -Destination 'C:\Temp\timestamps.json'
-        Should -Invoke -CommandName Set-Content -Times 1 -Exactly
+        Should -Invoke -CommandName Set-Content -Times 1 -Exactly -ParameterFilter {
+          $null -ne $Value -and
+          ($json = $Value | ConvertFrom-Json) -and
+          $json.Path -eq 'file.txt' -and
+          $json.CreationTime -eq '2025-01-01T00:00:00' -and
+          $json.LastWriteTime -eq '2025-01-02T00:00:00' -and
+          $json.LastAccessTime -eq '2025-01-03T00:00:00'
+        }
+      }
+      It 'exports timestamps by LiteralPath for a directory recursively enumerates all files relative to the parent folder' {
+        Export-ItemDate -LiteralPath 'C:\dir' -Destination 'C:\Temp\timestamps.json'
+        Should -Invoke -CommandName Set-Content -Times 1 -Exactly -ParameterFilter {
+          $null -ne $Value -and
+          ($json = $Value | ConvertFrom-Json) -and
+          ($json -is [array]) -and
+          $json.Count -eq 2 -and
+          ($json[0].Path -eq 'dir\file.txt' -or $json[0].Path -eq 'dir\sub\photo.jpg') -and
+          ($json[1].Path -eq 'dir\file.txt' -or $json[1].Path -eq 'dir\sub\photo.jpg')
+        }
       }
       It 'exports timestamps by LiteralPath with ValueFromPipelineByPropertyName' {
         [PSCustomObject]@{ LiteralPath = 'C:\dir\file.txt' } | Export-ItemDate -Destination 'C:\Temp\timestamps.json'
@@ -1148,17 +1166,6 @@ InModuleScope 'Item' {
       }
     }
     Context 'Edge cases' {
-      It 'recursively exports every file when a directory is specified' {
-        Export-ItemDate -LiteralPath 'C:\dir' -Destination 'C:\Temp\timestamps.json'
-        Should -Invoke -CommandName Set-Content -Times 1 -Exactly -ParameterFilter {
-          $null -ne $Value -and
-          ($json = $Value | ConvertFrom-Json) -and
-          ($json -is [array]) -and
-          $json.Count -eq 2 -and
-          ($json[0].Path -eq 'file.txt' -or $json[0].Path -eq 'sub\photo.jpg') -and
-          ($json[1].Path -eq 'file.txt' -or $json[1].Path -eq 'sub\photo.jpg')
-        }
-      }
       It 'saves to {folder name}.json in the current directory when Destination is omitted for a directory' {
         Export-ItemDate -LiteralPath 'C:\dir'
         Should -Invoke -CommandName Set-Content -Times 1 -Exactly -ParameterFilter {
@@ -1230,12 +1237,12 @@ InModuleScope 'Item' {
         Should -Invoke -CommandName Set-ItemProperty -Times 1 -Exactly -ParameterFilter { $Name -eq 'LastWriteTime' -and $Value -eq '2025-01-02T00:00:00' }
         Should -Invoke -CommandName Set-ItemProperty -Times 1 -Exactly -ParameterFilter { $Name -eq 'LastAccessTime' -and $Value -eq '2025-01-03T00:00:00' }
       }
-      It 'resolves a relative Path against the JSON file folder' {
+      It 'resolves a relative Path (including the folder name) against the JSON file folder' {
         Mock -CommandName Get-Content -ParameterFilter { $LiteralPath -eq 'C:\Temp\relative.json' } -MockWith {
-          '[{"Path":"file.txt","CreationTime":"2025-01-01T00:00:00","LastWriteTime":"2025-01-02T00:00:00","LastAccessTime":"2025-01-03T00:00:00"}]'
+          '[{"Path":"dir\\file.txt","CreationTime":"2025-01-01T00:00:00","LastWriteTime":"2025-01-02T00:00:00","LastAccessTime":"2025-01-03T00:00:00"}]'
         }
         Import-ItemDate -Path 'C:\Temp\relative.json'
-        Should -Invoke -CommandName Set-ItemProperty -Times 3 -Exactly -ParameterFilter { $LiteralPath -eq 'C:\Temp\file.txt' }
+        Should -Invoke -CommandName Set-ItemProperty -Times 3 -Exactly -ParameterFilter { $LiteralPath -eq 'C:\Temp\dir\file.txt' }
       }
     }
     Context 'Multiple files' {
