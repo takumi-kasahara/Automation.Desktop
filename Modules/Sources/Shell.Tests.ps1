@@ -267,8 +267,41 @@ InModuleScope 'Shell' {
   Describe 'Get-Startup' {
     BeforeAll {
       Mock -CommandName Test-Path -MockWith { $true }
-      Mock -CommandName Get-SpecialFolder -ParameterFilter { $Name -eq 'Startup' } -MockWith { 'C:\Startup' }
-      Mock -CommandName Get-SpecialFolder -ParameterFilter { $Name -eq 'Common Startup' } -MockWith { 'C:\Common Startup' }
+      Mock -CommandName Get-ChildItem -ParameterFilter { $Path -eq 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions' } -MockWith {
+        $startup = [PSCustomObject]@{ PSChildName = 'Startup' }
+        $startup | Add-Member -MemberType ScriptMethod -Name GetValue -Value {
+          param($name)
+          if ($name -eq 'Name') {
+            'Startup'
+          }
+          else {
+            $null
+          }
+        } -Force
+        $common = [PSCustomObject]@{ PSChildName = 'Common Startup' }
+        $common | Add-Member -MemberType ScriptMethod -Name GetValue -Value {
+          param($name)
+          if ($name -eq 'Name') {
+            'Common Startup'
+          }
+          else {
+            $null
+          }
+        } -Force
+        return @($startup, $common)
+      }
+      Mock -CommandName New-Object -ParameterFilter { $ComObject -eq 'Shell.Application' } -MockWith {
+        $folders = @{
+          'shell:Startup'        = [PSCustomObject]@{ Self = [PSCustomObject]@{ Path = 'C:\Startup' } }
+          'shell:Common Startup' = [PSCustomObject]@{ Self = [PSCustomObject]@{ Path = 'C:\Common Startup' } }
+        }
+        $shell = [PSCustomObject]@{ Folders = $folders }
+        $shell | Add-Member -MemberType ScriptMethod -Name NameSpace -Value {
+          param($path)
+          return $this.Folders[$path]
+        }
+        return $shell
+      }
       Mock -CommandName Get-ChildItem -ParameterFilter { $LiteralPath -eq 'C:\Startup' } -MockWith {
         [PSCustomObject]@{
           FullName   = 'C:\Startup\app.lnk'

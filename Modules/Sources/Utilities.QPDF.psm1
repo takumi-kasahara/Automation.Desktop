@@ -88,7 +88,7 @@ function ConvertTo-Qdf {
       $arguments += "--owner-password=$OwnerPassword"
     }
     if ($UserPassword) {
-      $arguments += "--user-password=$UserPassword"
+      $arguments += "--password=$UserPassword"
     }
     qpdf.exe @arguments 2>>$log
     if ($isReadOnly) {
@@ -182,7 +182,7 @@ function ConvertFrom-Qdf {
       $arguments += "--owner-password=$OwnerPassword"
     }
     if ($UserPassword) {
-      $arguments += "--user-password=$UserPassword"
+      $arguments += "--password=$UserPassword"
     }
     fix-qdf.exe @arguments >$Destination 2>>$log
     if ($isReadOnly) {
@@ -279,7 +279,7 @@ function Unblock-Pdf {
         $showArgs += "--owner-password=$OwnerPassword"
       }
       if ($UserPassword) {
-        $showArgs += "--user-password=$UserPassword"
+        $showArgs += "--password=$UserPassword"
       }
       $stdout = qpdf.exe @showArgs 2>>$log
       if ($stdout -eq 'File is not encrypted') {
@@ -293,7 +293,7 @@ function Unblock-Pdf {
         $decryptArgs += "--owner-password=$OwnerPassword"
       }
       if ($UserPassword) {
-        $decryptArgs += "--user-password=$UserPassword"
+        $decryptArgs += "--password=$UserPassword"
       }
       qpdf.exe @decryptArgs 2>>$log
     }
@@ -384,7 +384,7 @@ function Get-PdfPage {
         $arguments += "--owner-password=$OwnerPassword"
       }
       if ($UserPassword) {
-        $arguments += "--user-password=$UserPassword"
+        $arguments += "--password=$UserPassword"
       }
       $page = qpdf.exe @arguments 2>>$log
       if ($LASTEXITCODE -eq 0) {
