@@ -10,6 +10,7 @@ class ItemDate {
   [Nullable[datetime]]$CreationTime
   [Nullable[datetime]]$LastWriteTime
   [Nullable[datetime]]$LastAccessTime
+  [string]$Hash
 }
 class MeasureDirectoryInfo {
   [FileSystemInfo[]]$RecentCreatedFiles
@@ -1013,11 +1014,11 @@ function Export-ItemDate {
     files in subfolders.
 
   .PARAMETER Destination
-    Specifies the path of the JSON file to write the timestamp data to. Only one
-    output file is produced. The function returns this path as a single-element array.
-    When omitted, the data is written to '{folder name}.json' in the current directory,
-    but only when the input is a directory. If the input is a file, -Destination is
-    mandatory and omitting it throws an error.
+    Specifies the path of the JSON file to write the timestamp data to. When -Destination is
+    supplied, all inputs are written to that single file. When -Destination is omitted, each
+    input directory is written to its own '{folder name}.json' in the parent folder of that
+    directory, and the function returns one path per directory. If any input is a file,
+    -Destination is mandatory and omitting it throws an error.
 
   .PARAMETER Force
     If specified, overwrites the destination file if it already exists.
@@ -1038,13 +1039,15 @@ function Export-ItemDate {
     including files in subfolders, to a single JSON file.
 
   .OUTPUTS
-    System.String[]. Returns the destination path as a single-element array.
+    System.IO.FileInfo[]. Returns one FileInfo object per output file. When -Destination is
+    supplied, a single-element array is returned. When -Destination is omitted, one element is
+    returned per input directory.
 
   .NOTES
     This function supports ShouldProcess and can be used with -WhatIf and -Confirm.
   #>
   [CmdletBinding(DefaultParameterSetName = 'PathSet', SupportsShouldProcess)]
-  [OutputType([string[]])]
+  [OutputType([System.IO.FileInfo[]])]
   param (
     [Parameter(Mandatory, ParameterSetName = 'PathSet', Position = 0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
     [SupportsWildcards()]
@@ -1075,23 +1078,9 @@ function Export-ItemDate {
         }
       }
     )
-    $items = @(
-      $roots |
-      ForEach-Object {
-        if ($_.PSIsContainer) {
-          $_ | Get-ChildItem -File -Recurse -Force:$Force
-        }
-        else {
-          $_
-        }
-      }
-    )
     if ([string]::IsNullOrEmpty($Destination)) {
-      if ($roots[0].PSIsContainer) {
-        $Destination = Join-Path -Path $PWD.Path -ChildPath "$($roots[0].Name).json"
-      }
-      else {
-        $PSCmdlet.ThrowTerminatingError(([ErrorRecord]::new([ArgumentException]::new("Destination is required when the input is a file. Specify -Destination or export a directory instead."), 'DestinationRequiredForFile', [ErrorCategory]::InvalidArgument, $roots[0])))
+      if ($roots | Where-Object { -not $_.PSIsContainer }) {
+        $PSCmdlet.ThrowTerminatingError(([ErrorRecord]::new([ArgumentException]::new('Destination is required when the input is a file. Specify -Destination or export a directory instead.'), 'DestinationRequiredForFile', [ErrorCategory]::InvalidArgument, $roots)))
       }
     }
     $target = if ($PSCmdlet.ParameterSetName -eq 'PathSet') {
@@ -1103,52 +1092,48 @@ function Export-ItemDate {
     if (-not (($Force -and -not $WhatIfPreference) -or $PSCmdlet.ShouldProcess($target, 'Export item timestamps to JSON'))) {
       return
     }
-    if ((Test-Path -LiteralPath $Destination -PathType Container) -or ((Test-Path -LiteralPath $Destination -PathType Leaf) -and $NoClobber)) {
-      $PSCmdlet.ThrowTerminatingError(([ErrorRecord]::new([IOException]::new("$Destination already exists. Use -Force to overwrite the file."), 'ItemAlreadyExists', [ErrorCategory]::ResourceExists, $Destination)))
-    }
-    $isReadOnly = (Test-Path -LiteralPath $Destination -PathType Leaf) -and (Get-Item -LiteralPath $Destination -Force).IsReadOnly
-    if ($isReadOnly -and $Force) {
-      (Get-Item -LiteralPath $Destination -Force).IsReadOnly = $false
-    }
-    if ($roots[0].PSIsContainer) {
-      $baseDirectory = [Path]::GetDirectoryName($roots[0].FullName)
-    }
-    else {
-      $baseParts = $items |
-      Select-Object -First 1 |
-      ForEach-Object { [Path]::GetDirectoryName($_.FullName) -split '[\\/]' }
-      foreach ($item in $items) {
-        $parts = [Path]::GetDirectoryName($item.FullName) -split '[\\/]'
-        $shared = @()
-        for ($i = 0; $i -lt [Math]::Min($baseParts.Count, $parts.Count); $i++) {
-          if ($baseParts[$i] -eq $parts[$i]) {
-            $shared += $baseParts[$i]
-          }
-          else {
-            break
+    $results = @()
+    foreach ($root in $roots) {
+      $outputPath = if ([string]::IsNullOrEmpty($Destination)) {
+        Join-Path -Path ([Path]::GetDirectoryName($root.FullName)) -ChildPath "$($root.Name).json"
+      }
+      else {
+        $Destination
+      }
+      if ((Test-Path -LiteralPath $outputPath -PathType Container) -or ((Test-Path -LiteralPath $outputPath -PathType Leaf) -and $NoClobber)) {
+        $PSCmdlet.ThrowTerminatingError(([ErrorRecord]::new([IOException]::new("$outputPath already exists. Use -Force to overwrite the file."), 'ItemAlreadyExists', [ErrorCategory]::ResourceExists, $outputPath)))
+      }
+      $isReadOnly = (Test-Path -LiteralPath $outputPath -PathType Leaf) -and (Get-Item -LiteralPath $outputPath -Force).IsReadOnly
+      if ($isReadOnly -and $Force) {
+        (Get-Item -LiteralPath $outputPath -Force).IsReadOnly = $false
+      }
+      $items = if ($root.PSIsContainer) {
+        $root | Get-ChildItem -File -Recurse -Force:$Force
+      }
+      else {
+        $root
+      }
+      $directory = [Path]::GetDirectoryName($root.FullName)
+      $records = @(
+        $items |
+        ForEach-Object {
+          [ItemDate]@{
+            Path           = [Path]::GetRelativePath($directory, $_.FullName)
+            CreationTime   = $_.CreationTime
+            LastWriteTime  = $_.LastWriteTime
+            LastAccessTime = $_.LastAccessTime
+            Hash           = ($_ | Get-FileHash -Algorithm SHA256).Hash
           }
         }
-        $baseParts = $shared
+      )
+      $json = $records | ConvertTo-Json
+      $json | Set-Content -LiteralPath $outputPath -Encoding UTF8 -Force:$Force -WhatIf:$WhatIfPreference -Confirm:$false
+      if ($isReadOnly -and $Force) {
+        (Get-Item -LiteralPath $outputPath -Force).IsReadOnly = $true
       }
-      $baseDirectory = $baseParts -join '\'
+      $results += Get-Item -LiteralPath $outputPath -Force
     }
-    $records = @(
-      $items |
-      ForEach-Object {
-        [ItemDate]@{
-          Path           = [Path]::GetRelativePath($baseDirectory, $_.FullName)
-          CreationTime   = $_.CreationTime
-          LastWriteTime  = $_.LastWriteTime
-          LastAccessTime = $_.LastAccessTime
-        }
-      }
-    )
-    $json = $records | ConvertTo-Json -Compress
-    $json | Set-Content -LiteralPath $Destination -Encoding UTF8 -Force:$Force -WhatIf:$WhatIfPreference -Confirm:$false
-    if ($isReadOnly -and $Force) {
-      (Get-Item -LiteralPath $Destination -Force).IsReadOnly = $true
-    }
-    return [string[]]@($Destination)
+    return $results
   }
 }
 function Import-ItemDate {
@@ -1163,13 +1148,17 @@ function Import-ItemDate {
     interpreted as relative to the folder that contains the JSON file, so the data
     exported by Export-ItemDate can be re-applied under the same relative layout.
     The command supports -WhatIf and -Confirm via ShouldProcess, and -Force to set
-    timestamps on read-only items.
+    timestamps on read-only items. By default the command does not emit output; use
+    -PassThru to return each successfully updated file as a FileInfo object.
 
   .PARAMETER Path
     Path(s) to the JSON file(s) that contain the timestamp data. Accepts an array of paths.
 
   .PARAMETER Force
     If specified, sets timestamps on read-only items.
+
+  .PARAMETER PassThru
+    If specified, returns the FileInfo object for each successfully updated file.
 
   .EXAMPLE
     Import-ItemDate -Path 'C:\Temp\timestamps.json'
@@ -1180,8 +1169,14 @@ function Import-ItemDate {
   .EXAMPLE
     Import-ItemDate -Path @('C:\Temp\a.json', 'C:\Temp\b.json')
 
+  .EXAMPLE
+    Import-ItemDate -Path 'C:\Temp\timestamps.json' -PassThru
+
+    Applies the timestamp data and returns the FileInfo objects for the updated files.
+
   .OUTPUTS
-    None. Only applies timestamp data to target items.
+    None by default. When -PassThru is specified, returns System.IO.FileInfo objects
+    for each successfully updated file.
 
   .NOTES
     This function supports ShouldProcess and can be used with -WhatIf and -Confirm.
@@ -1195,7 +1190,9 @@ function Import-ItemDate {
     [string[]]
     $Path,
     [switch]
-    $Force
+    $Force,
+    [switch]
+    $PassThru
   )
   process {
     foreach ($file in $Path) {
@@ -1203,22 +1200,34 @@ function Import-ItemDate {
         continue
       }
       $records = @(Get-Content -LiteralPath $file -Raw | ConvertFrom-Json)
-      $baseDirectory = [Path]::GetDirectoryName([Path]::GetFullPath($file))
+      $directory = [Path]::GetDirectoryName([Path]::GetFullPath($file))
       foreach ($record in $records) {
-        $targetPath = if ([Path]::IsPathRooted($record.Path)) {
+        $target = if ([Path]::IsPathRooted($record.Path)) {
           $record.Path
         }
         else {
-          [Path]::Combine($baseDirectory, $record.Path)
+          [Path]::Combine($directory, $record.Path)
+        }
+        if (-not (Test-Path -LiteralPath $target -PathType Leaf)) {
+          Write-Warning -Message "Skipping '$target' because it does not exist or is not a file."
+          continue
+        }
+        $actualHash = (Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash
+        if ($actualHash -ne $record.Hash) {
+          Write-Warning -Message "Skipping '$target' because the file hash does not match (expected: $($record.Hash), actual: $actualHash)."
+          continue
         }
         if ($record.CreationTime) {
-          Set-ItemProperty -LiteralPath $targetPath -Name 'CreationTime' -Value $record.CreationTime -Force:$Force -WhatIf:$WhatIfPreference -Confirm:$false
+          Set-ItemProperty -LiteralPath $target -Name 'CreationTime' -Value $record.CreationTime -Force:$Force -WhatIf:$WhatIfPreference -Confirm:$false
         }
         if ($record.LastWriteTime) {
-          Set-ItemProperty -LiteralPath $targetPath -Name 'LastWriteTime' -Value $record.LastWriteTime -Force:$Force -WhatIf:$WhatIfPreference -Confirm:$false
+          Set-ItemProperty -LiteralPath $target -Name 'LastWriteTime' -Value $record.LastWriteTime -Force:$Force -WhatIf:$WhatIfPreference -Confirm:$false
         }
         if ($record.LastAccessTime) {
-          Set-ItemProperty -LiteralPath $targetPath -Name 'LastAccessTime' -Value $record.LastAccessTime -Force:$Force -WhatIf:$WhatIfPreference -Confirm:$false
+          Set-ItemProperty -LiteralPath $target -Name 'LastAccessTime' -Value $record.LastAccessTime -Force:$Force -WhatIf:$WhatIfPreference -Confirm:$false
+        }
+        if ($PassThru) {
+          Get-Item -LiteralPath $target -Force
         }
       }
     }

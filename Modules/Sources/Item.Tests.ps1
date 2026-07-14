@@ -1042,6 +1042,7 @@ InModuleScope 'Item' {
     BeforeAll {
       Mock -CommandName Set-Content
       Mock -CommandName Test-Path -MockWith { $PathType -ne 'Container' }
+      Mock -CommandName Get-FileHash -MockWith { [PSCustomObject]@{ Hash = 'abc123' } }
       Mock -CommandName Get-Item -MockWith {
         [PSCustomObject]@{
           FullName   = $LiteralPath
@@ -1119,7 +1120,8 @@ InModuleScope 'Item' {
           $json.Path -eq 'file.txt' -and
           $json.CreationTime -eq '2025-01-01T00:00:00' -and
           $json.LastWriteTime -eq '2025-01-02T00:00:00' -and
-          $json.LastAccessTime -eq '2025-01-03T00:00:00'
+          $json.LastAccessTime -eq '2025-01-03T00:00:00' -and
+          $json.Hash -eq 'abc123'
         }
       }
       It 'exports timestamps by LiteralPath for a directory recursively enumerates all files relative to the parent folder' {
@@ -1161,25 +1163,136 @@ InModuleScope 'Item' {
           $json.Path -eq 'file.txt' -and
           $json.CreationTime -eq '2025-01-01T00:00:00' -and
           $json.LastWriteTime -eq '2025-01-02T00:00:00' -and
-          $json.LastAccessTime -eq '2025-01-03T00:00:00'
+          $json.LastAccessTime -eq '2025-01-03T00:00:00' -and
+          $json.Hash -eq 'abc123'
         }
       }
     }
     Context 'Edge cases' {
-      It 'saves to {folder name}.json in the current directory when Destination is omitted for a directory' {
+      It 'saves to {folder name}.json in the parent folder of the input when Destination is omitted for a directory' {
         Export-ItemDate -LiteralPath 'C:\dir'
         Should -Invoke -CommandName Set-Content -Times 1 -Exactly -ParameterFilter {
-          $LiteralPath -eq (Join-Path -Path $PWD.Path -ChildPath 'dir.json')
+          $LiteralPath -eq (Join-Path -Path 'C:\' -ChildPath 'dir.json')
+        }
+      }
+      It 'saves each directory to its own {folder name}.json in its parent folder when Destination is omitted for multiple directories' {
+        Mock -CommandName Get-Item -ParameterFilter { ($LiteralPath -is [array]) -and ($LiteralPath -contains 'C:\dir1') -and ($LiteralPath -contains 'C:\dir2') } -MockWith {
+          @(
+            [PSCustomObject]@{
+              FullName      = 'C:\dir1'
+              Name          = 'dir1'
+              PSIsContainer = $true
+            }
+            [PSCustomObject]@{
+              FullName      = 'C:\dir2'
+              Name          = 'dir2'
+              PSIsContainer = $true
+            }
+          )
+        }
+        Mock -CommandName Get-ChildItem -ParameterFilter { $File -and ($Path -eq 'C:\dir1' -or $LiteralPath -eq 'C:\dir1' -or $PSPath -eq 'C:\dir1') } -MockWith {
+          @(
+            [PSCustomObject]@{
+              FullName       = 'C:\dir1\a.txt'
+              PSIsContainer  = $false
+              CreationTime   = [datetime]'2025-01-01'
+              LastWriteTime  = [datetime]'2025-01-02'
+              LastAccessTime = [datetime]'2025-01-03'
+            }
+          )
+        }
+        Mock -CommandName Get-ChildItem -ParameterFilter { $File -and ($Path -eq 'C:\dir2' -or $LiteralPath -eq 'C:\dir2' -or $PSPath -eq 'C:\dir2') } -MockWith {
+          @(
+            [PSCustomObject]@{
+              FullName       = 'C:\dir2\b.txt'
+              PSIsContainer  = $false
+              CreationTime   = [datetime]'2025-03-01'
+              LastWriteTime  = [datetime]'2025-03-02'
+              LastAccessTime = [datetime]'2025-03-03'
+            }
+          )
+        }
+        Export-ItemDate -LiteralPath 'C:\dir1', 'C:\dir2'
+        Should -Invoke -CommandName Set-Content -Times 2 -Exactly
+        Should -Invoke -CommandName Set-Content -Times 1 -Exactly -ParameterFilter {
+          $LiteralPath -eq (Join-Path -Path 'C:\' -ChildPath 'dir1.json')
+        }
+        Should -Invoke -CommandName Set-Content -Times 1 -Exactly -ParameterFilter {
+          $LiteralPath -eq (Join-Path -Path 'C:\' -ChildPath 'dir2.json')
         }
       }
       It 'throws an error when Destination is omitted for a file' {
         { Export-ItemDate -LiteralPath 'C:\dir\file.txt' } | Should -Throw -Because 'Destination is required for a file input'
       }
+      It 'throws an error when Destination is omitted for two files' {
+        Mock -CommandName Get-Item -ParameterFilter { ($LiteralPath -is [array]) -and ($LiteralPath -contains 'C:\dir\a.txt') -and ($LiteralPath -contains 'C:\dir\b.txt') } -MockWith {
+          @(
+            [PSCustomObject]@{
+              FullName       = 'C:\dir\a.txt'
+              Name           = 'a.txt'
+              PSIsContainer  = $false
+              CreationTime   = [datetime]'2025-01-01'
+              LastWriteTime  = [datetime]'2025-01-02'
+              LastAccessTime = [datetime]'2025-01-03'
+            }
+            [PSCustomObject]@{
+              FullName       = 'C:\dir\b.txt'
+              Name           = 'b.txt'
+              PSIsContainer  = $false
+              CreationTime   = [datetime]'2025-03-01'
+              LastWriteTime  = [datetime]'2025-03-02'
+              LastAccessTime = [datetime]'2025-03-03'
+            }
+          )
+        }
+        { Export-ItemDate -LiteralPath 'C:\dir\a.txt', 'C:\dir\b.txt' } | Should -Throw -Because 'Destination is required when the input is a file'
+      }
+      It 'throws an error when Destination is omitted and the first of two paths is a file' {
+        Mock -CommandName Get-Item -ParameterFilter { ($LiteralPath -is [array]) -and ($LiteralPath -contains 'C:\dir\file.txt') -and ($LiteralPath -contains 'C:\dir2') } -MockWith {
+          @(
+            [PSCustomObject]@{
+              FullName       = 'C:\dir\file.txt'
+              Name           = 'file.txt'
+              PSIsContainer  = $false
+              CreationTime   = [datetime]'2025-01-01'
+              LastWriteTime  = [datetime]'2025-01-02'
+              LastAccessTime = [datetime]'2025-01-03'
+            }
+            [PSCustomObject]@{
+              FullName      = 'C:\dir2'
+              Name          = 'dir2'
+              PSIsContainer = $true
+            }
+          )
+        }
+        { Export-ItemDate -LiteralPath 'C:\dir\file.txt', 'C:\dir2' } | Should -Throw -Because 'Destination is required when the input is a file'
+      }
+      It 'throws an error when Destination is omitted and any input is a file' {
+        Mock -CommandName Get-Item -ParameterFilter { ($LiteralPath -is [array]) -and ($LiteralPath -contains 'C:\dir') -and ($LiteralPath -contains 'C:\dir\file.txt') } -MockWith {
+          @(
+            [PSCustomObject]@{
+              FullName      = 'C:\dir'
+              Name          = 'dir'
+              PSIsContainer = $true
+            }
+            [PSCustomObject]@{
+              FullName       = 'C:\dir\file.txt'
+              Name           = 'file.txt'
+              PSIsContainer  = $false
+              CreationTime   = [datetime]'2025-01-01'
+              LastWriteTime  = [datetime]'2025-01-02'
+              LastAccessTime = [datetime]'2025-01-03'
+            }
+          )
+        }
+        { Export-ItemDate -LiteralPath 'C:\dir', 'C:\dir\file.txt' } | Should -Throw -Because 'Destination is required when the input is a file'
+      }
     }
     Context 'Output' {
-      It 'returns the destination path as a single-element array' {
+      It 'returns a single-element array with the destination file path' {
         $result = Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\Temp\timestamps.json'
-        $result | Should -Be @('C:\Temp\timestamps.json')
+        $result.Count | Should -Be 1
+        $result.FullName | Should -Be 'C:\Temp\timestamps.json'
       }
       It 'writes content to exactly one destination file' {
         Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\Temp\timestamps.json'
@@ -1188,13 +1301,66 @@ InModuleScope 'Item' {
       It 'does not accept an array of destinations because only one output file is produced' {
         { Export-ItemDate -Path 'C:\dir\*' -Destination @('C:\Temp\a.json', 'C:\Temp\b.json') } | Should -Throw
       }
+      It 'returns one destination path per directory when Destination is omitted for multiple directories' {
+        Mock -CommandName Get-Item -ParameterFilter { ($LiteralPath -is [array]) -and ($LiteralPath -contains 'C:\dir1') -and ($LiteralPath -contains 'C:\dir2') } -MockWith {
+          @(
+            [PSCustomObject]@{
+              FullName      = 'C:\dir1'
+              Name          = 'dir1'
+              PSIsContainer = $true
+            }
+            [PSCustomObject]@{
+              FullName      = 'C:\dir2'
+              Name          = 'dir2'
+              PSIsContainer = $true
+            }
+          )
+        }
+        Mock -CommandName Get-ChildItem -ParameterFilter { $File -and ($Path -eq 'C:\dir1' -or $LiteralPath -eq 'C:\dir1' -or $PSPath -eq 'C:\dir1') } -MockWith {
+          @(
+            [PSCustomObject]@{
+              FullName       = 'C:\dir1\a.txt'
+              PSIsContainer  = $false
+              CreationTime   = [datetime]'2025-01-01'
+              LastWriteTime  = [datetime]'2025-01-02'
+              LastAccessTime = [datetime]'2025-01-03'
+            }
+          )
+        }
+        Mock -CommandName Get-ChildItem -ParameterFilter { $File -and ($Path -eq 'C:\dir2' -or $LiteralPath -eq 'C:\dir2' -or $PSPath -eq 'C:\dir2') } -MockWith {
+          @(
+            [PSCustomObject]@{
+              FullName       = 'C:\dir2\b.txt'
+              PSIsContainer  = $false
+              CreationTime   = [datetime]'2025-03-01'
+              LastWriteTime  = [datetime]'2025-03-02'
+              LastAccessTime = [datetime]'2025-03-03'
+            }
+          )
+        }
+        $result = @(Export-ItemDate -LiteralPath 'C:\dir1', 'C:\dir2')
+        $result.Count | Should -Be 2
+        $result.FullName | Should -Contain (Join-Path -Path 'C:\' -ChildPath 'dir1.json')
+        $result.FullName | Should -Contain (Join-Path -Path 'C:\' -ChildPath 'dir2.json')
+      }
     }
   }
   Describe 'Import-ItemDate' {
     BeforeAll {
       Mock -CommandName Test-Path -MockWith { $true }
+      Mock -CommandName Test-Path -ParameterFilter { $PathType -eq 'Leaf' } -MockWith { $true }
+      Mock -CommandName Get-FileHash -MockWith { [PSCustomObject]@{ Hash = 'abc123' } }
       Mock -CommandName Get-Content -ParameterFilter { $LiteralPath -eq 'C:\Temp\timestamps.json' } -MockWith {
-        '[{"Path":"C:\\dir\\file.txt","CreationTime":"2025-01-01T00:00:00","LastWriteTime":"2025-01-02T00:00:00","LastAccessTime":"2025-01-03T00:00:00"}]'
+        '[{"Path":"C:\\dir\\file.txt","CreationTime":"2025-01-01T00:00:00","LastWriteTime":"2025-01-02T00:00:00","LastAccessTime":"2025-01-03T00:00:00","Hash":"abc123"}]'
+      }
+      Mock -CommandName Get-Item -MockWith {
+        [PSCustomObject]@{
+          FullName       = $LiteralPath
+          PSIsContainer  = $false
+          CreationTime   = [datetime]'2025-01-01'
+          LastWriteTime  = [datetime]'2025-01-02'
+          LastAccessTime = [datetime]'2025-01-03'
+        }
       }
       Mock -CommandName Set-ItemProperty
     }
@@ -1239,19 +1405,48 @@ InModuleScope 'Item' {
       }
       It 'resolves a relative Path (including the folder name) against the JSON file folder' {
         Mock -CommandName Get-Content -ParameterFilter { $LiteralPath -eq 'C:\Temp\relative.json' } -MockWith {
-          '[{"Path":"dir\\file.txt","CreationTime":"2025-01-01T00:00:00","LastWriteTime":"2025-01-02T00:00:00","LastAccessTime":"2025-01-03T00:00:00"}]'
+          '[{"Path":"dir\\file.txt","CreationTime":"2025-01-01T00:00:00","LastWriteTime":"2025-01-02T00:00:00","LastAccessTime":"2025-01-03T00:00:00","Hash":"abc123"}]'
         }
         Import-ItemDate -Path 'C:\Temp\relative.json'
         Should -Invoke -CommandName Set-ItemProperty -Times 3 -Exactly -ParameterFilter { $LiteralPath -eq 'C:\Temp\dir\file.txt' }
+      }
+      It 'returns the updated FileInfo object when PassThru is specified' {
+        $result = Import-ItemDate -Path 'C:\Temp\timestamps.json' -PassThru
+        $result | Should -Not -BeNullOrEmpty
+        $result.FullName | Should -Be 'C:\dir\file.txt'
+        Should -Invoke -CommandName Get-Item -Times 1 -Exactly -ParameterFilter { $LiteralPath -eq 'C:\dir\file.txt' }
+      }
+      It 'does not return output by default' {
+        $result = Import-ItemDate -Path 'C:\Temp\timestamps.json'
+        $result | Should -BeNullOrEmpty
+        Should -Invoke -CommandName Get-Item -Times 0 -Exactly
       }
     }
     Context 'Multiple files' {
       It 'imports timestamps from multiple JSON files passed as an array' {
         Mock -CommandName Get-Content -ParameterFilter { $LiteralPath -eq 'C:\Temp\second.json' } -MockWith {
-          '[{"Path":"C:\\dir\\file2.txt","CreationTime":"2025-02-01T00:00:00","LastWriteTime":"2025-02-02T00:00:00","LastAccessTime":"2025-02-03T00:00:00"}]'
+          '[{"Path":"C:\\dir\\file2.txt","CreationTime":"2025-02-01T00:00:00","LastWriteTime":"2025-02-02T00:00:00","LastAccessTime":"2025-02-03T00:00:00","Hash":"abc123"}]'
         }
         Import-ItemDate -Path @('C:\Temp\timestamps.json', 'C:\Temp\second.json')
         Should -Invoke -CommandName Set-ItemProperty -Times 6 -Exactly
+      }
+    }
+    Context 'Hash verification' {
+      It 'skips timestamps when file hash does not match' {
+        Mock -CommandName Get-FileHash -MockWith { [PSCustomObject]@{ Hash = 'mismatch' } }
+        $warnings = @()
+        Import-ItemDate -Path 'C:\Temp\timestamps.json' -WarningVariable warnings
+        Should -Invoke -CommandName Set-ItemProperty -Times 0 -Exactly
+        $warnings.Count | Should -Be 1
+        $warnings[0].Message | Should -Match 'does not match'
+      }
+      It 'skips timestamps when target file does not exist' {
+        Mock -CommandName Test-Path -ParameterFilter { $PathType -eq 'Leaf' } -MockWith { $false }
+        $warnings = @()
+        Import-ItemDate -Path 'C:\Temp\timestamps.json' -WarningVariable warnings
+        Should -Invoke -CommandName Set-ItemProperty -Times 0 -Exactly
+        $warnings.Count | Should -Be 1
+        $warnings[0].Message | Should -Match 'does not exist'
       }
     }
     Context 'Edge cases' {
