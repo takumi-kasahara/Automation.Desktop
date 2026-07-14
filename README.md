@@ -6,7 +6,7 @@ A collection of PowerShell modules and helper scripts for Windows file system, p
 
 - Windows 11
 - PowerShell 7
-  - [Pester v5](https://pester.dev/docs/introduction/installation)
+  - [Pester v6](https://pester.dev/docs/introduction/installation)
   - [PSScriptAnalyzer](https://learn.microsoft.com/en-us/powershell/utility-modules/psscriptanalyzer/overview?view=ps-modules)
 - Windows Script Host Version 10.0
 
@@ -18,8 +18,14 @@ Run from the repository root:
 ./Install.bat
 ```
 
+If you want to install Pester v6, run:
+
+``` powershell
+Install-Module -Name Pester -Scope CurrentUser
+```
+
 If you want to run tests:
 
 ``` powershell
-Invoke-Pester -Path .\Modules\Tests
+. .\Pester.ps1
 ```
