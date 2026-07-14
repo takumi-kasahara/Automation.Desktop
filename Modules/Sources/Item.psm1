@@ -1091,7 +1091,7 @@ function Export-ItemDate {
         $Destination = Join-Path -Path $PWD.Path -ChildPath "$($roots[0].Name).json"
       }
       else {
-        $PSCmdlet.ThrowTerminatingError((New-ErrorRecord -ErrorId 'DestinationRequiredForFile' -TargetObject $roots[0]))
+        $PSCmdlet.ThrowTerminatingError(([ErrorRecord]::new([ArgumentException]::new("Destination is required when the input is a file. Specify -Destination or export a directory instead."), 'DestinationRequiredForFile', [ErrorCategory]::InvalidArgument, $roots[0])))
       }
     }
     $target = if ($PSCmdlet.ParameterSetName -eq 'PathSet') {
@@ -1104,7 +1104,7 @@ function Export-ItemDate {
       return
     }
     if ((Test-Path -LiteralPath $Destination -PathType Container) -or ((Test-Path -LiteralPath $Destination -PathType Leaf) -and $NoClobber)) {
-      $PSCmdlet.ThrowTerminatingError((New-ErrorRecord -ErrorId 'ItemAlreadyExists' -TargetObject $Destination))
+      $PSCmdlet.ThrowTerminatingError(([ErrorRecord]::new([IOException]::new("$Destination already exists. Use -Force to overwrite the file."), 'ItemAlreadyExists', [ErrorCategory]::ResourceExists, $Destination)))
     }
     $isReadOnly = (Test-Path -LiteralPath $Destination -PathType Leaf) -and (Get-Item -LiteralPath $Destination -Force).IsReadOnly
     if ($isReadOnly -and $Force) {

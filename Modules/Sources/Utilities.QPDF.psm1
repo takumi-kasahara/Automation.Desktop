@@ -77,7 +77,7 @@ function ConvertTo-Qdf {
       return
     }
     if ((Test-Path -LiteralPath $Destination -PathType Container) -or ((Test-Path -LiteralPath $Destination -PathType Leaf) -and $NoClobber)) {
-      $PSCmdlet.ThrowTerminatingError((New-ErrorRecord -ErrorId 'ItemAlreadyExists' -TargetObject $Destination))
+      $PSCmdlet.ThrowTerminatingError(([ErrorRecord]::new([IOException]::new("$Destination already exists. Use -Force to overwrite the file."), 'ItemAlreadyExists', [ErrorCategory]::ResourceExists, $Destination)))
     }
     $isReadOnly = (Test-Path -LiteralPath $Destination -PathType Leaf) -and (Get-Item -LiteralPath $Destination -Force).IsReadOnly
     if ($isReadOnly -and $Force) {
@@ -171,7 +171,7 @@ function ConvertFrom-Qdf {
       return
     }
     if ((Test-Path -LiteralPath $Destination -PathType Container) -or ((Test-Path -LiteralPath $Destination -PathType Leaf) -and $NoClobber)) {
-      $PSCmdlet.ThrowTerminatingError((New-ErrorRecord -ErrorId 'ItemAlreadyExists' -TargetObject $Destination))
+      $PSCmdlet.ThrowTerminatingError(([ErrorRecord]::new([IOException]::new("$Destination already exists. Use -Force to overwrite the file."), 'ItemAlreadyExists', [ErrorCategory]::ResourceExists, $Destination)))
     }
     $isReadOnly = (Test-Path -LiteralPath $Destination -PathType Leaf) -and (Get-Item -LiteralPath $Destination -Force).IsReadOnly
     if ($isReadOnly -and $Force) {
