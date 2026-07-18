@@ -67,6 +67,23 @@ InModuleScope 'Shell' {
     }
     Context 'ParameterSetName' {
       It 'returns item details by Path' {
+        Get-ItemDetail -Path 'C:\dir\file.txt' -Min 0 -Max 2 | Should -HaveCount 3
+      }
+      It 'returns item details by Path with ValueFromPipeline' {
+        'C:\dir\file.txt' | Get-ItemDetail -Min 0 -Max 2 | Should -HaveCount 3
+      }
+      It 'returns item details by Path with ValueFromPipelineByPropertyName' {
+        [PSCustomObject]@{ Path = 'C:\dir\file.txt' } | Get-ItemDetail -Min 0 -Max 2 | Should -HaveCount 3
+      }
+      It 'returns item details by LiteralPath' {
+        Get-ItemDetail -LiteralPath 'C:\dir\file.txt' -Min 0 -Max 2 | Should -HaveCount 3
+      }
+      It 'returns item details by LiteralPath with ValueFromPipelineByPropertyName' {
+        [PSCustomObject]@{ PSPath = 'C:\dir\file.txt' } | Get-ItemDetail -Min 0 -Max 2 | Should -HaveCount 3
+      }
+    }
+    Context 'Output' {
+      It 'returns item details with Name and Value properties' {
         $result = Get-ItemDetail -Path 'C:\dir\file.txt' -Min 0 -Max 2
         $result | Should -HaveCount 3
         $result[0].Name | Should -Be 'Name'
@@ -76,20 +93,11 @@ InModuleScope 'Shell' {
         $result[2].Name | Should -Be 'Size'
         $result[2].Value | Should -Be '1 KB'
       }
-      It 'returns item details by Path with ValueFromPipeline' {
-        'C:\dir\file.txt' | Get-ItemDetail -Min 0 -Max 2 | Should -HaveCount 3
-      }
-      It 'returns item details by Path with ValueFromPipelineByPropertyName' {
-        [PSCustomObject]@{ Path = 'C:\dir\file.txt' } | Get-ItemDetail -Min 0 -Max 2 | Should -HaveCount 3
-      }
-      It 'returns item details by LiteralPath' {
+      It 'returns item details with Name and Value properties by LiteralPath' {
         $result = Get-ItemDetail -LiteralPath 'C:\dir\file.txt' -Min 0 -Max 2
         $result | Should -HaveCount 3
         $result[0].Name | Should -Be 'Name'
         $result[0].Value | Should -Be 'file.txt'
-      }
-      It 'returns item details by LiteralPath with ValueFromPipelineByPropertyName' {
-        [PSCustomObject]@{ PSPath = 'C:\dir\file.txt' } | Get-ItemDetail -Min 0 -Max 2 | Should -HaveCount 3
       }
     }
     Context 'Other parameters' {
@@ -115,7 +123,7 @@ InModuleScope 'Shell' {
     }
   }
   Describe 'Find-Application' {
-    Context 'Search order' {
+    Context 'Other parameters' {
       It 'returns applications found in PATH without searching other locations' {
         Set-Item -LiteralPath 'Function:\where.exe' -Value {
           if ($args[0] -eq 'notepad.exe') {
@@ -196,6 +204,14 @@ InModuleScope 'Shell' {
     }
     Context 'ParameterSetName' {
       It 'returns registered applications from App Paths' {
+        Get-Application | Should -HaveCount 2
+      }
+      It 'returns the requested application by Name' {
+        Get-Application -Name 'notepad.exe' | Should -HaveCount 1
+      }
+    }
+    Context 'Output' {
+      It 'returns applications with Name and Path properties' {
         $result = Get-Application
         $result | Should -HaveCount 2
         $result.Name | Should -Contain 'notepad.exe'
@@ -203,7 +219,7 @@ InModuleScope 'Shell' {
         $result.Path | Should -Contain 'C:\Program Files\notepad.exe'
         $result.Path | Should -Contain 'C:\Program Files\calc.exe'
       }
-      It 'returns the requested application by Name' {
+      It 'returns the requested application with Name and Path properties' {
         $result = Get-Application -Name 'notepad.exe'
         $result | Should -HaveCount 1
         $result[0].Name | Should -Be 'notepad.exe'
@@ -251,16 +267,20 @@ InModuleScope 'Shell' {
     }
     Context 'ParameterSetName' {
       It 'returns all registered special folders when no Name is supplied' {
+        Get-SpecialFolder | Should -HaveCount 2
+      }
+      It 'returns the requested special folder path by Name' {
+        Get-SpecialFolder -Name 'Startup' | Should -Be 'C:\Users\Test\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup'
+      }
+    }
+    Context 'Output' {
+      It 'returns special folders with Name and Path properties' {
         $result = Get-SpecialFolder
         $result | Should -HaveCount 2
         $result.Name | Should -Contain 'Startup'
         $result.Name | Should -Contain 'Common Startup'
         $result.Path | Should -Contain 'C:\Users\Test\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup'
         $result.Path | Should -Contain 'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup'
-      }
-      It 'returns the requested special folder path by Name' {
-        $result = Get-SpecialFolder -Name 'Startup'
-        $result | Should -Be 'C:\Users\Test\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup'
       }
     }
   }
@@ -349,6 +369,11 @@ InModuleScope 'Shell' {
     }
     Context 'ParameterSetName' {
       It 'returns startup items from startup folders and registry' {
+        @(Get-Startup) | Should -HaveCount 4
+      }
+    }
+    Context 'Output' {
+      It 'returns startup items with Name and CommandLine properties' {
         $result = @(Get-Startup)
         $result | Should -HaveCount 4
         $result | Where-Object { $_.Name -eq 'app' } | Select-Object -ExpandProperty CommandLine | Should -Contain '"C:\Program Files\App\app.exe" -arg'
@@ -457,20 +482,31 @@ InModuleScope 'Shell' {
     }
     Context 'ParameterSetName' {
       It 'creates a shortcut by Path' {
-        $result = New-Shortcut -Path 'C:\dir\shortcut.lnk' -TargetPath 'C:\Windows\notepad.exe'
-        $result.FullName | Should -Be 'C:\dir\shortcut.lnk'
+        New-Shortcut -Path 'C:\dir\shortcut.lnk' -TargetPath 'C:\Windows\notepad.exe' | Out-Null
       }
       It 'creates a shortcut by Path with ValueFromPipeline' {
-        $result = 'C:\dir\shortcut' | New-Shortcut -TargetPath 'C:\Windows\notepad.exe'
-        $result.FullName | Should -Be 'C:\dir\shortcut.lnk'
+        'C:\dir\shortcut' | New-Shortcut -TargetPath 'C:\Windows\notepad.exe' | Out-Null
       }
       It 'creates a shortcut by Path with ValueFromPipelineByPropertyName' {
-        $result = [PSCustomObject]@{ Path = 'C:\dir\shortcut' } | New-Shortcut -TargetPath 'C:\Windows\notepad.exe'
-        $result.FullName | Should -Be 'C:\dir\shortcut.lnk'
+        [PSCustomObject]@{ Path = 'C:\dir\shortcut' } | New-Shortcut -TargetPath 'C:\Windows\notepad.exe' | Out-Null
       }
       It 'appends .lnk extension when needed' {
         New-Shortcut -Path 'C:\dir\shortcut' -TargetPath 'C:\Windows\notepad.exe' | Out-Null
         Should -Invoke -CommandName New-Object -ParameterFilter { $ComObject -eq 'WScript.Shell' } -Times 1 -Exactly
+      }
+    }
+    Context 'Output' {
+      It 'returns the created shortcut with FullName property' {
+        $result = New-Shortcut -Path 'C:\dir\shortcut.lnk' -TargetPath 'C:\Windows\notepad.exe'
+        $result.FullName | Should -Be 'C:\dir\shortcut.lnk'
+      }
+      It 'returns the created shortcut with FullName property by ValueFromPipeline' {
+        $result = 'C:\dir\shortcut' | New-Shortcut -TargetPath 'C:\Windows\notepad.exe'
+        $result.FullName | Should -Be 'C:\dir\shortcut.lnk'
+      }
+      It 'returns the created shortcut with FullName property by ValueFromPipelineByPropertyName' {
+        $result = [PSCustomObject]@{ Path = 'C:\dir\shortcut' } | New-Shortcut -TargetPath 'C:\Windows\notepad.exe'
+        $result.FullName | Should -Be 'C:\dir\shortcut.lnk'
       }
     }
     Context 'SupportsShouldProcess' {
@@ -575,17 +611,31 @@ InModuleScope 'Shell' {
         Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\dir\shortcut.lnk' -and $Force -eq $true } -MockWith {
           [PSCustomObject]@{ FullName = 'C:\dir\shortcut.lnk' }
         }
-        $result = Get-Shortcut -Path 'C:\dir\shortcut.lnk'
-        $result.FullName | Should -Be 'C:\dir\shortcut.lnk'
+        Get-Shortcut -Path 'C:\dir\shortcut.lnk' | Should -Not -BeNullOrEmpty
         Should -Invoke -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\dir\shortcut.lnk' -and $Force -eq $true } -Times 1 -Exactly
       }
       It 'returns the shortcut object by LiteralPath' {
         Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\dir\shortcut.lnk' -and $Force -eq $true } -MockWith {
           [PSCustomObject]@{ FullName = 'C:\dir\shortcut.lnk' }
         }
+        Get-Shortcut -LiteralPath 'C:\dir\shortcut.lnk' | Should -Not -BeNullOrEmpty
+        Should -Invoke -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\dir\shortcut.lnk' -and $Force -eq $true } -Times 1 -Exactly
+      }
+    }
+    Context 'Output' {
+      It 'returns the shortcut object with FullName property by Path' {
+        Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\dir\shortcut.lnk' -and $Force -eq $true } -MockWith {
+          [PSCustomObject]@{ FullName = 'C:\dir\shortcut.lnk' }
+        }
+        $result = Get-Shortcut -Path 'C:\dir\shortcut.lnk'
+        $result.FullName | Should -Be 'C:\dir\shortcut.lnk'
+      }
+      It 'returns the shortcut object with FullName property by LiteralPath' {
+        Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\dir\shortcut.lnk' -and $Force -eq $true } -MockWith {
+          [PSCustomObject]@{ FullName = 'C:\dir\shortcut.lnk' }
+        }
         $result = Get-Shortcut -LiteralPath 'C:\dir\shortcut.lnk'
         $result.FullName | Should -Be 'C:\dir\shortcut.lnk'
-        Should -Invoke -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\dir\shortcut.lnk' -and $Force -eq $true } -Times 1 -Exactly
       }
     }
     Context 'Other parameters' {
@@ -605,17 +655,31 @@ InModuleScope 'Shell' {
         Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\dir\shortcut.lnk' } -MockWith {
           [PSCustomObject]@{ FullName = 'C:\dir\shortcut.lnk' }
         }
-        $result = Test-Shortcut -Path 'C:\dir\shortcut.lnk'
-        $result | Should -BeTrue
+        Test-Shortcut -Path 'C:\dir\shortcut.lnk' | Should -BeTrue
         Should -Invoke -CommandName Get-Shortcut -Times 1 -Exactly
       }
       It 'returns True when shortcut target exists by LiteralPath' {
         Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\dir\shortcut.lnk' } -MockWith {
           [PSCustomObject]@{ FullName = 'C:\dir\shortcut.lnk' }
         }
+        Test-Shortcut -LiteralPath 'C:\dir\shortcut.lnk' | Should -BeTrue
+        Should -Invoke -CommandName Get-Shortcut -Times 1 -Exactly
+      }
+    }
+    Context 'Output' {
+      It 'returns a boolean result by Path' {
+        Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\dir\shortcut.lnk' } -MockWith {
+          [PSCustomObject]@{ FullName = 'C:\dir\shortcut.lnk' }
+        }
+        $result = Test-Shortcut -Path 'C:\dir\shortcut.lnk'
+        $result | Should -BeTrue
+      }
+      It 'returns a boolean result by LiteralPath' {
+        Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\dir\shortcut.lnk' } -MockWith {
+          [PSCustomObject]@{ FullName = 'C:\dir\shortcut.lnk' }
+        }
         $result = Test-Shortcut -LiteralPath 'C:\dir\shortcut.lnk'
         $result | Should -BeTrue
-        Should -Invoke -CommandName Get-Shortcut -Times 1 -Exactly
       }
     }
     Context 'Edge cases' {

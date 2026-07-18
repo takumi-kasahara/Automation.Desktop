@@ -31,11 +31,7 @@ InModuleScope 'Utilities.ExifTool' {
             ModifyDate       = '2025-01-02T06:07:08+09:00'
           } | ConvertTo-Csv
         }
-        $result = Get-ExifDate -Path 'C:\Photos\*.jpg'
-        $result | Should -HaveCount 1
-        $result[0].Path | Should -Be 'C:\Photos\IMG_0001.jpg'
-        $result[0].CreationTime | Should -Be ([datetime]'2025-01-02 03:04:05')
-        $result[0].LastWriteTime | Should -Be ([datetime]'2025-01-02 06:07:08')
+        Get-ExifDate -Path 'C:\Photos\*.jpg' | Should -HaveCount 1
       }
       It 'parses Exif dates from CSV ExifTool output by Path with ValueFromPipeline' {
         Mock -CommandName ExifTool.exe -MockWith {
@@ -76,9 +72,7 @@ InModuleScope 'Utilities.ExifTool' {
             ModifyDate       = '2025-01-02T06:07:08+09:00'
           }
         }
-        $result = Get-ExifDate -LiteralPath 'C:\Photos\IMG_0001.jpg' -AsJson
-        $result | Should -HaveCount 1
-        $result[0].Path | Should -Be 'C:\Photos\IMG_0001.jpg'
+        Get-ExifDate -LiteralPath 'C:\Photos\IMG_0001.jpg' -AsJson | Should -HaveCount 1
       }
       It 'parses Exif dates from JSON ExifTool output by LiteralPath with ValueFromPipelineByPropertyName' {
         Mock -CommandName ExifTool.exe -MockWith {
@@ -98,6 +92,44 @@ InModuleScope 'Utilities.ExifTool' {
           }
         }
         [PSCustomObject]@{ LiteralPath = 'C:\Photos\IMG_0001.jpg' } | Get-ExifDate -AsJson | Should -HaveCount 1
+      }
+    }
+    Context 'Output' {
+      It 'returns Exif dates with Path and timestamp properties' {
+        Mock -CommandName ExifTool.exe -MockWith {
+          [PSCustomObject]@{
+            SourceFile       = 'IMG_0001.jpg'
+            DateTimeOriginal = '2025-01-02T03:04:05+09:00'
+            CreateDate       = '2025-01-02T03:04:05+09:00'
+            ModifyDate       = '2025-01-02T06:07:08+09:00'
+          } | ConvertTo-Csv
+        }
+        $result = Get-ExifDate -Path 'C:\Photos\*.jpg'
+        $result | Should -HaveCount 1
+        $result[0].Path | Should -Be 'C:\Photos\IMG_0001.jpg'
+        $result[0].CreationTime | Should -Be ([datetime]'2025-01-02 03:04:05')
+        $result[0].LastWriteTime | Should -Be ([datetime]'2025-01-02 06:07:08')
+      }
+      It 'returns Exif dates with Path property by LiteralPath' {
+        Mock -CommandName ExifTool.exe -MockWith {
+          [PSCustomObject]@{
+            SourceFile       = 'IMG_0001.jpg'
+            DateTimeOriginal = '2025-01-02T03:04:05+09:00'
+            CreateDate       = '2025-01-02T03:04:05+09:00'
+            ModifyDate       = '2025-01-02T06:07:08+09:00'
+          } | ConvertTo-Json -Compress
+        }
+        Mock -CommandName ConvertFrom-Json -MockWith {
+          [PSCustomObject]@{
+            SourceFile       = 'IMG_0001.jpg'
+            DateTimeOriginal = '2025-01-02T03:04:05+09:00'
+            CreateDate       = '2025-01-02T03:04:05+09:00'
+            ModifyDate       = '2025-01-02T06:07:08+09:00'
+          }
+        }
+        $result = Get-ExifDate -LiteralPath 'C:\Photos\IMG_0001.jpg' -AsJson
+        $result | Should -HaveCount 1
+        $result[0].Path | Should -Be 'C:\Photos\IMG_0001.jpg'
       }
     }
     Context 'Other parameters' {

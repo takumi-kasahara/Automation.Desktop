@@ -62,9 +62,7 @@ InModuleScope 'Item' {
     }
     Context 'ParameterSetName' {
       It 'returns duplicate files by Path with wildcard' {
-        $result = Get-DuplicateFile -Path 'C:\dir\*'
-        $result | Should -HaveCount 1
-        $result[0].Path | Should -Be 'C:\dir\file1.txt'
+        Get-DuplicateFile -Path 'C:\dir\*' | Should -HaveCount 1
       }
       It 'returns duplicate files by Path with ValueFromPipeline' {
         'C:\dir\*' | Get-DuplicateFile | Should -HaveCount 1
@@ -73,12 +71,22 @@ InModuleScope 'Item' {
         [PSCustomObject]@{ Path = 'C:\dir\*' } | Get-DuplicateFile | Should -HaveCount 1
       }
       It 'returns duplicate files by LiteralPath' {
-        $result = Get-DuplicateFile -LiteralPath 'C:\dir'
-        $result | Should -HaveCount 1
-        $result[0].Path | Should -Be 'C:\dir\file1.txt'
+        Get-DuplicateFile -LiteralPath 'C:\dir' | Should -HaveCount 1
       }
       It 'returns duplicate files by LiteralPath with ValueFromPipelineByPropertyName' {
         [PSCustomObject]@{ PSPath = 'C:\dir' } | Get-DuplicateFile | Should -HaveCount 1
+      }
+    }
+    Context 'Output' {
+      It 'returns the duplicate file Path property' {
+        $result = Get-DuplicateFile -Path 'C:\dir\*'
+        $result | Should -HaveCount 1
+        $result[0].Path | Should -Be 'C:\dir\file1.txt'
+      }
+      It 'returns the duplicate file Path property by LiteralPath' {
+        $result = Get-DuplicateFile -LiteralPath 'C:\dir'
+        $result | Should -HaveCount 1
+        $result[0].Path | Should -Be 'C:\dir\file1.txt'
       }
     }
     Context 'Other parameters' {
@@ -91,8 +99,6 @@ InModuleScope 'Item' {
         $result | Should -HaveCount 1
         $result[0].Path | Should -Be 'C:\dir\file2.txt'
       }
-    }
-    Context 'Edge cases' {
     }
   }
   Describe 'Get-EmptyDirectory' {
@@ -120,9 +126,7 @@ InModuleScope 'Item' {
     }
     Context 'ParameterSetName' {
       It 'returns empty directories by Path with wildcard' {
-        $result = Get-EmptyDirectory -Path 'C:\dir\*'
-        @($result) | Should -HaveCount 1
-        @($result)[0].FullName | Should -Be 'C:\dir\emptydir'
+        Get-EmptyDirectory -Path 'C:\dir\*' | Should -HaveCount 1
       }
       It 'returns empty directories by Path with ValueFromPipeline' {
         'C:\dir\*' | Get-EmptyDirectory | Should -HaveCount 1
@@ -131,12 +135,22 @@ InModuleScope 'Item' {
         [PSCustomObject]@{ Path = 'C:\dir\*' } | Get-EmptyDirectory | Should -HaveCount 1
       }
       It 'returns empty directories by LiteralPath' {
-        $result = Get-EmptyDirectory -LiteralPath 'C:\dir'
-        @($result) | Should -HaveCount 1
-        @($result)[0].FullName | Should -Be 'C:\dir\emptydir'
+        Get-EmptyDirectory -LiteralPath 'C:\dir' | Should -HaveCount 1
       }
       It 'returns empty directories by LiteralPath with ValueFromPipelineByPropertyName' {
         [PSCustomObject]@{ PSPath = 'C:\dir' } | Get-EmptyDirectory | Should -HaveCount 1
+      }
+    }
+    Context 'Output' {
+      It 'returns the empty directory FullName property' {
+        $result = Get-EmptyDirectory -Path 'C:\dir\*'
+        @($result) | Should -HaveCount 1
+        @($result)[0].FullName | Should -Be 'C:\dir\emptydir'
+      }
+      It 'returns the empty directory FullName property by LiteralPath' {
+        $result = Get-EmptyDirectory -LiteralPath 'C:\dir'
+        @($result) | Should -HaveCount 1
+        @($result)[0].FullName | Should -Be 'C:\dir\emptydir'
       }
     }
     Context 'Other parameters' {
@@ -145,8 +159,6 @@ InModuleScope 'Item' {
         @($result) | Should -HaveCount 1
         @($result)[0].FullName | Should -Be 'C:\dir\emptydir'
       }
-    }
-    Context 'Edge cases' {
     }
   }
   Describe 'Measure-Directory' {
@@ -176,9 +188,7 @@ InModuleScope 'Item' {
     }
     Context 'ParameterSetName' {
       It 'returns recent created files by Path' {
-        $result = Measure-Directory -Path 'C:\dir\*' -RecentCreatedFiles
-        $result.RecentCreatedFiles | Should -HaveCount 1
-        $result.RecentCreatedFiles[0].FullName | Should -Be 'C:\dir\file1.txt'
+        Measure-Directory -Path 'C:\dir\*' -RecentCreatedFiles | Should -Not -BeNullOrEmpty
       }
       It 'returns recent created files by Path with ValueFromPipeline' {
         'C:\dir\*' | Measure-Directory -RecentCreatedFiles | Should -Not -BeNullOrEmpty
@@ -187,6 +197,16 @@ InModuleScope 'Item' {
         [PSCustomObject]@{ Path = 'C:\dir\*' } | Measure-Directory -RecentCreatedFiles | Should -Not -BeNullOrEmpty
       }
       It 'returns recent created files by LiteralPath' {
+        Measure-Directory -LiteralPath 'C:\dir' -RecentCreatedFiles | Should -Not -BeNullOrEmpty
+      }
+    }
+    Context 'Output' {
+      It 'returns the recent created files with FullName property' {
+        $result = Measure-Directory -Path 'C:\dir\*' -RecentCreatedFiles
+        $result.RecentCreatedFiles | Should -HaveCount 1
+        $result.RecentCreatedFiles[0].FullName | Should -Be 'C:\dir\file1.txt'
+      }
+      It 'returns the recent created files with FullName property by LiteralPath' {
         $result = Measure-Directory -LiteralPath 'C:\dir' -RecentCreatedFiles
         $result.RecentCreatedFiles | Should -HaveCount 1
         $result.RecentCreatedFiles[0].FullName | Should -Be 'C:\dir\file1.txt'
@@ -1422,7 +1442,7 @@ InModuleScope 'Item' {
         Should -Invoke -CommandName Get-Item -Times 0 -Exactly
       }
     }
-    Context 'Multiple files' {
+    Context 'Other parameters' {
       It 'imports timestamps from multiple JSON files passed as an array' {
         Mock -CommandName Get-Content -ParameterFilter { $LiteralPath -eq 'C:\Temp\second.json' } -MockWith {
           '[{"Path":"C:\\dir\\file2.txt","CreationTime":"2025-02-01T00:00:00","LastWriteTime":"2025-02-02T00:00:00","LastAccessTime":"2025-02-03T00:00:00","Hash":"abc123"}]'
@@ -1431,7 +1451,7 @@ InModuleScope 'Item' {
         Should -Invoke -CommandName Set-ItemProperty -Times 6 -Exactly
       }
     }
-    Context 'Hash verification' {
+    Context 'Other parameters' {
       It 'skips timestamps when file hash does not match' {
         Mock -CommandName Get-FileHash -MockWith { [PSCustomObject]@{ Hash = 'mismatch' } }
         $warnings = @()

@@ -25,7 +25,7 @@ InModuleScope 'Path' {
         )
       }
     }
-    Context 'Basic behavior' {
+    Context 'Output' {
       It 'replaces environment variable values with percent-wrapped names' {
         $inputString = 'Begin C:\Users\User and then C:\Users end'
         $result = Compress-EnvironmentVariable -InputString $inputString
@@ -77,7 +77,7 @@ InModuleScope 'Path' {
         Remove-Item -LiteralPath 'Env:TEST_EXPAND_VAR2'
       }
     }
-    Context 'Basic behavior' {
+    Context 'Output' {
       It 'expands a single environment variable' {
         $result = Expand-EnvironmentVariable -InputString '%TEST_EXPAND_VAR1%\file.txt'
         $result | Should -Be 'C:\Users\User\file.txt'

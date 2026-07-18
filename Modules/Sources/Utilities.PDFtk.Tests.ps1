@@ -82,7 +82,7 @@ InModuleScope 'Utilities.PDFtk' {
         Should -Invoke -CommandName Out-Host -Times 1 -Exactly
       }
     }
-    Context 'Password parameters' {
+    Context 'Other parameters' {
       It 'passes owner_pw to pdftk.exe when OwnerPassword is specified' {
         Export-PdfDump -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\dump.txt' -OwnerPassword (Get-Password -Text 'owner')
         Should -Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
@@ -154,7 +154,7 @@ InModuleScope 'Utilities.PDFtk' {
         Should -Invoke -CommandName Remove-Item -ParameterFilter { $LiteralPath -like '*PDFtk.*.log' } -Times 1 -Exactly
       }
     }
-    Context 'Password parameters' {
+    Context 'Other parameters' {
       It 'passes owner_pw to pdftk.exe when OwnerPassword is specified' {
         Import-PdfDump -Path 'C:\Docs\manual.pdf' -Source 'C:\Temp\dump.txt' -Destination 'C:\Temp\manual.updated.pdf' -OwnerPassword (Get-Password -Text 'owner') -Force
         Should -Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
@@ -255,7 +255,7 @@ InModuleScope 'Utilities.PDFtk' {
         Should -Invoke -CommandName pdftk.exe -Times 1 -Exactly
       }
     }
-    Context 'Source shape' {
+    Context 'Other parameters' {
       It 'passes quoted file path and verbose when source is a file' {
         Join-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\merged.pdf'
         Should -Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
@@ -313,13 +313,13 @@ InModuleScope 'Utilities.PDFtk' {
         Should -Invoke -CommandName pdftk.exe -Times 0 -Exactly
       }
     }
-    Context 'Overwrite behavior' {
+    Context 'Other parameters' {
       It 'throws when destination exists and NoClobber is specified' {
         Mock -CommandName Test-Path -ParameterFilter { $LiteralPath -eq 'C:\Temp\merged.pdf' -and $PathType -eq 'Leaf' } -MockWith { $true }
         { Join-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\merged.pdf' -NoClobber } | Should -Throw
       }
     }
-    Context 'Edge case' {
+    Context 'Edge cases' {
       It 'throws when multiple directories are specified' {
         { Join-Pdf -Path 'C:\Docs', 'C:\Books' -Destination 'C:\Temp\merged.pdf' } | Should -Throw
       }
@@ -330,7 +330,7 @@ InModuleScope 'Utilities.PDFtk' {
         { Join-Pdf -Path 'C:\Docs\manual.pdf' -ErrorAction Stop } | Should -Throw -ErrorId 'DestinationRequired,Join-Pdf'
       }
     }
-    Context 'Password parameters' {
+    Context 'Other parameters' {
       It 'passes owner_pw to pdftk.exe when OwnerPassword is specified' {
         Join-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\merged.pdf' -OwnerPassword (Get-Password -Text 'owner') -Force
         Should -Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
@@ -417,7 +417,7 @@ InModuleScope 'Utilities.PDFtk' {
         }
       }
     }
-    Context 'Edge case' {
+    Context 'Edge cases' {
       It 'throws when source path is a directory' {
         { Split-Pdf -Path 'C:\Docs' -Destination 'C:\Temp\page_%04d.pdf' } | Should -Throw
       }
@@ -425,7 +425,7 @@ InModuleScope 'Utilities.PDFtk' {
         { Split-Pdf -Path 'C:\Docs\readme.txt' -Destination 'C:\Temp\page_%04d.pdf' } | Should -Throw
       }
     }
-    Context 'Password parameters' {
+    Context 'Other parameters' {
       It 'passes owner_pw to pdftk.exe when OwnerPassword is specified' {
         Split-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\page_%04d.pdf' -OwnerPassword (Get-Password -Text 'owner')
         Should -Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {

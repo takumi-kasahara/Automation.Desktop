@@ -31,12 +31,7 @@ InModuleScope 'Utilities.7z' {
     }
     Context 'ParameterSetName' {
       It 'parses archive entries by Path with wildcard' {
-        $result = Get-ArchivedItem -Path 'C:\Archive\*.7z'
-        $result | Should -HaveCount 1
-        $result[0].Path | Should -Be 'file1.txt'
-        $result[0].CreationTime | Should -Be ([datetime]'2025-01-02 03:04:05')
-        $result[0].LastWriteTime | Should -Be ([datetime]'2025-01-02 06:07:08')
-        $result[0].LastAccessTime | Should -Be ([datetime]'2025-01-02 09:10:11')
+        Get-ArchivedItem -Path 'C:\Archive\*.7z' | Should -HaveCount 1
       }
       It 'parses archive entries by Path with ValueFromPipeline' {
         'C:\Archive\*.7z' | Get-ArchivedItem | Should -HaveCount 1
@@ -45,12 +40,25 @@ InModuleScope 'Utilities.7z' {
         [PSCustomObject]@{ Path = 'C:\Archive\*.7z' } | Get-ArchivedItem | Should -HaveCount 1
       }
       It 'parses archive entries by LiteralPath' {
-        $result = Get-ArchivedItem -LiteralPath 'C:\Archive\sample.7z'
-        $result | Should -HaveCount 1
-        $result[0].Path | Should -Be 'file1.txt'
+        Get-ArchivedItem -LiteralPath 'C:\Archive\sample.7z' | Should -HaveCount 1
       }
       It 'parses archive entries by LiteralPath with ValueFromPipelineByPropertyName' {
         [PSCustomObject]@{ LiteralPath = 'C:\Archive\sample.7z' } | Get-ArchivedItem | Should -HaveCount 1
+      }
+    }
+    Context 'Output' {
+      It 'returns archived items with Path and timestamp properties' {
+        $result = Get-ArchivedItem -Path 'C:\Archive\*.7z'
+        $result | Should -HaveCount 1
+        $result[0].Path | Should -Be 'file1.txt'
+        $result[0].CreationTime | Should -Be ([datetime]'2025-01-02 03:04:05')
+        $result[0].LastWriteTime | Should -Be ([datetime]'2025-01-02 06:07:08')
+        $result[0].LastAccessTime | Should -Be ([datetime]'2025-01-02 09:10:11')
+      }
+      It 'returns archived items with Path property by LiteralPath' {
+        $result = Get-ArchivedItem -LiteralPath 'C:\Archive\sample.7z'
+        $result | Should -HaveCount 1
+        $result[0].Path | Should -Be 'file1.txt'
       }
     }
     Context 'Other parameters' {

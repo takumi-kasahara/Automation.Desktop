@@ -35,7 +35,7 @@ InModuleScope 'Utilities.QPDF' {
         Should -Invoke -CommandName qpdf.exe -Times 1 -Exactly
       }
     }
-    Context 'Password parameters' {
+    Context 'Other parameters' {
       It 'passes --owner-password to qpdf.exe when OwnerPassword is specified' {
         ConvertTo-Qdf -Path 'C:\Docs\encrypted.pdf' -Destination 'C:\Temp\manual.qdf' -OwnerPassword 'owner123' -Force -Confirm:$false
         Should -Invoke -CommandName qpdf.exe -ParameterFilter { $args -contains '--owner-password=owner123' }
@@ -108,7 +108,7 @@ InModuleScope 'Utilities.QPDF' {
         Should -Invoke -CommandName fix-qdf.exe -Times 1 -Exactly
       }
     }
-    Context 'Password parameters' {
+    Context 'Other parameters' {
       It 'passes --owner-password to fix-qdf.exe when OwnerPassword is specified' {
         ConvertFrom-Qdf -Path 'C:\Temp\manual.qdf' -Destination 'C:\Docs\manual.pdf' -OwnerPassword 'owner123' -Force -Confirm:$false
         Should -Invoke -CommandName fix-qdf.exe -ParameterFilter { $args -contains '--owner-password=owner123' }
@@ -173,11 +173,7 @@ InModuleScope 'Utilities.QPDF' {
           $global:LASTEXITCODE = 0
           return 12
         }
-        $result = Get-PdfPage -Path 'C:\Docs\*.pdf'
-        $result | Should -BeOfType [PSCustomObject]
-        $result.PageCount | Should -Be @(12, 12)
-        $result[0].Item.FullName | Should -Be 'C:\Docs\manual1.pdf'
-        $result[1].Item.FullName | Should -Be 'C:\Docs\manual2.pdf'
+        Get-PdfPage -Path 'C:\Docs\*.pdf' | Should -Not -BeNullOrEmpty
       }
       It 'returns page count by Path with ValueFromPipeline' {
         Mock -CommandName qpdf.exe -ParameterFilter { $args -contains '--show-npages' } -MockWith {
@@ -198,10 +194,7 @@ InModuleScope 'Utilities.QPDF' {
           $global:LASTEXITCODE = 0
           return 34
         }
-        $result = Get-PdfPage -LiteralPath 'C:\Docs\manual.pdf'
-        $result | Should -BeOfType [PSCustomObject]
-        $result.PageCount | Should -Be 34
-        $result.Item.FullName | Should -Be 'C:\Docs\manual.pdf'
+        Get-PdfPage -LiteralPath 'C:\Docs\manual.pdf' | Should -Not -BeNullOrEmpty
       }
       It 'returns page count by LiteralPath with ValueFromPipelineByPropertyName' {
         Mock -CommandName qpdf.exe -ParameterFilter { $args -contains '--show-npages' } -MockWith {
@@ -211,7 +204,30 @@ InModuleScope 'Utilities.QPDF' {
         [PSCustomObject]@{ LiteralPath = 'C:\Docs\manual.pdf' } | Get-PdfPage | Should -Not -BeNullOrEmpty
       }
     }
-    Context 'Password parameters' {
+    Context 'Output' {
+      It 'returns page count with Item property by Path with wildcards' {
+        Mock -CommandName qpdf.exe -ParameterFilter { $args -contains '--show-npages' } -MockWith {
+          $global:LASTEXITCODE = 0
+          return 12
+        }
+        $result = Get-PdfPage -Path 'C:\Docs\*.pdf'
+        $result | Should -BeOfType [PSCustomObject]
+        $result.PageCount | Should -Be @(12, 12)
+        $result[0].Item.FullName | Should -Be 'C:\Docs\manual1.pdf'
+        $result[1].Item.FullName | Should -Be 'C:\Docs\manual2.pdf'
+      }
+      It 'returns page count with Item property by LiteralPath' {
+        Mock -CommandName qpdf.exe -ParameterFilter { $args -contains '--show-npages' } -MockWith {
+          $global:LASTEXITCODE = 0
+          return 34
+        }
+        $result = Get-PdfPage -LiteralPath 'C:\Docs\manual.pdf'
+        $result | Should -BeOfType [PSCustomObject]
+        $result.PageCount | Should -Be 34
+        $result.Item.FullName | Should -Be 'C:\Docs\manual.pdf'
+      }
+    }
+    Context 'Other parameters' {
       It 'passes --owner-password to qpdf.exe when OwnerPassword is specified' {
         Mock -CommandName qpdf.exe -ParameterFilter { $args -contains '--show-npages' } -MockWith {
           $global:LASTEXITCODE = 0
@@ -316,7 +332,7 @@ InModuleScope 'Utilities.QPDF' {
         Should -Invoke -CommandName qpdf.exe -ParameterFilter { $args -contains '--decrypt' } -Times 1 -Exactly
       }
     }
-    Context 'Password parameters' {
+    Context 'Other parameters' {
       It 'passes --owner-password to qpdf.exe when decrypting with OwnerPassword' {
         Mock -CommandName qpdf.exe -ParameterFilter { $args -contains '--show-encryption' } -MockWith {
           return 'R = 6'
