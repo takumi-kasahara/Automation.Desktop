@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "target": "ES5",
+    "allowJs": true,
+    "checkJs": true,
+    "ignoreDeprecations": "6.0",
     "lib": [
       "ES5",
       "ScriptHost",
     ],
-    "allowJs": true,
-    "checkJs": true,
-    "ignoreDeprecations": "6.0",
+    "target": "ES5"
   },
   "include": [
     "**/*.js",
