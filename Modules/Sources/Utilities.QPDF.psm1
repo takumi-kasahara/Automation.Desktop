@@ -5,6 +5,8 @@
   https://qpdf.readthedocs.io/en/stable/cli.html
 #>
 using namespace System.IO
+using namespace System.Net
+using namespace System.Security
 
 Set-StrictMode -Version Latest
 
@@ -34,16 +36,17 @@ function ConvertTo-Qdf {
     If specified, the function will fail if the destination file already exists.
 
   .PARAMETER OwnerPassword
-    Specifies the owner password for encrypted PDF files.
+    Specifies the owner password for encrypted PDF files. Use a SecureString for secure input.
 
   .PARAMETER UserPassword
-    Specifies the user password for encrypted PDF files.
+    Specifies the user password for encrypted PDF files. Use a SecureString for secure input.
 
   .EXAMPLE
     ConvertTo-Qdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\manual.qdf'
 
   .EXAMPLE
-    ConvertTo-Qdf -Path 'C:\Docs\encrypted.pdf' -Destination 'C:\Temp\manual.qdf' -OwnerPassword 'owner123'
+    $ownerPw = ConvertTo-SecureString -String 'owner123' -AsPlainText -Force
+    ConvertTo-Qdf -Path 'C:\Docs\encrypted.pdf' -Destination 'C:\Temp\manual.qdf' -OwnerPassword $ownerPw
 
   .OUTPUTS
     None. Only converts PDF to QDF.
@@ -63,9 +66,9 @@ function ConvertTo-Qdf {
     $Force,
     [switch]
     $NoClobber,
-    [string]
+    [SecureString]
     $OwnerPassword,
-    [string]
+    [SecureString]
     $UserPassword
   )
   begin {
@@ -84,11 +87,11 @@ function ConvertTo-Qdf {
       (Get-Item -LiteralPath $Destination -Force).IsReadOnly = $false
     }
     $arguments = @($item.FullName, '--qdf', $Destination)
-    if ($OwnerPassword) {
-      $arguments += "--owner-password=$OwnerPassword"
+    if ($PSBoundParameters.ContainsKey('OwnerPassword')) {
+      $arguments += "--owner-password=$([NetworkCredential]::new([string]::Empty, $OwnerPassword).Password)"
     }
-    if ($UserPassword) {
-      $arguments += "--password=$UserPassword"
+    if ($PSBoundParameters.ContainsKey('UserPassword')) {
+      $arguments += "--password=$([NetworkCredential]::new([string]::Empty, $UserPassword).Password)"
     }
     qpdf.exe @arguments 2>>$log
     if ($isReadOnly) {
@@ -127,16 +130,17 @@ function ConvertFrom-Qdf {
     If specified, the function will fail if the destination file already exists.
 
   .PARAMETER OwnerPassword
-    Specifies the owner password for encrypted QDF files.
+    Specifies the owner password for encrypted QDF files. Use a SecureString for secure input.
 
   .PARAMETER UserPassword
-    Specifies the user password for encrypted QDF files.
+    Specifies the user password for encrypted QDF files. Use a SecureString for secure input.
 
   .EXAMPLE
     ConvertFrom-Qdf -Path 'C:\Temp\manual.qdf' -Destination 'C:\Docs\manual.pdf'
 
   .EXAMPLE
-    ConvertFrom-Qdf -Path 'C:\Temp\encrypted.qdf' -Destination 'C:\Docs\manual.pdf' -OwnerPassword 'owner123'
+    $ownerPw = ConvertTo-SecureString -String 'owner123' -AsPlainText -Force
+    ConvertFrom-Qdf -Path 'C:\Temp\encrypted.qdf' -Destination 'C:\Docs\manual.pdf' -OwnerPassword $ownerPw
 
   .OUTPUTS
     None. Only converts QDF to PDF.
@@ -156,9 +160,9 @@ function ConvertFrom-Qdf {
     $Force,
     [switch]
     $NoClobber,
-    [string]
+    [SecureString]
     $OwnerPassword,
-    [string]
+    [SecureString]
     $UserPassword
   )
   begin {
@@ -177,11 +181,11 @@ function ConvertFrom-Qdf {
       (Get-Item -LiteralPath $Destination -Force).IsReadOnly = $false
     }
     $arguments = @($item.FullName)
-    if ($OwnerPassword) {
-      $arguments += "--owner-password=$OwnerPassword"
+    if ($PSBoundParameters.ContainsKey('OwnerPassword')) {
+      $arguments += "--owner-password=$([NetworkCredential]::new([string]::Empty, $OwnerPassword).Password)"
     }
-    if ($UserPassword) {
-      $arguments += "--password=$UserPassword"
+    if ($PSBoundParameters.ContainsKey('UserPassword')) {
+      $arguments += "--password=$([NetworkCredential]::new([string]::Empty, $UserPassword).Password)"
     }
     fix-qdf.exe @arguments >$Destination 2>>$log
     if ($isReadOnly) {
@@ -218,11 +222,10 @@ function Unblock-Pdf {
     Specifies literal PDF file paths to inspect and unblock.
 
   .PARAMETER OwnerPassword
-    Specifies the owner password for encrypted PDF files.
-
+    Specifies the owner password for encrypted PDF files. Use a SecureString for secure input.
 
   .PARAMETER UserPassword
-    Specifies the user password for encrypted PDF files.
+    Specifies the user password for encrypted PDF files. Use a SecureString for secure input.
 
   .EXAMPLE
     Unblock-Pdf -Path 'C:\Docs\*.pdf'
@@ -231,7 +234,8 @@ function Unblock-Pdf {
     Unblock-Pdf -LiteralPath 'C:\Docs\manual.pdf' -WhatIf
 
   .EXAMPLE
-    Unblock-Pdf -LiteralPath 'C:\Docs\encrypted.pdf' -OwnerPassword 'ownerpass'
+    $ownerPw = ConvertTo-SecureString -String 'ownerpass' -AsPlainText -Force
+    Unblock-Pdf -LiteralPath 'C:\Docs\encrypted.pdf' -OwnerPassword $ownerPw
 
   .OUTPUTS
     None. Only removes PDF encryption.
@@ -251,9 +255,9 @@ function Unblock-Pdf {
     [Parameter(Mandatory, ParameterSetName = 'LiteralPathSet', ValueFromPipelineByPropertyName)]
     [string[]]
     $LiteralPath,
-    [string]
+    [SecureString]
     $OwnerPassword,
-    [string]
+    [SecureString]
     $UserPassword
   )
   begin {
@@ -273,11 +277,11 @@ function Unblock-Pdf {
     $items |
     ForEach-Object {
       $showArgs = @('--show-encryption', $_)
-      if ($OwnerPassword) {
-        $showArgs += "--owner-password=$OwnerPassword"
+      if ($PSBoundParameters.ContainsKey('OwnerPassword')) {
+        $showArgs += "--owner-password=$([NetworkCredential]::new([string]::Empty, $OwnerPassword).Password)"
       }
-      if ($UserPassword) {
-        $showArgs += "--password=$UserPassword"
+      if ($PSBoundParameters.ContainsKey('UserPassword')) {
+        $showArgs += "--password=$([NetworkCredential]::new([string]::Empty, $UserPassword).Password)"
       }
       $stdout = qpdf.exe @showArgs 2>>$log
       if ($stdout -eq 'File is not encrypted') {
@@ -287,11 +291,11 @@ function Unblock-Pdf {
         return
       }
       $decryptArgs = @($_, '--decrypt', '--replace-input')
-      if ($OwnerPassword) {
-        $decryptArgs += "--owner-password=$OwnerPassword"
+      if ($PSBoundParameters.ContainsKey('OwnerPassword')) {
+        $decryptArgs += "--owner-password=$([NetworkCredential]::new([string]::Empty, $OwnerPassword).Password)"
       }
-      if ($UserPassword) {
-        $decryptArgs += "--password=$UserPassword"
+      if ($PSBoundParameters.ContainsKey('UserPassword')) {
+        $decryptArgs += "--password=$([NetworkCredential]::new([string]::Empty, $UserPassword).Password)"
       }
       qpdf.exe @decryptArgs 2>>$log
     }
@@ -325,10 +329,10 @@ function Get-PdfPage {
     Specifies literal PDF file paths to inspect.
 
   .PARAMETER OwnerPassword
-    Specifies the owner password for encrypted PDF files.
+    Specifies the owner password for encrypted PDF files. Use a SecureString for secure input.
 
   .PARAMETER UserPassword
-    Specifies the user password for encrypted PDF files.
+    Specifies the user password for encrypted PDF files. Use a SecureString for secure input.
 
   .EXAMPLE
     Get-PdfPage -Path 'C:\Docs\*.pdf'
@@ -337,7 +341,8 @@ function Get-PdfPage {
     Get-PdfPage -LiteralPath 'C:\Docs\manual.pdf'
 
   .EXAMPLE
-    Get-PdfPage -LiteralPath 'C:\Docs\encrypted.pdf' -OwnerPassword 'owner123'
+    $ownerPw = ConvertTo-SecureString -String 'owner123' -AsPlainText -Force
+    Get-PdfPage -LiteralPath 'C:\Docs\encrypted.pdf' -OwnerPassword $ownerPw
 
   .OUTPUTS
     PdfInfo
@@ -355,9 +360,9 @@ function Get-PdfPage {
     [Parameter(Mandatory, ParameterSetName = 'LiteralPathSet', ValueFromPipelineByPropertyName)]
     [string[]]
     $LiteralPath,
-    [string]
+    [SecureString]
     $OwnerPassword,
-    [string]
+    [SecureString]
     $UserPassword
   )
   begin {
@@ -377,11 +382,11 @@ function Get-PdfPage {
     $items |
     ForEach-Object {
       $arguments = @('--show-npages', $_)
-      if ($OwnerPassword) {
-        $arguments += "--owner-password=$OwnerPassword"
+      if ($PSBoundParameters.ContainsKey('OwnerPassword')) {
+        $arguments += "--owner-password=$([NetworkCredential]::new([string]::Empty, $OwnerPassword).Password)"
       }
-      if ($UserPassword) {
-        $arguments += "--password=$UserPassword"
+      if ($PSBoundParameters.ContainsKey('UserPassword')) {
+        $arguments += "--password=$([NetworkCredential]::new([string]::Empty, $UserPassword).Password)"
       }
       $page = qpdf.exe @arguments 2>>$log
       if ($LASTEXITCODE -eq 0) {
