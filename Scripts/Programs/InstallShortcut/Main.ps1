@@ -9,8 +9,7 @@ $settings = $programs | Join-Path -ChildPath '.Local'
 if (Test-Path -LiteralPath $settings) {
   Get-ChildItem -LiteralPath $settings -Filter '*.lnk' | Remove-Item
   Get-ChildItem -LiteralPath $settings -Filter '*.url' | Remove-Item
-}
-else {
+} else {
   New-Item -Path $settings -ItemType Directory | Out-Null
 }
 $config = Import-PowerShellDataFile -LiteralPath 'Config.psd1'

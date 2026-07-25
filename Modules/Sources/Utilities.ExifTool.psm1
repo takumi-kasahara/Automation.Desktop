@@ -100,34 +100,28 @@ function Get-ExifDate {
         if (@($_ | Get-Member -MemberType NoteProperty) -match 'DateTimeOriginal') {
           $_.DateTimeOriginal = try {
             [datetime]::ParseExact($_.DateTimeOriginal, $fmt, [DateTimeFormatInfo]::InvariantInfo, [DateTimeStyles]::None)
-          }
-          catch {
+          } catch {
             $null
           }
-        }
-        else {
+        } else {
           $_ | Add-Member -MemberType NoteProperty -Name 'DateTimeOriginal' -Value $null
         }
         if (@($_ | Get-Member -MemberType NoteProperty) -match 'CreateDate') {
           $_.CreateDate = try {
             [datetime]::ParseExact($_.CreateDate, $fmt, [DateTimeFormatInfo]::InvariantInfo, [DateTimeStyles]::None)
-          }
-          catch {
+          } catch {
             $null
           }
-        }
-        else {
+        } else {
           $_ | Add-Member -MemberType NoteProperty -Name 'CreateDate' -Value $null
         }
         if (@($_ | Get-Member -MemberType NoteProperty) -match 'ModifyDate') {
           $_.ModifyDate = try {
             [datetime]::ParseExact($_.ModifyDate, $fmt, [DateTimeFormatInfo]::InvariantInfo, [DateTimeStyles]::None)
-          }
-          catch {
+          } catch {
             $null
           }
-        }
-        else {
+        } else {
           $_ | Add-Member -MemberType NoteProperty -Name 'ModifyDate' -Value $null
         }
         $result = Resolve-Path -LiteralPath $_.SourceFile
@@ -141,8 +135,7 @@ function Get-ExifDate {
     if (Test-Path -LiteralPath $log) {
       if (@(Get-Content -LiteralPath $log).Count -gt 0) {
         "LOG:`t$log" | Out-Host
-      }
-      else {
+      } else {
         Remove-Item -LiteralPath $log -Force
       }
     }
@@ -241,8 +234,7 @@ function Set-ExifDate {
     if (Test-Path -LiteralPath $log) {
       if (@(Get-Content -LiteralPath $log).Count -gt 0) {
         "LOG:`t$log" | Out-Host
-      }
-      else {
+      } else {
         Remove-Item -LiteralPath $log -Force
       }
     }
@@ -334,8 +326,7 @@ function Remove-ExifDate {
     if (Test-Path -LiteralPath $log) {
       if (@(Get-Content -LiteralPath $log).Count -gt 0) {
         "LOG:`t$log" | Out-Host
-      }
-      else {
+      } else {
         Remove-Item -LiteralPath $log -Force
       }
     }

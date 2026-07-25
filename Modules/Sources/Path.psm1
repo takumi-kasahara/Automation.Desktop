@@ -127,8 +127,7 @@ function ConvertTo-LocalPath {
   begin {
     try {
       $shares = @(Get-CimInstance -ClassName Win32_Share | Sort-Object { $_.Path.Length } -Descending)
-    }
-    catch {
+    } catch {
       $shares = @()
     }
   }
@@ -204,8 +203,7 @@ function ConvertTo-NetworkPath {
   begin {
     try {
       $shares = @(Get-CimInstance -ClassName Win32_Share | Sort-Object { $_.Path.Length } -Descending)
-    }
-    catch {
+    } catch {
       $shares = @()
     }
   }
@@ -522,8 +520,7 @@ function Move-NormalizedPath {
           Get-ChildItem -LiteralPath $_.Source -Force |
           Move-Item -Destination $_.Destination -PassThru:$PassThru -WhatIf:$WhatIfPreference -Confirm:$false
         }
-      }
-      else {
+      } else {
         Move-Item -LiteralPath $_.Source -Destination $_.Destination -PassThru:$PassThru -WhatIf:$WhatIfPreference -Confirm:$false
       }
     }
@@ -558,8 +555,7 @@ function Test-ArchiveExtension {
           }
         }
       )
-    }
-    catch [ItemNotFoundException] {
+    } catch [ItemNotFoundException] {
       return $false
     }
     return @(
@@ -599,8 +595,7 @@ function Test-PdfExtension {
           }
         }
       )
-    }
-    catch [ItemNotFoundException] {
+    } catch [ItemNotFoundException] {
       return $false
     }
     return @(
@@ -640,8 +635,7 @@ function Test-PictureExtension {
           }
         }
       )
-    }
-    catch [ItemNotFoundException] {
+    } catch [ItemNotFoundException] {
       return $false
     }
     return @(

@@ -66,14 +66,12 @@ InModuleScope 'Path' {
     AfterAll {
       if ($null -ne $oldTestExpandVar1) {
         $env:TEST_EXPAND_VAR1 = $oldTestExpandVar1
-      }
-      else {
+      } else {
         Remove-Item -LiteralPath 'Env:TEST_EXPAND_VAR1'
       }
       if ($null -ne $oldTestExpandVar2) {
         $env:TEST_EXPAND_VAR2 = $oldTestExpandVar2
-      }
-      else {
+      } else {
         Remove-Item -LiteralPath 'Env:TEST_EXPAND_VAR2'
       }
     }
@@ -121,8 +119,7 @@ InModuleScope 'Path' {
     AfterAll {
       if ($null -ne $oldComputerName) {
         $env:COMPUTERNAME = $oldComputerName
-      }
-      else {
+      } else {
         Remove-Item -LiteralPath 'Env:COMPUTERNAME'
       }
     }
@@ -178,8 +175,7 @@ InModuleScope 'Path' {
     AfterAll {
       if ($null -ne $oldComputerName) {
         $env:COMPUTERNAME = $oldComputerName
-      }
-      else {
+      } else {
         Remove-Item -LiteralPath 'Env:COMPUTERNAME'
       }
     }
@@ -397,11 +393,9 @@ InModuleScope 'Path' {
         }
         $target = if ($LiteralPath -is [string]) {
           $LiteralPath
-        }
-        elseif ($null -ne $LiteralPath -and $LiteralPath.PSObject.Properties.Name -contains 'FullName') {
+        } elseif ($null -ne $LiteralPath -and $LiteralPath.PSObject.Properties.Name -contains 'FullName') {
           $LiteralPath.FullName
-        }
-        else {
+        } else {
           [string]$LiteralPath
         }
         if ($PathType -eq 'Leaf') {
@@ -470,11 +464,9 @@ InModuleScope 'Path' {
         }
         $target = if ($LiteralPath -is [string]) {
           $LiteralPath
-        }
-        elseif ($null -ne $LiteralPath -and $LiteralPath.PSObject.Properties.Name -contains 'FullName') {
+        } elseif ($null -ne $LiteralPath -and $LiteralPath.PSObject.Properties.Name -contains 'FullName') {
           $LiteralPath.FullName
-        }
-        else {
+        } else {
           [string]$LiteralPath
         }
         if ($PathType -eq 'Leaf') {
@@ -543,11 +535,9 @@ InModuleScope 'Path' {
         }
         $target = if ($LiteralPath -is [string]) {
           $LiteralPath
-        }
-        elseif ($null -ne $LiteralPath -and $LiteralPath.PSObject.Properties.Name -contains 'FullName') {
+        } elseif ($null -ne $LiteralPath -and $LiteralPath.PSObject.Properties.Name -contains 'FullName') {
           $LiteralPath.FullName
-        }
-        else {
+        } else {
           [string]$LiteralPath
         }
         if ($PathType -eq 'Leaf') {

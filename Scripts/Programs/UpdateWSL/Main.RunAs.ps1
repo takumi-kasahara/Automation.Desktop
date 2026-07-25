@@ -27,7 +27,6 @@ try {
   Where-Object { Test-Path -LiteralPath $_ } |
   ForEach-Object { [WildcardPattern]::Escape($_) } |
   ForEach-Object { Optimize-VHD -Path $_ -Mode Full }
-}
-catch {
+} catch {
   Write-Warning -Message $_.Exception.Message
 }

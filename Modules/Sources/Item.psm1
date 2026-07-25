@@ -695,8 +695,7 @@ function Set-ItemDate {
     )
     $target = if ($PSCmdlet.ParameterSetName -in 'AllDatesPathSet', 'EachDatePathSet', 'ExifDatePathSet') {
       $Path -join ', '
-    }
-    else {
+    } else {
       $LiteralPath -join ', '
     }
     if ($UseExif) {
@@ -713,8 +712,7 @@ function Set-ItemDate {
           Set-ItemProperty -LiteralPath $_.Path -Name 'LastWriteTime' -Value $_.LastWriteTime -Force:$Force -WhatIf:$WhatIfPreference -Confirm:$false
         }
       }
-    }
-    else {
+    } else {
       if ($CreationTime) {
         $target += ", CreationTime: $CreationTime"
       }
@@ -891,8 +889,7 @@ function Sync-ItemDate {
         $item = $_ | Get-Item -Force:$Force
         if ($item.PSIsContainer) {
           $_ | Get-ChildItem -File -Recurse -Force:$Force
-        }
-        else {
+        } else {
           $item
         }
       }
@@ -915,15 +912,13 @@ function Sync-ItemDate {
       Write-Progress -Activity "#$id Unblock files." -Status $status -Id $id -PercentComplete $percent
       try {
         Unblock-File -LiteralPath $_
-      }
-      catch {
+      } catch {
         Write-Warning -Message $_.Exception.Message
       }
       if (Test-PdfExtension -LiteralPath $_) {
         try {
           Unblock-Pdf -LiteralPath $_
-        }
-        catch {
+        } catch {
           Write-Warning -Message $_.Exception.Message
         }
       }
@@ -931,16 +926,13 @@ function Sync-ItemDate {
         if (Test-ArchiveExtension -LiteralPath $_) {
           try {
             Sync-ArchivedItemDate -LiteralPath $_
-          }
-          catch {
+          } catch {
             Write-Warning -Message $_.Exception.Message
           }
-        }
-        else {
+        } else {
           Set-ItemDate -LiteralPath $_ -TimeFix -Force:$Force
         }
-      }
-      catch {
+      } catch {
         Write-Warning -Message $_.Exception.Message
       }
     }
@@ -961,8 +953,7 @@ function Sync-ItemDate {
       if ($_.CreationTime -or $_.LastWriteTime) {
         if (-not (Test-Path -LiteralPath $root.FullName -PathType Container)) {
           $_.Path | Out-Host
-        }
-        else {
+        } else {
           Resolve-Path -LiteralPath $_.Path -Relative -RelativeBasePath ([WildcardPattern]::Escape($root.FullName)) | Out-Host
         }
         Set-ItemDate -LiteralPath $_.Path -CreationTime $_.CreationTime -LastWriteTime $_.LastWriteTime -TimeFix -Force:$Force
@@ -979,8 +970,7 @@ function Sync-ItemDate {
       Write-Progress -Activity "#$id Update directory timestamps." -Status $status -Id $id -PercentComplete $percent
       try {
         Sync-DirectoryDate -LiteralPath $_ -Force:$Force
-      }
-      catch {
+      } catch {
         Write-Warning -Message $_.Exception.Message
       }
     }
@@ -1085,8 +1075,7 @@ function Export-ItemDate {
     }
     $target = if ($PSCmdlet.ParameterSetName -eq 'PathSet') {
       $Path -join ', '
-    }
-    else {
+    } else {
       $LiteralPath -join ', '
     }
     if (-not (($Force -and -not $WhatIfPreference) -or $PSCmdlet.ShouldProcess($target, 'Export item timestamps to JSON'))) {
@@ -1096,8 +1085,7 @@ function Export-ItemDate {
     foreach ($root in $roots) {
       $outputPath = if ([string]::IsNullOrEmpty($Destination)) {
         Join-Path -Path ([Path]::GetDirectoryName($root.FullName)) -ChildPath "$($root.Name).json"
-      }
-      else {
+      } else {
         $Destination
       }
       if ((Test-Path -LiteralPath $outputPath -PathType Container) -or ((Test-Path -LiteralPath $outputPath -PathType Leaf) -and $NoClobber)) {
@@ -1109,8 +1097,7 @@ function Export-ItemDate {
       }
       $items = if ($root.PSIsContainer) {
         $root | Get-ChildItem -File -Recurse -Force:$Force
-      }
-      else {
+      } else {
         $root
       }
       $directory = [Path]::GetDirectoryName($root.FullName)
@@ -1204,8 +1191,7 @@ function Import-ItemDate {
       foreach ($record in $records) {
         $target = if ([Path]::IsPathRooted($record.Path)) {
           $record.Path
-        }
-        else {
+        } else {
           [Path]::Combine($directory, $record.Path)
         }
         if (-not (Test-Path -LiteralPath $target -PathType Leaf)) {

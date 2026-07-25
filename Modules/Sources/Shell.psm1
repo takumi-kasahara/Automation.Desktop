@@ -164,8 +164,7 @@ function Find-Application {
     if ($applications.Count -gt 0) {
       return $applications
     }
-  }
-  finally {
+  } finally {
     Write-Progress -Completed
   }
 }
@@ -218,8 +217,7 @@ function Get-Application {
           Name = $regKey.PSChildName
           Path = (Test-Path -LiteralPath $defaultValue) ? $defaultValue : [Environment]::ExpandEnvironmentVariables($defaultValue)
         }
-      }
-      catch {
+      } catch {
         Write-Warning -Message "$regKey`t$($_.Exception.Message)"
       }
     } |
@@ -235,8 +233,7 @@ function Get-Application {
     $Name = $PSBoundParameters[$parameterName]
     if ($Name) {
       return $applications | Where-Object -Property Name -Like $Name
-    }
-    else {
+    } else {
       return $applications
     }
   }
@@ -283,8 +280,7 @@ function Get-SpecialFolder {
     if ($Name) {
       $folder = $shell.NameSpace('shell:{0}' -f $Name)
       return $folder ? $folder.Self.Path : $null
-    }
-    else {
+    } else {
       $validateSet.ValidValues |
       ForEach-Object {
         $folder = $shell.NameSpace('shell:{0}' -f $_)
@@ -330,16 +326,14 @@ function Get-Startup {
           CommandLine = $reg.GetValue($_)
         }
       }
-    }
-    elseif ($_.PSProvider.Name -eq 'FileSystem') {
+    } elseif ($_.PSProvider.Name -eq 'FileSystem') {
       if ($_.Extension -eq '.lnk') {
         $lnk = Get-Shortcut -LiteralPath $_.FullName
         return [StartupItem]@{
           Name        = $_.BaseName
           CommandLine = "`"$($lnk.TargetPath)`" $($lnk.Arguments)"
         }
-      }
-      else {
+      } else {
         return [StartupItem]@{
           Name        = $_.BaseName
           CommandLine = $_.FullName
@@ -548,8 +542,7 @@ function New-Shortcut {
     }
     $wshShortcut.Save()
     Get-Item -LiteralPath $Path -Force
-  }
-  finally {
+  } finally {
     Get-Variable |
     Where-Object -Property Value -Is [__ComObject] |
     Clear-Variable -Force -WhatIf:$false
@@ -623,8 +616,7 @@ function New-UrlShortcut {
     $wshShortcut.TargetPath = $TargetPath
     $wshShortcut.Save()
     Get-Item -LiteralPath $Path -Force
-  }
-  finally {
+  } finally {
     Get-Variable |
     Where-Object -Property Value -Is [__ComObject] |
     Clear-Variable -Force -WhatIf:$false
@@ -755,8 +747,7 @@ function Test-Shortcut {
           }
         }
       )
-    }
-    catch [ItemNotFoundException] {
+    } catch [ItemNotFoundException] {
       return $false
     }
     return @(
@@ -863,8 +854,7 @@ function New-NetworkShortcut {
   }
   if (Test-Path -LiteralPath $destination) {
     Remove-Item -LiteralPath $destination -Recurse -Force:$Force -WhatIf:$WhatIfPreference -Confirm:$false
-  }
-  else {
+  } else {
     New-Item -Path $destination -ItemType Directory -Force:$Force -WhatIf:$WhatIfPreference -Confirm:$false | Out-Null
   }
   $ini = $destination | Join-Path -ChildPath 'desktop.ini'

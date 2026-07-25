@@ -43,8 +43,7 @@ try {
   $xml.Add($packages)
   $xml.Save($destination)
   Get-Item -LiteralPath $destination
-}
-catch {
+} catch {
   Write-Warning -Message $_.Exception.Message
 }
 
@@ -71,8 +70,7 @@ try {
     $temp = [Path]::GetTempFileName()
     winget.exe export --include-versions --accept-source-agreements --output $temp
     $json = Get-Content -Path $temp -Raw | ConvertFrom-Json
-  }
-  finally {
+  } finally {
     if (Test-Path -LiteralPath $temp) {
       Remove-Item -LiteralPath $temp
     }
@@ -86,8 +84,7 @@ try {
   ConvertTo-Json |
   Out-File -LiteralPath $destination
   Get-Item -LiteralPath $destination
-}
-catch {
+} catch {
   Write-Warning -Message $_.Exception.Message
 }
 
@@ -106,8 +103,7 @@ foreach ($program in @(
     Out-File -LiteralPath $destination
     Get-Item -LiteralPath $destination
     break
-  }
-  catch {
+  } catch {
     Write-Warning -Message $_.Exception.Message
     continue
   }
@@ -122,8 +118,7 @@ try {
   dotnet.exe tool list --global --format json |
   Out-File -LiteralPath $destination
   Get-Item -LiteralPath $destination
-}
-catch {
+} catch {
   Write-Warning -Message $_.Exception.Message
 }
 
@@ -136,8 +131,7 @@ try {
   if (Test-Path -LiteralPath $config) {
     Copy-Item -LiteralPath $config -Destination $target -PassThru
   }
-}
-catch {
+} catch {
   Write-Warning -Message $_.Exception.Message
 }
 
@@ -155,8 +149,7 @@ try {
   npm.cmd list --json --global --depth=0 |
   Out-File -LiteralPath $destination
   Get-Item -LiteralPath $destination
-}
-catch {
+} catch {
   Write-Warning -Message $_.Exception.Message
 }
 
@@ -177,8 +170,7 @@ try {
     Out-File -LiteralPath $destination
     Get-Item -LiteralPath $destination
   }
-}
-catch {
+} catch {
   Write-Warning -Message $_.Exception.Message
 }
 

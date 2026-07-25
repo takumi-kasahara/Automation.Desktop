@@ -42,8 +42,7 @@ InModuleScope 'Shell' {
                 return [string]::Empty
               }
             }
-          }
-          else {
+          } else {
             switch ($Index) {
               0 {
                 return $this.Item.Name
@@ -136,8 +135,7 @@ InModuleScope 'Shell' {
           $result | Should -HaveCount 1
           $result[0] | Should -Be 'C:\Windows\notepad.exe'
           Should -Invoke -CommandName Get-Application -Times 0 -Exactly
-        }
-        finally {
+        } finally {
           Remove-Item -LiteralPath 'Function:\where.exe' -ErrorAction SilentlyContinue
         }
       }
@@ -154,8 +152,7 @@ InModuleScope 'Shell' {
           $result | Should -HaveCount 1
           $result[0] | Should -Be 'C:\Program Files\Example\app.exe'
           Should -Invoke -CommandName Get-Application -Times 0 -Exactly
-        }
-        finally {
+        } finally {
           Remove-Item -LiteralPath 'Function:\where.exe' -ErrorAction SilentlyContinue
         }
       }
@@ -173,8 +170,7 @@ InModuleScope 'Shell' {
           $result | Should -HaveCount 1
           $result[0] | Should -Be 'C:\Program Files\notepad.exe'
           Should -Invoke -CommandName Get-Application -Times 1 -Exactly
-        }
-        finally {
+        } finally {
           Remove-Item -LiteralPath 'Function:\where.exe' -ErrorAction SilentlyContinue
         }
       }
@@ -235,8 +231,7 @@ InModuleScope 'Shell' {
           param($name)
           if ($name -eq 'Name') {
             'Startup'
-          }
-          else {
+          } else {
             $null
           }
         } -Force
@@ -245,8 +240,7 @@ InModuleScope 'Shell' {
           param($name)
           if ($name -eq 'Name') {
             'Common Startup'
-          }
-          else {
+          } else {
             $null
           }
         } -Force
@@ -293,8 +287,7 @@ InModuleScope 'Shell' {
           param($name)
           if ($name -eq 'Name') {
             'Startup'
-          }
-          else {
+          } else {
             $null
           }
         } -Force
@@ -303,8 +296,7 @@ InModuleScope 'Shell' {
           param($name)
           if ($name -eq 'Name') {
             'Common Startup'
-          }
-          else {
+          } else {
             $null
           }
         } -Force

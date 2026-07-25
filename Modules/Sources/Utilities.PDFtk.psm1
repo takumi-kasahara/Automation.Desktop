@@ -102,8 +102,7 @@ function Export-PdfDump {
     if (Test-Path -LiteralPath $log) {
       if (@(Get-Content -LiteralPath $log).Count -gt 0) {
         "LOG:`t$log" | Out-Host
-      }
-      else {
+      } else {
         Remove-Item -LiteralPath $log -Force
       }
     }
@@ -206,8 +205,7 @@ function Import-PdfDump {
     if (Test-Path -LiteralPath $log) {
       if (@(Get-Content -LiteralPath $log).Count -gt 0) {
         "LOG:`t$log" | Out-Host
-      }
-      else {
+      } else {
         Remove-Item -LiteralPath $log -Force
       }
     }
@@ -355,8 +353,7 @@ function Join-Pdf {
     if (($items.Count -eq 0) -and ($sourceItems.Count -eq 0)) {
       $source = if ($PSCmdlet.ParameterSetName -eq 'PathSet') {
         $Path -join ', '
-      }
-      else {
+      } else {
         $LiteralPath -join ', '
       }
       $PSCmdlet.ThrowTerminatingError([ErrorRecord]::new(
@@ -388,18 +385,15 @@ function Join-Pdf {
     }
     $sourceItems = if ($directories.Count -eq 1) {
       @($directories[0].FullName | Join-Path -ChildPath '*.pdf')
-    }
-    else {
+    } else {
       @($sourceItems + @($files | ForEach-Object { $_.FullName }))
     }
     $source = "`"$($sourceItems -join '" "')`""
     $outputDestination = if ($PSBoundParameters.ContainsKey('Destination')) {
       $Destination
-    }
-    elseif ($directories.Count -eq 1) {
+    } elseif ($directories.Count -eq 1) {
       $directories[0].Parent.FullName | Join-Path -ChildPath ($directories[0].Name + '.pdf')
-    }
-    else {
+    } else {
       $PSCmdlet.ThrowTerminatingError([ErrorRecord]::new(
           [ArgumentException]::new('Destination is required when joining PDF files. Specify the output path.', 'Destination')
           , 'DestinationRequired'
@@ -434,8 +428,7 @@ function Join-Pdf {
     if (Test-Path -LiteralPath $log) {
       if (@(Get-Content -LiteralPath $log).Count -gt 0) {
         "LOG:`t$log" | Out-Host
-      }
-      else {
+      } else {
         Remove-Item -LiteralPath $log -Force
       }
     }
@@ -521,8 +514,7 @@ function Split-Pdf {
     if ($items.Count -ne 1) {
       $source = if ($PSCmdlet.ParameterSetName -eq 'PathSet') {
         $Path
-      }
-      else {
+      } else {
         $LiteralPath
       }
       $PSCmdlet.ThrowTerminatingError([ErrorRecord]::new(
@@ -566,8 +558,7 @@ function Split-Pdf {
     if (Test-Path -LiteralPath $log) {
       if (@(Get-Content -LiteralPath $log).Count -gt 0) {
         "LOG:`t$log" | Out-Host
-      }
-      else {
+      } else {
         Remove-Item -LiteralPath $log -Force
       }
     }

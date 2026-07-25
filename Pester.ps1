@@ -16,20 +16,17 @@ $ext = [WildcardPattern]::Escape($Path) | Split-Path -Extension
 if (Test-Path -LiteralPath $Path -PathType Container) {
   $module = Get-ChildItem -LiteralPath $Path -File -Filter '*.psm1' | Where-Object { $_.BaseName -notlike '.*' }
   $test = Get-ChildItem -LiteralPath $Path -File -Filter '*.Tests.ps1'
-}
-elseif ($ext -eq '.ps1') {
+} elseif ($ext -eq '.ps1') {
   $parent = [WildcardPattern]::Escape($Path) | Split-Path -Parent
   $base = ([WildcardPattern]::Escape($Path) | Split-Path -LeafBase) -replace '\.Tests$', [string]::Empty
   $module = $parent | Join-Path -ChildPath "$base.psm1"
   $test = $Path
-}
-elseif ($ext -eq '.psm1') {
+} elseif ($ext -eq '.psm1') {
   $parent = [WildcardPattern]::Escape($Path) | Split-Path -Parent
   $base = [WildcardPattern]::Escape($Path) | Split-Path -LeafBase
   $module = $Path
   $test = $parent | Join-Path -ChildPath "$base.Tests.ps1"
-}
-else {
+} else {
   throw "Unsupported file type: $ext"
 }
 if (-not (Test-Path -LiteralPath $module)) {

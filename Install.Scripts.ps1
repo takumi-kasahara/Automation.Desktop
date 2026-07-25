@@ -9,8 +9,7 @@ Set-Location -LiteralPath $PSScriptRoot
 $startMenu = Get-SpecialFolder -Name Programs | Join-Path -ChildPath '.Local\Scripts'
 if (Test-Path -LiteralPath $startMenu) {
   Get-ChildItem -LiteralPath $startMenu -Filter '*.lnk' | Remove-Item
-}
-else {
+} else {
   New-Item -Path $startMenu -ItemType Directory | Out-Null
 }
 'Scripts\Programs' |

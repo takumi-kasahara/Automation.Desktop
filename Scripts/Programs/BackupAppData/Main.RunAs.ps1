@@ -42,8 +42,7 @@ function Invoke-Robocopy {
     if ($LASTEXITCODE -ge 0x8) {
       Write-Warning -Message "Robocopy failed with exit code $LASTEXITCODE."
     }
-  }
-  finally {
+  } finally {
     Write-Progress -Completed
   }
 }
@@ -82,8 +81,7 @@ ForEach-Object {
     }
     $destination = $target | Join-Path -ChildPath $name
     Invoke-Robocopy -Source $source -Destination $destination
-  }
-  else {
+  } else {
     $_.Value |
     ForEach-Object {
       $source = $item.Value | Join-Path -ChildPath $_
@@ -113,8 +111,7 @@ try {
     $destination = $root | Join-Path -ChildPath $_
     Invoke-Robocopy -Source $source -Destination $destination
   } | Out-Host
-}
-catch {
+} catch {
   Write-Warning -Message $_.Exception.Message
 }
 
@@ -137,8 +134,7 @@ try {
     }
     $_ | Export-VM -Path $root
   }
-}
-catch {
+} catch {
   Write-Warning -Message $_.Exception.Message
 }
 
@@ -158,8 +154,7 @@ try {
   ForEach-Object { $_ -replace '\0', [string]::Empty } |
   Where-Object -Property Length -GT 0 |
   ForEach-Object { wsl.exe --export $_ $($root | Join-Path -ChildPath "$($_).vhdx") --vhd }
-}
-catch {
+} catch {
   Write-Warning -Message $_.Exception.Message
 }
 
@@ -168,8 +163,7 @@ $config = $target | Join-Path -ChildPath '.config'
 $root = $config | Join-Path -ChildPath 'ipconfig'
 if (Test-Path -LiteralPath $root) {
   "$root\*" | Remove-Item
-}
-else {
+} else {
   New-Item -Path $root -ItemType Directory | Out-Null
 }
 ipconfig.exe /all |
@@ -181,8 +175,7 @@ Out-File -LiteralPath ($root | Join-Path -ChildPath 'ipconfig.txt')
 $root = $config | Join-Path -ChildPath 'wlan'
 if (Test-Path -LiteralPath $root) {
   "$root\*" | Remove-Item
-}
-else {
+} else {
   New-Item -Path $root -ItemType Directory | Out-Null
 }
 netsh.exe wlan export profile key=clear folder="$root"
@@ -193,8 +186,7 @@ netsh.exe wlan export profile key=clear folder="$root"
 $root = $config | Join-Path -ChildPath 'powercfg'
 if (Test-Path -LiteralPath $root) {
   "$root\*" | Remove-Item
-}
-else {
+} else {
   New-Item -Path $root -ItemType Directory | Out-Null
 }
 powercfg.exe /QUERY |
@@ -210,8 +202,7 @@ powercfg.exe /BATTERYREPORT /OUTPUT $($root | Join-Path -ChildPath 'batteryrepor
 $root = $config | Join-Path -ChildPath 'schtasks'
 if (Test-Path -LiteralPath $root) {
   "$root\*" | Remove-Item
-}
-else {
+} else {
   New-Item -Path $root -ItemType Directory | Out-Null
 }
 schtasks.exe /query /xml |

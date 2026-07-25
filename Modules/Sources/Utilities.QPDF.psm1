@@ -99,8 +99,7 @@ function ConvertTo-Qdf {
     if (Test-Path -LiteralPath $log) {
       if (@(Get-Content -LiteralPath $log).Count -gt 0) {
         "LOG:`t$log" | Out-Host
-      }
-      else {
+      } else {
         Remove-Item -LiteralPath $log -Force
       }
     }
@@ -193,8 +192,7 @@ function ConvertFrom-Qdf {
     if (Test-Path -LiteralPath $log) {
       if (@(Get-Content -LiteralPath $log).Count -gt 0) {
         "LOG:`t$log" | Out-Host
-      }
-      else {
+      } else {
         Remove-Item -LiteralPath $log -Force
       }
     }
@@ -302,8 +300,7 @@ function Unblock-Pdf {
     if (Test-Path -LiteralPath $log) {
       if (@(Get-Content -LiteralPath $log).Count -gt 0) {
         "LOG:`t$log" | Out-Host
-      }
-      else {
+      } else {
         Remove-Item -LiteralPath $log -Force
       }
     }
@@ -399,8 +396,7 @@ function Get-PdfPage {
     if (Test-Path -LiteralPath $log) {
       if (@(Get-Content -LiteralPath $log).Count -gt 0) {
         "LOG:`t$log" | Out-Host
-      }
-      else {
+      } else {
         Remove-Item -LiteralPath $log -Force
       }
     }
