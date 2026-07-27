@@ -4,49 +4,6 @@ param ()
 Set-StrictMode -Version Latest
 Set-Location -LiteralPath $PSScriptRoot
 
-function Invoke-Robocopy {
-  [CmdletBinding()]
-  param (
-    [Parameter(Mandatory)]
-    [ValidateScript({ Test-Path -LiteralPath $_ })]
-    [string]
-    $Source,
-    [Parameter(Mandatory)]
-    [ValidateScript({ Test-Path -LiteralPath $_ -IsValid })]
-    [string]
-    $Destination
-  )
-  try {
-    $log = $env:TEMP | Join-Path -ChildPath "Robocopy.$(Get-Date -Format 'yyyyMMddHHmmss').log"
-    Write-Progress -Activity 'Backup' -Status $Source
-    [PSCustomObject]@{
-      Source      = $Source
-      Destination = $Destination
-      Log         = $log
-    }
-    $arguments = @(
-      '/COPY:DAT'
-      '/DCOPY:DAT'
-      '/TIMFIX'
-      '/MIR'
-      '/NP'
-      '/XJ'
-      '/COMPRESS'
-      '/SPARSE'
-      '/R:0'
-      '/W:0'
-      "/LOG+:$log"
-    )
-    Robocopy.exe $Source $Destination @arguments | Out-Null
-    # https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/robocopy#exit-return-codes
-    if ($LASTEXITCODE -ge 0x8) {
-      Write-Warning -Message "Robocopy failed with exit code $LASTEXITCODE."
-    }
-  } finally {
-    Write-Progress -Completed
-  }
-}
-
 $externalDrive = Get-Disk |
 Where-Object -Property BusType -EQ 'USB' |
 Get-Partition |
@@ -58,10 +15,7 @@ if (-not $externalDrive) {
 $target = "$($externalDrive):"
 
 Get-Process |
-Where-Object -Property ProcessName -In @(
-  'Everything'
-  'OneDrive'
-) |
+Where-Object -Property ProcessName -EQ 'Everything' |
 Stop-Process -Force
 
 (Import-PowerShellDataFile -LiteralPath 'Directory.psd1').GetEnumerator() |

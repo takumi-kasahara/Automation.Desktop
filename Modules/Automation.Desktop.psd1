@@ -56,6 +56,7 @@
     'ConvertFrom-Qdf'
     'Unblock-Pdf'
     'Get-PdfPage'
+    'Invoke-Robocopy'
     #endregion
   )
   CmdletsToExport      = @()

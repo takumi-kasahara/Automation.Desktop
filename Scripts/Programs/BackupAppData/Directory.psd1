@@ -56,6 +56,4 @@
     'Packages\Mozilla.MozillaFirefoxNightly_jag0gd4e3s9p2'
     'Packages\MozillaThunderbird.MozillaThunderbird_jag0gd4e3s9p2'
   )
-  OneDriveCommercial = @()
-  OneDriveConsumer   = @()
 }
