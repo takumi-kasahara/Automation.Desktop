@@ -1194,13 +1194,16 @@ function Import-ItemDate {
         } else {
           [Path]::Combine($directory, $record.Path)
         }
-        if (-not (Test-Path -LiteralPath $target -PathType Leaf)) {
-          Write-Warning -Message "Skipping '$target' because it does not exist or is not a file."
+        if (-not (Test-Path -LiteralPath $target)) {
+          Write-Warning -Message "Skipping '$target' because it does not exist."
+          continue
+        } elseif (Test-Path -LiteralPath $target -PathType Container) {
+          Write-Warning -Message "Skipping '$target' because it is a directory."
           continue
         }
         $actualHash = (Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash
         if ($actualHash -ne $record.Hash) {
-          Write-Warning -Message "Skipping '$target' because the file hash does not match (expected: $($record.Hash), actual: $actualHash)."
+          Write-Warning -Message "Skipping '$target' because the file hash does not match."
           continue
         }
         if ($record.CreationTime) {
