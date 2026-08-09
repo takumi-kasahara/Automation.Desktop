@@ -1367,8 +1367,8 @@ InModuleScope 'Item' {
   }
   Describe 'Import-ItemDate' {
     BeforeAll {
+      Mock -CommandName Test-Path -ParameterFilter { $PathType -eq 'Container' } -MockWith { $false }
       Mock -CommandName Test-Path -MockWith { $true }
-      Mock -CommandName Test-Path -ParameterFilter { $PathType -eq 'Leaf' } -MockWith { $true }
       Mock -CommandName Get-FileHash -MockWith { [PSCustomObject]@{ Hash = 'abc123' } }
       Mock -CommandName Get-Content -ParameterFilter { $LiteralPath -eq 'C:\Temp\timestamps.json' } -MockWith {
         '[{"Path":"C:\\dir\\file.txt","CreationTime":"2025-01-01T00:00:00","LastWriteTime":"2025-01-02T00:00:00","LastAccessTime":"2025-01-03T00:00:00","Hash":"abc123"}]'
@@ -1458,15 +1458,24 @@ InModuleScope 'Item' {
         Import-ItemDate -Path 'C:\Temp\timestamps.json' -WarningVariable warnings
         Should -Invoke -CommandName Set-ItemProperty -Times 0 -Exactly
         $warnings.Count | Should -Be 1
-        $warnings[0].Message | Should -Match 'does not match'
+        $warnings[0].Message | Should -Match 'file hash does not match'
       }
       It 'skips timestamps when target file does not exist' {
-        Mock -CommandName Test-Path -ParameterFilter { $PathType -eq 'Leaf' } -MockWith { $false }
+        Mock -CommandName Test-Path -ParameterFilter { $LiteralPath -eq 'C:\dir\file.txt' } -MockWith { $false }
         $warnings = @()
         Import-ItemDate -Path 'C:\Temp\timestamps.json' -WarningVariable warnings
         Should -Invoke -CommandName Set-ItemProperty -Times 0 -Exactly
         $warnings.Count | Should -Be 1
         $warnings[0].Message | Should -Match 'does not exist'
+      }
+      It 'skips timestamps when target is a directory' {
+        Mock -CommandName Test-Path -ParameterFilter { $LiteralPath -eq 'C:\dir\file.txt' -and $PathType -eq 'Container' } -MockWith { $true }
+        Mock -CommandName Test-Path -ParameterFilter { $LiteralPath -eq 'C:\dir\file.txt' -and -not $PathType } -MockWith { $true }
+        $warnings = @()
+        Import-ItemDate -Path 'C:\Temp\timestamps.json' -WarningVariable warnings
+        Should -Invoke -CommandName Set-ItemProperty -Times 0 -Exactly
+        $warnings.Count | Should -Be 1
+        $warnings[0].Message | Should -Match 'is a directory'
       }
     }
     Context 'Edge cases' {
