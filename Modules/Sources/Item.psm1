@@ -1070,7 +1070,12 @@ function Export-ItemDate {
     )
     if ([string]::IsNullOrEmpty($Destination)) {
       if ($roots | Where-Object { -not $_.PSIsContainer }) {
-        $PSCmdlet.ThrowTerminatingError(([ErrorRecord]::new([ArgumentException]::new('Destination is required when the input is a file. Specify -Destination or export a directory instead.'), 'DestinationRequiredForFile', [ErrorCategory]::InvalidArgument, $roots)))
+        $PSCmdlet.ThrowTerminatingError([ErrorRecord]::new(
+            [ArgumentException]::new('Destination is required when the input is a file. Specify -Destination or export a directory instead.')
+            , 'DestinationRequiredForFile'
+            , [ErrorCategory]::InvalidArgument
+            , $roots
+          ))
       }
     }
     $target = if ($PSCmdlet.ParameterSetName -eq 'PathSet') {
@@ -1089,7 +1094,12 @@ function Export-ItemDate {
         $Destination
       }
       if ((Test-Path -LiteralPath $outputPath -PathType Container) -or ((Test-Path -LiteralPath $outputPath -PathType Leaf) -and $NoClobber)) {
-        $PSCmdlet.ThrowTerminatingError(([ErrorRecord]::new([IOException]::new("$outputPath already exists. Use -Force to overwrite the file."), 'ItemAlreadyExists', [ErrorCategory]::ResourceExists, $outputPath)))
+        $PSCmdlet.ThrowTerminatingError([ErrorRecord]::new(
+            [IOException]::new("$outputPath already exists. Use -Force to overwrite the file.")
+            , 'ItemAlreadyExists'
+            , [ErrorCategory]::ResourceExists
+            , $outputPath
+          ))
       }
       $isReadOnly = (Test-Path -LiteralPath $outputPath -PathType Leaf) -and (Get-Item -LiteralPath $outputPath -Force).IsReadOnly
       if ($isReadOnly -and $Force) {
@@ -1194,16 +1204,13 @@ function Import-ItemDate {
         } else {
           [Path]::Combine($directory, $record.Path)
         }
-        if (-not (Test-Path -LiteralPath $target)) {
-          Write-Warning -Message "Skipping '$target' because it does not exist."
-          continue
-        } elseif (Test-Path -LiteralPath $target -PathType Container) {
-          Write-Warning -Message "Skipping '$target' because it is a directory."
+        if (-not (Test-Path -LiteralPath $target -PathType Leaf)) {
+          Write-Warning -Message "Skipping '$target' because it does not exist or is not a file."
           continue
         }
         $actualHash = (Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash
         if ($actualHash -ne $record.Hash) {
-          Write-Warning -Message "Skipping '$target' because the file hash does not match."
+          Write-Warning -Message "Skipping '$target' because the file hash does not match (expected: $($record.Hash), actual: $actualHash)."
           continue
         }
         if ($record.CreationTime) {

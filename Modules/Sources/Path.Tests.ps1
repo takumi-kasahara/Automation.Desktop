@@ -1,8 +1,7 @@
 [CmdletBinding()]
 param ()
 
-$modulePath = $PSScriptRoot | Join-Path -ChildPath '..\Automation.Desktop.psm1'
-Import-Module -Name $modulePath -Force
+Import-Module -Name ($PSScriptRoot | Join-Path -ChildPath '..\Automation.Desktop.psm1') -Force
 Set-StrictMode -Version Latest
 
 InModuleScope 'Path' {
@@ -29,14 +28,14 @@ InModuleScope 'Path' {
       It 'replaces environment variable values with percent-wrapped names' {
         $inputString = 'Begin C:\Users\User and then C:\Users end'
         $result = Compress-EnvironmentVariable -InputString $inputString
-        $result | Should -Be 'Begin %HOME% and then %PATH% end'
+        $result | Should-BeString 'Begin %HOME% and then %PATH% end'
       }
     }
     Context 'Edge cases' {
       It 'skips empty environment variable values' {
         $inputString = 'Value C:\Users\User and empty text'
         $result = Compress-EnvironmentVariable -InputString $inputString
-        $result | Should -Not -Match '%EMPTY%'
+        $result | Should-NotMatchString '%EMPTY%'
       }
       It 'replaces longer matches before shorter substrings' {
         Mock -CommandName Get-ChildItem -ParameterFilter { $LiteralPath -eq 'Env:' } -MockWith {
@@ -52,7 +51,7 @@ InModuleScope 'Path' {
           )
         }
         $result = Compress-EnvironmentVariable -InputString 'Path C:\Foo\Bar'
-        $result | Should -Be 'Path %LONG%'
+        $result | Should-BeString 'Path %LONG%'
       }
     }
   }
@@ -78,17 +77,17 @@ InModuleScope 'Path' {
     Context 'Output' {
       It 'expands a single environment variable' {
         $result = Expand-EnvironmentVariable -InputString '%TEST_EXPAND_VAR1%\file.txt'
-        $result | Should -Be 'C:\Users\User\file.txt'
+        $result | Should-BeString 'C:\Users\User\file.txt'
       }
       It 'expands multiple environment variables' {
         $result = Expand-EnvironmentVariable -InputString '%TEST_EXPAND_VAR1%\%TEST_EXPAND_VAR2%'
-        $result | Should -Be 'C:\Users\User\C:\Temp'
+        $result | Should-BeString 'C:\Users\User\C:\Temp'
       }
     }
     Context 'Edge cases' {
       It 'leaves unknown environment variables unchanged' {
         $result = Expand-EnvironmentVariable -InputString '%UNKNOWN_ENV_VAR%'
-        $result | Should -Be '%UNKNOWN_ENV_VAR%'
+        $result | Should-BeString '%UNKNOWN_ENV_VAR%'
       }
     }
   }
@@ -126,23 +125,23 @@ InModuleScope 'Path' {
     Context 'ParameterSetName' {
       It 'converts UNC share paths by Path with wildcards' {
         $result = ConvertTo-LocalPath -Path '\\server\share\*'
-        $result | Should -Be 'C:\share\dir\file.txt'
+        $result | Should-BeString 'C:\share\dir\file.txt'
       }
       It 'converts UNC share paths by Path with ValueFromPipeline' {
-        '\\server\share\*' | ConvertTo-LocalPath | Should -Be 'C:\share\dir\file.txt'
+        '\\server\share\*' | ConvertTo-LocalPath | Should-BeString 'C:\share\dir\file.txt'
       }
       It 'converts UNC share paths by Path with ValueFromPipelineByPropertyName' {
-        [PSCustomObject]@{ Path = '\\server\share\*' } | ConvertTo-LocalPath | Should -Be 'C:\share\dir\file.txt'
+        [PSCustomObject]@{ Path = '\\server\share\*' } | ConvertTo-LocalPath | Should-BeString 'C:\share\dir\file.txt'
       }
       It 'converts UNC share paths by LiteralPath' {
         $result = ConvertTo-LocalPath -LiteralPath '\\server\share\dir\file.txt'
-        $result | Should -Be 'C:\share\dir\file.txt'
+        $result | Should-BeString 'C:\share\dir\file.txt'
       }
     }
     Context 'Edge cases' {
       It 'returns a non-UNC local path unchanged' {
         $result = ConvertTo-LocalPath -Path 'C:\local\dir\file.txt'
-        $result | Should -Be 'C:\local\dir\file.txt'
+        $result | Should-BeString 'C:\local\dir\file.txt'
       }
     }
   }
@@ -182,23 +181,23 @@ InModuleScope 'Path' {
     Context 'ParameterSetName' {
       It 'converts local paths to UNC paths by Path with wildcards' {
         $result = ConvertTo-NetworkPath -Path 'C:\share\dir\*'
-        $result | Should -Be '\\server\share\dir\file.txt'
+        $result | Should-BeString '\\server\share\dir\file.txt'
       }
       It 'converts local paths to UNC paths by Path with ValueFromPipeline' {
-        'C:\share\dir\*' | ConvertTo-NetworkPath | Should -Be '\\server\share\dir\file.txt'
+        'C:\share\dir\*' | ConvertTo-NetworkPath | Should-BeString '\\server\share\dir\file.txt'
       }
       It 'converts local paths to UNC paths by Path with ValueFromPipelineByPropertyName' {
-        [PSCustomObject]@{ Path = 'C:\share\dir\*' } | ConvertTo-NetworkPath | Should -Be '\\server\share\dir\file.txt'
+        [PSCustomObject]@{ Path = 'C:\share\dir\*' } | ConvertTo-NetworkPath | Should-BeString '\\server\share\dir\file.txt'
       }
       It 'converts local paths to UNC paths by LiteralPath' {
         $result = ConvertTo-NetworkPath -LiteralPath 'C:\share\dir\file.txt'
-        $result | Should -Be '\\server\share\dir\file.txt'
+        $result | Should-BeString '\\server\share\dir\file.txt'
       }
     }
     Context 'Edge cases' {
       It 'returns an already UNC path unchanged' {
         $result = ConvertTo-NetworkPath -Path '\\server\share\dir\file.txt'
-        $result | Should -Be '\\server\share\dir\file.txt'
+        $result | Should-BeString '\\server\share\dir\file.txt'
       }
     }
   }
@@ -216,23 +215,23 @@ InModuleScope 'Path' {
     Context 'ParameterSetName' {
       It 'converts a Path Windows path to WSL path' {
         $result = ConvertTo-WSLPath -Path 'C:\Users\User\file.txt'
-        $result | Should -Be 'WSL_PATH:wslpath -a -u C:/Users/User/file.txt'
+        $result | Should-BeString 'WSL_PATH:wslpath -a -u C:/Users/User/file.txt'
       }
       It 'converts a Path Windows path to WSL path with ValueFromPipeline' {
-        'C:\Users\User\file.txt' | ConvertTo-WSLPath | Should -Be 'WSL_PATH:wslpath -a -u C:/Users/User/file.txt'
+        'C:\Users\User\file.txt' | ConvertTo-WSLPath | Should-BeString 'WSL_PATH:wslpath -a -u C:/Users/User/file.txt'
       }
       It 'converts a Path Windows path to WSL path with ValueFromPipelineByPropertyName' {
-        [PSCustomObject]@{ Path = 'C:\Users\User\file.txt' } | ConvertTo-WSLPath | Should -Be 'WSL_PATH:wslpath -a -u C:/Users/User/file.txt'
+        [PSCustomObject]@{ Path = 'C:\Users\User\file.txt' } | ConvertTo-WSLPath | Should-BeString 'WSL_PATH:wslpath -a -u C:/Users/User/file.txt'
       }
       It 'converts a LiteralPath Windows path to WSL path' {
         $result = ConvertTo-WSLPath -LiteralPath 'C:\Users\User\file.txt'
-        $result | Should -Be 'WSL_PATH:wslpath -a -u C:/Users/User/file.txt'
+        $result | Should-BeString 'WSL_PATH:wslpath -a -u C:/Users/User/file.txt'
       }
     }
     Context 'Other parameters' {
       It 'passes additional arguments to wsl.exe' {
         $result = ConvertTo-WSLPath -Path 'C:\Users\User\file.txt' -ArgumentList '--quiet'
-        $result | Should -Be 'WSL_PATH:--quiet wslpath -a -u C:/Users/User/file.txt'
+        $result | Should-BeString 'WSL_PATH:--quiet wslpath -a -u C:/Users/User/file.txt'
       }
     }
   }
@@ -268,7 +267,7 @@ InModuleScope 'Path' {
       It 'normalizes a wildcard Path using Get-Item' {
         $result = Get-NormalizedPath -Path 'C:\dir\*'
         $result | Should -HaveCount 2
-        $result | Should -Be @(
+        $result | Should-BeCollection @(
           'C:\dir\file1.txt',
           'C:\dir\file2.txt'
         )
@@ -281,14 +280,14 @@ InModuleScope 'Path' {
       }
       It 'normalizes a LiteralPath directly' {
         $result = Get-NormalizedPath -LiteralPath 'C:\dir\file.txt'
-        $result | Should -Be 'C:\dir\file.txt'
+        $result | Should-BeString 'C:\dir\file.txt'
       }
     }
     Context 'Other parameters' {
       It 'supports compatible normalization mode' {
         $result = Get-NormalizedPath -Path 'C:\dir\*' -Compatible
         $result | Should -HaveCount 2
-        $result | Should -Be @(
+        $result | Should-BeCollection @(
           'C:\dir\file1.txt',
           'C:\dir\file2.txt'
         )
@@ -349,37 +348,37 @@ InModuleScope 'Path' {
     Context 'ParameterSetName' {
       It 'moves a item to its normalized destination by Path' {
         Move-NormalizedPath -Path $mockSource
-        Should -Invoke -CommandName Move-Item -Times 1 -Exactly
+        Should-Invoke -CommandName Move-Item -Times 1 -Exactly
       }
       It 'moves a item to its normalized destination by Path with ValueFromPipeline' {
         $mockSource | Move-NormalizedPath
-        Should -Invoke -CommandName Move-Item -Times 1 -Exactly
+        Should-Invoke -CommandName Move-Item -Times 1 -Exactly
       }
       It 'moves a item to its normalized destination by Path with ValueFromPipelineByPropertyName' {
         [PSCustomObject]@{ Path = $mockSource } | Move-NormalizedPath
-        Should -Invoke -CommandName Move-Item -Times 1 -Exactly
+        Should-Invoke -CommandName Move-Item -Times 1 -Exactly
       }
       It 'moves a item to its normalized destination by LiteralPath' {
         Move-NormalizedPath -LiteralPath $mockSource
-        Should -Invoke -CommandName Move-Item -Times 1 -Exactly
+        Should-Invoke -CommandName Move-Item -Times 1 -Exactly
       }
     }
     Context 'SupportsShouldProcess' {
       It 'does not move the item when WhatIf is specified' {
         Move-NormalizedPath -Path $mockSource -Force -WhatIf
-        Should -Invoke -CommandName Move-Item -Times 0 -Exactly
+        Should-Invoke -CommandName Move-Item -Times 0 -Exactly
       }
       It 'suppresses ShouldProcess when Force is supplied with Confirm' {
         Move-NormalizedPath -Path $mockSource -Force -Confirm
-        Should -Invoke -CommandName Move-Item -Times 1 -Exactly
+        Should-Invoke -CommandName Move-Item -Times 1 -Exactly
       }
     }
     Context 'Other parameters' {
       It 'returns PSObject when PassThru is specified' {
         $result = Move-NormalizedPath -Path $mockSource -PassThru
         $result | Should -BeOfType [PSObject]
-        $result.Source | Should -Be $mockSource
-        $result.Destination | Should -Be $mockDest
+        $result.Source | Should-BeString $mockSource
+        $result.Destination | Should-BeString $mockDest
       }
     }
     Context 'Edge cases' {

@@ -78,7 +78,12 @@ function Export-PdfDump {
       return
     }
     if ((Test-Path -LiteralPath $Destination -PathType Container) -or ((Test-Path -LiteralPath $Destination -PathType Leaf) -and $NoClobber)) {
-      $PSCmdlet.ThrowTerminatingError(([ErrorRecord]::new([IOException]::new("$Destination already exists. Use -Force to overwrite the file."), 'ItemAlreadyExists', [ErrorCategory]::ResourceExists, $Destination)))
+      $PSCmdlet.ThrowTerminatingError([ErrorRecord]::new(
+          [IOException]::new("$Destination already exists. Use -Force to overwrite the file.")
+          , 'ItemAlreadyExists'
+          , [ErrorCategory]::ResourceExists
+          , $Destination
+        ))
     }
     $isReadOnly = (Test-Path -LiteralPath $Destination -PathType Leaf) -and (Get-Item -LiteralPath $Destination -Force).IsReadOnly
     if ($isReadOnly -and $Force) {
@@ -405,7 +410,12 @@ function Join-Pdf {
       return
     }
     if ((Test-Path -LiteralPath $outputDestination -PathType Container) -or ((Test-Path -LiteralPath $outputDestination -PathType Leaf) -and $NoClobber)) {
-      $PSCmdlet.ThrowTerminatingError(([ErrorRecord]::new([IOException]::new("$outputDestination already exists. Use -Force to overwrite the file."), 'ItemAlreadyExists', [ErrorCategory]::ResourceExists, $outputDestination)))
+      $PSCmdlet.ThrowTerminatingError([ErrorRecord]::new(
+          [IOException]::new("$outputDestination already exists. Use -Force to overwrite the file.")
+          , 'ItemAlreadyExists'
+          , [ErrorCategory]::ResourceExists
+          , $outputDestination
+        ))
     }
     $isReadOnly = (Test-Path -LiteralPath $outputDestination -PathType Leaf) -and (Get-Item -LiteralPath $outputDestination -Force).IsReadOnly
     if ($isReadOnly -and $Force) {
