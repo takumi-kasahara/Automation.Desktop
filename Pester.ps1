@@ -39,6 +39,7 @@
 #>
 [CmdletBinding()]
 param (
+  [Parameter(Mandatory, Position = 0)]
   [ValidateScript({ Test-Path -LiteralPath $_ })]
   [string]
   $Path,
@@ -61,7 +62,7 @@ if (Test-Path -LiteralPath $Path -PathType Container) {
   $parent = [WildcardPattern]::Escape($Path) | Split-Path -Parent
   $base = ([WildcardPattern]::Escape($Path) | Split-Path -LeafBase) -replace '\.Tests$', [string]::Empty
   $module = $parent | Join-Path -ChildPath "$base.psm1"
-  $test = $Path
+  $test = $parent | Join-Path -ChildPath "$base.Tests.ps1"
 } elseif ($ext -eq '.psm1') {
   $parent = [WildcardPattern]::Escape($Path) | Split-Path -Parent
   $base = [WildcardPattern]::Escape($Path) | Split-Path -LeafBase
