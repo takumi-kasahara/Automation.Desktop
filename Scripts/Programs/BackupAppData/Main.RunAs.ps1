@@ -49,26 +49,6 @@ ForEach-Object {
   }
 } | Out-Host
 
-# Dev Drive
-# https://learn.microsoft.com/en-us/windows/dev-drive/
-try {
-  Get-ChildItem -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Control\AutoAttachVirtualDisks' |
-  ForEach-Object { $_.GetValue('Path') } |
-  Where-Object { Test-Path -LiteralPath $_ } |
-  ForEach-Object { [WildcardPattern]::Escape($_) } |
-  ForEach-Object { Optimize-VHD -Path $_ -Mode Full }
-
-  $root = $target | Join-Path -ChildPath 'DevDrives'
-  @(Get-Volume | Where-Object -Property FileSystem -EQ 'ReFS' | Select-Object -ExpandProperty DriveLetter) |
-  ForEach-Object {
-    $source = "$($_):\"
-    $destination = $root | Join-Path -ChildPath $_
-    Invoke-Robocopy -Source $source -Destination $destination
-  } | Out-Host
-} catch {
-  Write-Warning -Message $_.Exception.Message
-}
-
 # Hyper-V
 # https://learn.microsoft.com/en-us/powershell/module/hyper-v/?view=windowsserver2025-ps
 try {
