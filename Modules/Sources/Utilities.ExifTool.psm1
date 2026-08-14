@@ -27,10 +27,14 @@ function Get-ExifDate {
     Treats ExifTool output as JSON instead of CSV.
 
   .EXAMPLE
+    ``` powershell
     Get-ExifDate -Path 'C:\Pictures\*.jpg'
+    ```
 
   .EXAMPLE
+    ``` powershell
     Get-ExifDate -LiteralPath 'C:\Pictures\IMG_0001.JPG' -AsJson
+    ```
 
   .OUTPUTS
     System.Management.Automation.PathInfo.
@@ -168,10 +172,14 @@ function Set-ExifDate {
     Bypasses confirmation prompts from `ShouldProcess`.
 
   .EXAMPLE
+    ``` powershell
     Set-ExifDate -Path 'C:\Photos\*.jpg' -Date ([datetime]'2024-01-02 03:04:05') -Force
+    ```
 
   .EXAMPLE
+    ``` powershell
     Set-ExifDate -LiteralPath 'C:\Photos\IMG_0001.jpg' -Date ([datetime]'2024-01-02 03:04:05') -WhatIf
+    ```
 
   .OUTPUTS
     None.
@@ -264,10 +272,14 @@ function Remove-ExifDate {
     Bypasses confirmation prompts from `ShouldProcess`.
 
   .EXAMPLE
+    ``` powershell
     Remove-ExifDate -Path 'C:\Photos\*.jpg' -Force
+    ```
 
   .EXAMPLE
+    ``` powershell
     Remove-ExifDate -LiteralPath 'C:\Photos\IMG_0001.jpg' -WhatIf
+    ```
 
   .OUTPUTS
     None. Only removes Exif timestamps.

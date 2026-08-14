@@ -42,11 +42,15 @@ function ConvertTo-Qdf {
     Specifies the user password for encrypted PDF files. Use a SecureString for secure input.
 
   .EXAMPLE
+    ``` powershell
     ConvertTo-Qdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\manual.qdf'
+    ```
 
   .EXAMPLE
+    ``` powershell
     $ownerPw = ConvertTo-SecureString -String 'owner123' -AsPlainText -Force
     ConvertTo-Qdf -Path 'C:\Docs\encrypted.pdf' -Destination 'C:\Temp\manual.qdf' -OwnerPassword $ownerPw
+    ```
 
   .OUTPUTS
     None. Only converts PDF to QDF.
@@ -141,11 +145,15 @@ function ConvertFrom-Qdf {
     Specifies the user password for encrypted QDF files. Use a SecureString for secure input.
 
   .EXAMPLE
+    ``` powershell
     ConvertFrom-Qdf -Path 'C:\Temp\manual.qdf' -Destination 'C:\Docs\manual.pdf'
+    ```
 
   .EXAMPLE
+    ``` powershell
     $ownerPw = ConvertTo-SecureString -String 'owner123' -AsPlainText -Force
     ConvertFrom-Qdf -Path 'C:\Temp\encrypted.qdf' -Destination 'C:\Docs\manual.pdf' -OwnerPassword $ownerPw
+    ```
 
   .OUTPUTS
     None. Only converts QDF to PDF.
@@ -238,14 +246,20 @@ function Unblock-Pdf {
     Specifies the user password for encrypted PDF files. Use a SecureString for secure input.
 
   .EXAMPLE
+    ``` powershell
     Unblock-Pdf -Path 'C:\Docs\*.pdf'
+    ```
 
   .EXAMPLE
+    ``` powershell
     Unblock-Pdf -LiteralPath 'C:\Docs\manual.pdf' -WhatIf
+    ```
 
   .EXAMPLE
+    ``` powershell
     $ownerPw = ConvertTo-SecureString -String 'ownerpass' -AsPlainText -Force
     Unblock-Pdf -LiteralPath 'C:\Docs\encrypted.pdf' -OwnerPassword $ownerPw
+    ```
 
   .OUTPUTS
     None. Only removes PDF encryption.
@@ -345,14 +359,20 @@ function Get-PdfPage {
     Specifies the user password for encrypted PDF files. Use a SecureString for secure input.
 
   .EXAMPLE
+    ``` powershell
     Get-PdfPage -Path 'C:\Docs\*.pdf'
+    ```
 
   .EXAMPLE
+    ``` powershell
     Get-PdfPage -LiteralPath 'C:\Docs\manual.pdf'
+    ```
 
   .EXAMPLE
+    ``` powershell
     $ownerPw = ConvertTo-SecureString -String 'owner123' -AsPlainText -Force
     Get-PdfPage -LiteralPath 'C:\Docs\encrypted.pdf' -OwnerPassword $ownerPw
+    ```
 
   .OUTPUTS
     PdfInfo

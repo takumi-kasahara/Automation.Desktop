@@ -43,7 +43,9 @@ function Get-ItemDetail {
     The maximum detail index to include. Defaults to 1024.
 
   .EXAMPLE
+    ``` powershell
     Get-ItemDetail -Path 'C:\dir\file.txt' -Min 0 -Max 10
+    ```
 
   .OUTPUTS
     ItemDetail.
@@ -361,10 +363,14 @@ function Move-ItemToRecycleBin {
 
 
   .EXAMPLE
+    ``` powershell
     Move-ItemToRecycleBin -Path 'C:\dir\*'
+    ```
 
   .EXAMPLE
+    ``` powershell
     Move-ItemToRecycleBin -LiteralPath 'C:\dir\file.txt'
+    ```
 
   .NOTES
     This cmdlet moves items to the Recycle Bin and does not return any object on success.
@@ -461,10 +467,14 @@ function New-Shortcut {
     Overwrites an existing shortcut file if it already exists.
 
   .EXAMPLE
+    ``` powershell
     New-Shortcut -Path 'C:\Users\Public\Desktop\Example.lnk' -TargetPath 'C:\Windows\System32\notepad.exe'
+    ```
 
   .EXAMPLE
+    ``` powershell
     New-Shortcut -Path 'C:\Users\Public\Desktop\Example' -TargetPath 'C:\Windows\System32\notepad.exe' -WorkingDirectory 'C:\Temp' -Arguments '/A /B' -Description 'Example shortcut' -IconLocation 'C:\Windows\System32\shell32.dll,1' -HotKey 'F5' -WindowStyle Maximum -Force
+    ```
 
   .OUTPUTS
     System.IO.FileInfo
@@ -572,10 +582,14 @@ function New-UrlShortcut {
     Overwrites an existing shortcut if one already exists.
 
   .EXAMPLE
+    ``` powershell
     New-UrlShortcut -Path 'C:\Users\Public\Desktop\Example.url' -TargetPath 'https://example.com'
+    ```
 
   .EXAMPLE
+    ``` powershell
     New-UrlShortcut -Path 'C:\Users\Public\Desktop\Example' -TargetPath 'https://example.com' -Force
+    ```
 
   .OUTPUTS
     System.IO.FileInfo
@@ -641,10 +655,14 @@ function Get-Shortcut {
     Specifies one or more exact shortcut file paths.
 
   .EXAMPLE
+    ``` powershell
     Get-Shortcut -Path 'C:\Users\Public\Desktop\Example.lnk'
+    ```
 
   .EXAMPLE
+    ``` powershell
     Get-Shortcut -LiteralPath 'C:\Users\Public\Desktop\Example.lnk'
+    ```
 
   .OUTPUTS
     System.__ComObject
@@ -709,10 +727,14 @@ function Test-Shortcut {
     Specifies one or more exact shortcut file paths.
 
   .EXAMPLE
+    ``` powershell
     Test-Shortcut -Path 'C:\Users\Public\Desktop\Example.lnk'
+    ```
 
   .EXAMPLE
+    ``` powershell
     Test-Shortcut -LiteralPath 'C:\Users\Public\Desktop\Example.lnk'
+    ```
 
   .NOTES
     Returns a boolean value indicating whether the shortcut target exists.
@@ -778,10 +800,14 @@ function New-NetworkDrive {
     Removes the existing mapped drive before creating the new mapping.
 
   .EXAMPLE
+    ``` powershell
     New-NetworkDrive -Name Z -Root '\\server\share'
+    ```
 
   .EXAMPLE
+    ``` powershell
     New-NetworkDrive -Name Z -Root '\\server\share' -Force
+    ```
 
   .OUTPUTS
     None.
@@ -824,10 +850,14 @@ function New-NetworkShortcut {
     Removes the existing network shortcut before creating a new one.
 
   .EXAMPLE
+    ``` powershell
     New-NetworkShortcut -Path '\\server\share'
+    ```
 
   .EXAMPLE
+    ``` powershell
     New-NetworkShortcut -Path '\\server\share' -Force
+    ```
 
   .OUTPUTS
   System.IO.DirectoryInfo

@@ -33,10 +33,14 @@ function Get-ArchivedItem {
     When provided, the function passes `-mcp=<codepage>` to `7z.exe`.
 
   .EXAMPLE
+    ``` powershell
     Get-ArchivedItem -Path 'C:\Archives\*.7z'
+    ```
 
   .EXAMPLE
+    ``` powershell
     Get-ArchivedItem -LiteralPath 'C:\Archives\release.7z' -Encoding ([System.Text.Encoding]::UTF8)
+    ```
 
   .OUTPUTS
     ArchivedItem. Objects containing the relative path and timestamps of each archived item.
@@ -148,10 +152,14 @@ function Sync-ArchivedItemDate {
     Specifies literal archive paths to update.
 
   .EXAMPLE
+    ``` powershell
     Sync-ArchivedItemDate -Path 'C:\Archive\*.7z'
+    ```
 
   .EXAMPLE
+    ``` powershell
     Sync-ArchivedItemDate -LiteralPath 'C:\Archive\release.7z' -WhatIf
+    ```
 
   .OUTPUTS
     None. Only updates archive file timestamps.

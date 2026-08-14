@@ -22,10 +22,14 @@ function Compress-EnvironmentVariable {
     The string to compress by replacing environment variable values.
 
   .EXAMPLE
+    ``` powershell
     Compress-EnvironmentVariable -InputString 'Path is C:\Users\User; temp is C:\Temp'
+    ```
 
   .EXAMPLE
+    ``` powershell
     Compress-EnvironmentVariable -InputString 'My home is C:\Users\User and path is C:\Users'
+    ```
 
   .OUTPUTS
     System.String. The compressed string with environment variables replaced.
@@ -61,10 +65,14 @@ function Expand-EnvironmentVariable {
     The string containing environment variable references to expand.
 
   .EXAMPLE
+    ``` powershell
     Expand-EnvironmentVariable -InputString '%USERPROFILE%\Documents'
+    ```
 
   .EXAMPLE
+    ``` powershell
     Expand-EnvironmentVariable -InputString 'Path is %PATH%'
+    ```
 
   .OUTPUTS
     System.String. The expanded string with environment variables replaced by their values.
@@ -99,10 +107,14 @@ function ConvertTo-LocalPath {
     Specifies literal UNC or local paths to convert.
 
   .EXAMPLE
+    ``` powershell
     ConvertTo-LocalPath -Path '\\MYPC\Share\Folder\File.txt'
+    ```
 
   .EXAMPLE
+    ``` powershell
     ConvertTo-LocalPath -LiteralPath '\\MYPC\Share\Folder\File.txt'
+    ```
 
   .OUTPUTS
     System.String. The converted local path.
@@ -176,10 +188,14 @@ function ConvertTo-NetworkPath {
     Specifies literal local or UNC paths to convert.
 
   .EXAMPLE
+    ``` powershell
     ConvertTo-NetworkPath -Path 'C:\Shared\Folder\File.txt'
+    ```
 
   .EXAMPLE
+    ``` powershell
     ConvertTo-NetworkPath -LiteralPath 'C:\Shared\Folder\File.txt'
+    ```
 
   .OUTPUTS
     System.String. The converted UNC network path.
@@ -255,10 +271,14 @@ function ConvertTo-WSLPath {
     Specifies additional arguments passed to `wsl.exe` before `wslpath`.
 
   .EXAMPLE
+    ``` powershell
     ConvertTo-WSLPath -Path 'C:\Users\User\file.txt'
+    ```
 
   .EXAMPLE
+    ``` powershell
     ConvertTo-WSLPath -LiteralPath 'C:\Users\User\file.txt' -ArgumentList '--quiet'
+    ```
 
   .NOTES
     This function uses `Get-Item` to resolve the input path and delegates path
@@ -324,10 +344,14 @@ function Get-NormalizedPath {
     Uses compatibility normalization forms for path component normalization.
 
   .EXAMPLE
+    ``` powershell
     Get-NormalizedPath -Path 'C:\Users\Public\Document.txt'
+    ```
 
   .EXAMPLE
+    ``` powershell
     Get-NormalizedPath -LiteralPath 'C:\Users\Public\Document.txt' -Compatible
+    ```
 
   .OUTPUTS
     System.String. The normalized path.
@@ -453,10 +477,14 @@ function Move-NormalizedPath {
     Returns moved items when the operation succeeds.
 
   .EXAMPLE
+    ``` powershell
     Move-NormalizedPath -Path 'C:\Temp\*' -WhatIf
+    ```
 
   .EXAMPLE
+    ``` powershell
     Move-NormalizedPath -LiteralPath 'C:\Temp\file.txt' -Force
+    ```
 
   .OUTPUTS
     PSObject when PassThru is specified; otherwise, none.

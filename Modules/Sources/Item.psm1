@@ -80,10 +80,14 @@ function Get-DuplicateFile {
     Skips the first N items in each duplicate group and returns the rest.
 
   .EXAMPLE
+    ``` powershell
     Get-DuplicateFile -Path 'C:\dir\*' -Recurse
+    ```
 
   .EXAMPLE
+    ``` powershell
     Get-DuplicateFile -LiteralPath 'C:\Temp' -Property 'CreationTime','LastWriteTime' -Descending -Skip 2
+    ```
 
   .OUTPUTS
     System.IO.FileInfo
@@ -174,10 +178,14 @@ function Get-EmptyDirectory {
     Searches child directories recursively.
 
   .EXAMPLE
+    ``` powershell
     Get-EmptyDirectory -Path 'C:\dir\*'
+    ```
 
   .EXAMPLE
+    ``` powershell
     Get-EmptyDirectory -LiteralPath 'C:\dir' -Recurse
+    ```
 
   .OUTPUTS
     System.IO.DirectoryInfo
@@ -273,10 +281,14 @@ function Measure-Directory {
     Returns directory pairs with similar names.
 
   .EXAMPLE
+    ``` powershell
     Measure-Directory -Path 'C:\dir\*' -RecentModifiedFiles
+    ```
 
   .EXAMPLE
+    ``` powershell
     Measure-Directory -LiteralPath 'C:\dir' -AllStats -Recurse -Depth 2
+    ```
 
   .OUTPUTS
     MeasureDirectoryInfo
@@ -441,10 +453,14 @@ function Set-ItemAttribute {
     Forces the attribute update even if the item already has the requested attribute. If not specified, skips items that already have the attribute.
 
   .EXAMPLE
+    ``` powershell
     Set-ItemAttribute -Path 'C:\dir\*' -Attribute ReadOnly
+    ```
 
   .EXAMPLE
+    ``` powershell
     Set-ItemAttribute -LiteralPath 'C:\dir\file.txt' -Attribute Hidden -Force
+    ```
 
   .OUTPUTS
     None.
@@ -524,10 +540,14 @@ function Remove-ItemAttribute {
     Forces the attribute removal even if the item does not have the requested attribute. If not specified, skips items that do not have the attribute.
 
   .EXAMPLE
+    ``` powershell
     Remove-ItemAttribute -Path 'C:\dir\*' -Attribute ReadOnly
+    ```
 
   .EXAMPLE
+    ``` powershell
     Remove-ItemAttribute -LiteralPath 'C:\dir\file.txt' -Attribute Hidden -Force
+    ```
 
   .OUTPUTS
     None.
@@ -618,11 +638,15 @@ function Set-ItemDate {
     Forces setting timestamps even if the item is read-only or otherwise protected.
 
   .EXAMPLE
+    ``` powershell
     Set-ItemDate -Path 'C:\file.txt' -Date (Get-Date)
+    ```
     Sets all timestamps of file.txt to the current date and time.
 
   .EXAMPLE
+    ``` powershell
     Set-ItemDate -Path 'C:\image.jpg' -UseExif
+    ```
     Sets timestamps of image.jpg from its EXIF metadata.
 
   .OUTPUTS
@@ -771,10 +795,14 @@ function Sync-DirectoryDate {
     Forces child enumeration and timestamp sync for protected files.
 
   .EXAMPLE
+    ``` powershell
     Sync-DirectoryDate -Path 'C:\dir\*'
+    ```
 
   .EXAMPLE
+    ``` powershell
     Sync-DirectoryDate -LiteralPath 'C:\dir\subdir' -Force
+    ```
 
   .OUTPUTS
     None.
@@ -841,10 +869,14 @@ function Sync-ItemDate {
     Forces timestamp synchronization for protected items and suppresses ShouldProcess confirmation.
 
   .EXAMPLE
+    ``` powershell
     Sync-ItemDate -LiteralPath 'C:\dir\subdir'
+    ```
 
   .EXAMPLE
+    ``` powershell
     Sync-ItemDate -Path 'C:\dir\*' -Force
+    ```
 
   .OUTPUTS
     None.
@@ -1017,13 +1049,19 @@ function Export-ItemDate {
     If specified, the function will fail if the destination file already exists.
 
   .EXAMPLE
+    ``` powershell
     Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\Temp\timestamps.json'
+    ```
 
   .EXAMPLE
+    ``` powershell
     Export-ItemDate -LiteralPath 'C:\dir\file.txt' -Destination 'C:\Temp\timestamps.json' -Force
+    ```
 
   .EXAMPLE
+    ``` powershell
     Export-ItemDate -LiteralPath 'C:\dir' -Destination 'C:\Temp\timestamps.json'
+    ```
 
     Exports the CreationTime, LastWriteTime, and LastAccessTime of every file under C:\dir,
     including files in subfolders, to a single JSON file.
@@ -1158,16 +1196,24 @@ function Import-ItemDate {
     If specified, returns the FileInfo object for each successfully updated file.
 
   .EXAMPLE
+    ``` powershell
     Import-ItemDate -Path 'C:\Temp\timestamps.json'
+    ```
 
   .EXAMPLE
+    ``` powershell
     Import-ItemDate -Path 'C:\Temp\timestamps.json' -Force
+    ```
 
   .EXAMPLE
+    ``` powershell
     Import-ItemDate -Path @('C:\Temp\a.json', 'C:\Temp\b.json')
+    ```
 
   .EXAMPLE
+    ``` powershell
     Import-ItemDate -Path 'C:\Temp\timestamps.json' -PassThru
+    ```
 
     Applies the timestamp data and returns the FileInfo objects for the updated files.
 
