@@ -17,6 +17,12 @@
 .PARAMETER Destination
   The destination directory path to copy to. Must be a valid path.
 
+.PARAMETER NDL
+  No Directory List: Do not output directory names during the Robocopy operation.
+
+.PARAMETER NFL
+  No File List: Do not output file names during the Robocopy operation.
+
 .EXAMPLE
   Invoke-Robocopy -Source 'C:\Data' -Destination 'D:\Backup\Data'
 
@@ -37,6 +43,7 @@
 #>
 function Invoke-Robocopy {
   [CmdletBinding(SupportsShouldProcess)]
+  [OutputType([PSCustomObject])]
   param (
     [Parameter(Mandatory)]
     [ValidateScript({ Test-Path -LiteralPath $_ })]
@@ -45,7 +52,11 @@ function Invoke-Robocopy {
     [Parameter(Mandatory)]
     [ValidateScript({ Test-Path -LiteralPath $_ -IsValid })]
     [string]
-    $Destination
+    $Destination,
+    [switch]
+    $NDL,
+    [switch]
+    $NFL
   )
   try {
     $log = $env:TEMP | Join-Path -ChildPath "Robocopy.$(Get-Date -Format 'yyyyMMddHHmmss').log"
@@ -56,8 +67,6 @@ function Invoke-Robocopy {
       Log         = $log
     }
     $arguments = @(
-      '/NFL'
-      '/NDL'
       '/TEE'
       '/COPY:DAT'
       '/DCOPY:DAT'
@@ -71,6 +80,12 @@ function Invoke-Robocopy {
       '/W:0'
       "/LOG+:$log"
     )
+    if ($NDL) {
+      $arguments += '/NDL'
+    }
+    if ($NFL) {
+      $arguments += '/NFL'
+    }
     if (-not $PSCmdlet.ShouldProcess("$Source -> $Destination", 'Robocopy')) {
       $arguments += '/L'
     }
