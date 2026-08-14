@@ -1,3 +1,14 @@
+<#
+.SYNOPSIS
+  Updates WSL distributions and optimizes virtual hard disks.
+
+.DESCRIPTION
+  This script updates WSL to the latest pre-release version, executes distribution-specific scripts defined in Distro.psd1, shuts down WSL, and optimizes virtual hard disk files.
+
+.NOTES
+  Requires WSL to be installed.
+  The script reads distribution scripts from `Distro.psd1` configuration file.
+#>
 [CmdletBinding()]
 param ()
 

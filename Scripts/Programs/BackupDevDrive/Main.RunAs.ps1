@@ -1,3 +1,14 @@
+<#
+.SYNOPSIS
+  Creates and manages Windows Dev Drives for enhanced storage performance.
+
+.DESCRIPTION
+  This script creates and manages Windows Dev Drives, which are optimized storage volumes that provide faster performance for applications.
+  It identifies external USBdrives, optimizes existing VHD files, and copies ReFS volumes to the Dev Drive location.
+
+.NOTES
+  Requires admin privileges to create and manage Dev Drives.
+#>
 using namespace System.IO
 
 [CmdletBinding()]

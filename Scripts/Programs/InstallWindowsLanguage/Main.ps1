@@ -1,3 +1,15 @@
+<#
+.SYNOPSIS
+  Installs Japanese and English language packs and configures Windows language settings.
+
+.DESCRIPTION
+  This script installs Japanese and English language packs on Windows, configures the user interface language, system locale, UI language override, and default input method.
+  It sets the timezone to Tokyo Standard Time and configures geographical location to Japan.
+
+.NOTES
+  Requires administrator privileges to install languages and configure system settings.
+  The script modifies system locale and language settings which may require a reboot.
+#>
 [CmdletBinding()]
 param ()
 

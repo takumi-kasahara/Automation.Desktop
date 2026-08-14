@@ -1,3 +1,15 @@
+<#
+.SYNOPSIS
+  Installs shortcuts and URL links to the user's Start Menu.
+
+.DESCRIPTION
+  This script installs shortcuts and URL links to the user's Start Menu.
+  It creates a .Local directory in the Programs folder, removes existing shortcuts, and creates new shortcuts and URL links based on configuration.
+
+.NOTES
+  Requires admin privileges to install shortcuts.
+  The script creates a .Local directory in the Programs folder.
+#>
 [CmdletBinding()]
 param ()
 

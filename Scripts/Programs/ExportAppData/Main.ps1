@@ -1,3 +1,15 @@
+<#
+.SYNOPSIS
+  Exports application data to a backup location.
+
+.DESCRIPTION
+  This script exports application data (Chocolatey and Winget packages) to a backup location.
+  It identifies the user's personal folder, creates a backup directory if needed, and exports installed package lists from both Chocolatey and Winget package managers.
+
+.NOTES
+  Requires Chocolatey and Winget to be installed.
+  The script exports both Chocolatey and Winget package lists.
+#>
 using namespace System.IO
 using namespace System.Xml.Linq
 

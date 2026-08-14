@@ -1,4 +1,15 @@
 
+<#
+.SYNOPSIS
+  Optimizes the Saved Pictures folder by removing duplicates, normalizing paths, and cleaning up empty directories.
+
+.DESCRIPTION
+  This script optimizes the Saved Pictures folder by removing duplicate files, moving normalized paths, and removing empty directories. It also identifies and logs similar file names for review.
+
+.NOTES
+  The script uses duplicate file detection, path normalization, and empty directory removal.
+  It logs similar file names to a CSV file for review.
+#>
 [CmdletBinding()]
 param ()
 

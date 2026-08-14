@@ -1,3 +1,15 @@
+<#
+.SYNOPSIS
+  Backs up OneDrive data to an external drive.
+
+.DESCRIPTION
+  This script backs up OneDrive data to an external USB drive.
+  It identifies USB drives, stops the OneDrive process, and copies files from the OneDrive directory to the backup location.
+
+.NOTES
+  Requires admin privileges to access external drives.
+  The script stops the OneDrive process before copying files.
+#>
 [CmdletBinding()]
 param ()
 

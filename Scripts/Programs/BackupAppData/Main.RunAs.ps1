@@ -1,3 +1,13 @@
+<#
+.SYNOPSIS
+  Backs up external drives to a designated backup location.
+
+.DESCRIPTION
+  This script backs up external USB drives to a local backup directory.
+
+.NOTES
+  Requires admin privileges to access external drives.
+#>
 [CmdletBinding()]
 param ()
 

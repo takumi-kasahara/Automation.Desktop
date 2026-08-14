@@ -1,3 +1,15 @@
+<#
+.SYNOPSIS
+  Cleans and optimizes environment variables.
+
+.DESCRIPTION
+  This script cleans and optimizes environment variables by removing invalid paths, expanding environment variable references, and adding missing application paths.
+  It exports current environment variables to temporary registry files for backup.
+
+.NOTES
+  Requires admin privileges to modify machine-level environment variables.
+  The script exports user and machine environment variables to temporary `.reg` files.
+#>
 using namespace System.Management.Automation
 
 [CmdletBinding()]
