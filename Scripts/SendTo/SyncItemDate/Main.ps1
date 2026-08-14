@@ -1,3 +1,16 @@
+<#
+.SYNOPSIS
+  Synchronizes item dates between locations.
+
+.DESCRIPTION
+  This script synchronizes item dates between the specified paths.
+
+.PARAMETER LiteralPath
+  Specifies the paths of items to synchronize.
+
+.NOTES
+  Requires appropriate permissions to access the specified paths.
+#>
 using namespace System.IO
 using namespace System.Globalization
 
