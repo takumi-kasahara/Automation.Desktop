@@ -31,6 +31,8 @@ function Get-ExifDate {
     Get-ExifDate -Path 'C:\Pictures\*.jpg'
     ```
 
+    Returns EXIF timestamps for every matching JPEG file.
+
   .EXAMPLE
     ``` powershell
     Get-ExifDate -LiteralPath 'C:\Pictures\IMG_0001.JPG' -AsJson
@@ -176,6 +178,8 @@ function Set-ExifDate {
     Set-ExifDate -Path 'C:\Photos\*.jpg' -Date ([datetime]'2024-01-02 03:04:05') -Force
     ```
 
+    Sets the EXIF timestamp for every matching JPEG file.
+
   .EXAMPLE
     ``` powershell
     Set-ExifDate -LiteralPath 'C:\Photos\IMG_0001.jpg' -Date ([datetime]'2024-01-02 03:04:05') -WhatIf
@@ -275,6 +279,8 @@ function Remove-ExifDate {
     ``` powershell
     Remove-ExifDate -Path 'C:\Photos\*.jpg' -Force
     ```
+
+    Removes EXIF timestamps from every matching JPEG file.
 
   .EXAMPLE
     ``` powershell

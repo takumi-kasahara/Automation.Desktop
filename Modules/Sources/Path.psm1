@@ -26,6 +26,8 @@ function Compress-EnvironmentVariable {
     Compress-EnvironmentVariable -InputString 'Path is C:\Users\User; temp is C:\Temp'
     ```
 
+    Replaces matching path values with environment-variable references.
+
   .EXAMPLE
     ``` powershell
     Compress-EnvironmentVariable -InputString 'My home is C:\Users\User and path is C:\Users'
@@ -69,6 +71,8 @@ function Expand-EnvironmentVariable {
     Expand-EnvironmentVariable -InputString '%USERPROFILE%\Documents'
     ```
 
+    Expands USERPROFILE to return the full Documents path.
+
   .EXAMPLE
     ``` powershell
     Expand-EnvironmentVariable -InputString 'Path is %PATH%'
@@ -110,6 +114,8 @@ function ConvertTo-LocalPath {
     ``` powershell
     ConvertTo-LocalPath -Path '\\MYPC\Share\Folder\File.txt'
     ```
+
+    Converts a UNC path to its local path when the share is available locally.
 
   .EXAMPLE
     ``` powershell
@@ -191,6 +197,8 @@ function ConvertTo-NetworkPath {
     ``` powershell
     ConvertTo-NetworkPath -Path 'C:\Shared\Folder\File.txt'
     ```
+
+    Converts a local path to its corresponding UNC path.
 
   .EXAMPLE
     ``` powershell
@@ -275,6 +283,8 @@ function ConvertTo-WSLPath {
     ConvertTo-WSLPath -Path 'C:\Users\User\file.txt'
     ```
 
+    Converts the Windows path to its WSL representation.
+
   .EXAMPLE
     ``` powershell
     ConvertTo-WSLPath -LiteralPath 'C:\Users\User\file.txt' -ArgumentList '--quiet'
@@ -347,6 +357,8 @@ function Get-NormalizedPath {
     ``` powershell
     Get-NormalizedPath -Path 'C:\Users\Public\Document.txt'
     ```
+
+    Returns the normalized form of the specified path.
 
   .EXAMPLE
     ``` powershell
@@ -480,6 +492,8 @@ function Move-NormalizedPath {
     ``` powershell
     Move-NormalizedPath -Path 'C:\Temp\*' -WhatIf
     ```
+
+    Shows how matching paths would be renamed to their normalized forms.
 
   .EXAMPLE
     ``` powershell

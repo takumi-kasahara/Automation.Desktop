@@ -36,8 +36,10 @@ function Export-PdfDump {
 
   .EXAMPLE
     ``` powershell
-    Export-PdfDump -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\dump.txt'
-    ```
+  Export-PdfDump -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\dump.txt'
+  ```
+
+  Exports metadata from manual.pdf to a text dump.
 
   .EXAMPLE
     ``` powershell
@@ -148,8 +150,10 @@ function Import-PdfDump {
 
   .EXAMPLE
     ``` powershell
-    Import-PdfDump -Path 'C:\Docs\manual.pdf' -Source 'C:\Temp\meta.dump' -Destination 'C:\Temp\updated.pdf'
-    ```
+  Import-PdfDump -Path 'C:\Docs\manual.pdf' -Source 'C:\Temp\meta.dump' -Destination 'C:\Temp\updated.pdf'
+  ```
+
+  Applies metadata from meta.dump and writes the updated PDF to C:\Temp.
 
   .EXAMPLE
     ``` powershell
@@ -495,8 +499,10 @@ function Split-Pdf {
 
   .EXAMPLE
     ``` powershell
-    Split-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\page_%04d.pdf'
-    ```
+  Split-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\page_%04d.pdf'
+  ```
+
+  Splits manual.pdf into numbered page files in C:\Temp.
 
   .EXAMPLE
     ``` powershell

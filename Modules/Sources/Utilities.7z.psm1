@@ -37,6 +37,8 @@ function Get-ArchivedItem {
     Get-ArchivedItem -Path 'C:\Archives\*.7z'
     ```
 
+    Lists the contents of every matching 7z archive.
+
   .EXAMPLE
     ``` powershell
     Get-ArchivedItem -LiteralPath 'C:\Archives\release.7z' -Encoding ([System.Text.Encoding]::UTF8)
@@ -155,6 +157,8 @@ function Sync-ArchivedItemDate {
     ``` powershell
     Sync-ArchivedItemDate -Path 'C:\Archive\*.7z'
     ```
+
+    Synchronizes timestamps for items in every matching archive.
 
   .EXAMPLE
     ``` powershell

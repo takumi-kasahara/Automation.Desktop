@@ -367,6 +367,8 @@ function Move-ItemToRecycleBin {
     Move-ItemToRecycleBin -Path 'C:\dir\*'
     ```
 
+    Moves every item in C:\dir to the Recycle Bin.
+
   .EXAMPLE
     ``` powershell
     Move-ItemToRecycleBin -LiteralPath 'C:\dir\file.txt'
@@ -470,6 +472,8 @@ function New-Shortcut {
     ``` powershell
     New-Shortcut -Path 'C:\Users\Public\Desktop\Example.lnk' -TargetPath 'C:\Windows\System32\notepad.exe'
     ```
+
+    Creates a public desktop shortcut to Notepad.
 
   .EXAMPLE
     ``` powershell
@@ -586,6 +590,8 @@ function New-UrlShortcut {
     New-UrlShortcut -Path 'C:\Users\Public\Desktop\Example.url' -TargetPath 'https://example.com'
     ```
 
+    Creates a public desktop shortcut to the specified website.
+
   .EXAMPLE
     ``` powershell
     New-UrlShortcut -Path 'C:\Users\Public\Desktop\Example' -TargetPath 'https://example.com' -Force
@@ -659,6 +665,8 @@ function Get-Shortcut {
     Get-Shortcut -Path 'C:\Users\Public\Desktop\Example.lnk'
     ```
 
+    Returns the properties of the matching shortcut.
+
   .EXAMPLE
     ``` powershell
     Get-Shortcut -LiteralPath 'C:\Users\Public\Desktop\Example.lnk'
@@ -730,6 +738,8 @@ function Test-Shortcut {
     ``` powershell
     Test-Shortcut -Path 'C:\Users\Public\Desktop\Example.lnk'
     ```
+
+    Tests whether the matching shortcut target is valid.
 
   .EXAMPLE
     ``` powershell
@@ -804,6 +814,8 @@ function New-NetworkDrive {
     New-NetworkDrive -Name Z -Root '\\server\share'
     ```
 
+    Maps the server share to drive Z.
+
   .EXAMPLE
     ``` powershell
     New-NetworkDrive -Name Z -Root '\\server\share' -Force
@@ -853,6 +865,8 @@ function New-NetworkShortcut {
     ``` powershell
     New-NetworkShortcut -Path '\\server\share'
     ```
+
+    Creates a network shortcut for the server share.
 
   .EXAMPLE
     ``` powershell

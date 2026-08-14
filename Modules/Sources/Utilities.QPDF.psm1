@@ -43,8 +43,10 @@ function ConvertTo-Qdf {
 
   .EXAMPLE
     ``` powershell
-    ConvertTo-Qdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\manual.qdf'
-    ```
+  ConvertTo-Qdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\manual.qdf'
+  ```
+
+  Converts manual.pdf to an editable QDF file in C:\Temp.
 
   .EXAMPLE
     ``` powershell
@@ -146,8 +148,10 @@ function ConvertFrom-Qdf {
 
   .EXAMPLE
     ``` powershell
-    ConvertFrom-Qdf -Path 'C:\Temp\manual.qdf' -Destination 'C:\Docs\manual.pdf'
-    ```
+  ConvertFrom-Qdf -Path 'C:\Temp\manual.qdf' -Destination 'C:\Docs\manual.pdf'
+  ```
+
+  Converts the QDF file back to a PDF document.
 
   .EXAMPLE
     ``` powershell
@@ -247,13 +251,17 @@ function Unblock-Pdf {
 
   .EXAMPLE
     ``` powershell
-    Unblock-Pdf -Path 'C:\Docs\*.pdf'
-    ```
+  Unblock-Pdf -Path 'C:\Docs\*.pdf'
+  ```
+
+  Removes encryption from every PDF that matches the path.
 
   .EXAMPLE
     ``` powershell
-    Unblock-Pdf -LiteralPath 'C:\Docs\manual.pdf' -WhatIf
-    ```
+  Unblock-Pdf -LiteralPath 'C:\Docs\manual.pdf' -WhatIf
+  ```
+
+  Shows the decryption operation for manual.pdf without modifying it.
 
   .EXAMPLE
     ``` powershell
@@ -360,13 +368,17 @@ function Get-PdfPage {
 
   .EXAMPLE
     ``` powershell
-    Get-PdfPage -Path 'C:\Docs\*.pdf'
-    ```
+  Get-PdfPage -Path 'C:\Docs\*.pdf'
+  ```
+
+  Returns the page count for each matching PDF file.
 
   .EXAMPLE
     ``` powershell
-    Get-PdfPage -LiteralPath 'C:\Docs\manual.pdf'
-    ```
+  Get-PdfPage -LiteralPath 'C:\Docs\manual.pdf'
+  ```
+
+  Returns the page count for manual.pdf.
 
   .EXAMPLE
     ``` powershell
