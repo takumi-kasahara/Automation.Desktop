@@ -12,11 +12,8 @@ function Compress-EnvironmentVariable {
     Replaces environment variable values in a string with %NAME% tokens.
 
   .DESCRIPTION
-    Compress-EnvironmentVariable scans the input string for environment variable values
-    and replaces each occurrence with the corresponding variable name wrapped in percent
-    signs (for example, %PATH%). It uses all environment variables from the Env: provider,
-    sorting them by the length of their value in descending order to ensure longer values
-    are replaced before shorter substrings.
+    Scans the input string for environment variable values and replaces each occurrence with the corresponding variable name wrapped in percent signs (for example, %PATH%).
+    Uses all environment variables from the Env: provider, sorting them by the length of their value in descending order to ensure longer values are replaced before shorter substrings.
 
   .PARAMETER InputString
     The string to compress by replacing environment variable values.
@@ -59,9 +56,8 @@ function Expand-EnvironmentVariable {
     Expands environment variable references in a string.
 
   .DESCRIPTION
-    Expand-EnvironmentVariable replaces percent-wrapped environment variable names
-    like %USERPROFILE% with their current values from the environment.
-    If a referenced variable does not exist, the Source token remains unchanged.
+    Replaces percent-wrapped environment variable names like %USERPROFILE% with their current values from the environment.
+    If a referenced variable does not exist, the percent-wrapped token remains unchanged.
 
   .PARAMETER InputString
     The string containing environment variable references to expand.
@@ -98,11 +94,9 @@ function ConvertTo-LocalPath {
     Converts a network share path to its local filesystem path.
 
   .DESCRIPTION
-    ConvertTo-LocalPath accepts a UNC path that begins with a share name and
-    converts it to the corresponding local path on the current computer.
-    When a matching Win32 share is found, the share prefix is replaced with the
-    share's local path. Non-UNC paths are returned unchanged after optional
-    environment-variable compression.
+    Accepts a UNC path that begins with a share name and converts it to the corresponding local path on the current computer.
+    When a matching Win32 share is found, the share prefix is replaced with the share's local path.
+    Non-UNC paths are returned unchanged after optional environment-variable compression.
 
   .PARAMETER Path
     Specifies wildcard-compatible UNC or local paths to convert.
@@ -183,9 +177,8 @@ function ConvertTo-NetworkPath {
     Converts a local filesystem path to a network share path.
 
   .DESCRIPTION
-    ConvertTo-NetworkPath accepts a local path that begins with a shared folder path and
-    converts it to the corresponding UNC path on the current computer.
-    If the local path does not match a defined Win32 share, the Source path is returned.
+    Accepts a local path that begins with a shared folder path and converts it to the corresponding UNC path on the current computer.
+    If the local path does not match a defined Win32 share, the local path is returned.
 
   .PARAMETER Path
     Specifies wildcard-compatible local or UNC paths to convert.
@@ -265,9 +258,8 @@ function ConvertTo-WSLPath {
     Converts a Windows path to a WSL path.
 
   .DESCRIPTION
-    ConvertTo-WSLPath converts a Windows filesystem path into the corresponding
-    WSL (Windows Subsystem for Linux) path by invoking `wsl.exe wslpath -a -u`.
-    It accepts wildcard and literal paths and returns the converted path string(s).
+    Converts a Windows filesystem path into the corresponding WSL (Windows Subsystem for Linux) path by invoking `wsl.exe wslpath -a -u`.
+    Accepts wildcard and literal paths and returns the converted path string(s).
 
   .PARAMETER Path
     Specifies wildcard-compatible Windows paths to convert.
@@ -335,11 +327,9 @@ function Get-NormalizedPath {
     Normalizes Windows file and directory paths.
 
   .DESCRIPTION
-    Get-NormalizedPath normalizes each input path by resolving the target item
-    and normalizing the final path component. It preserves parent directories and
-    converts invalid file name characters as needed. Use `-Compatible` for
-    compatibility normalization forms and `-Decompose` to decompose Unicode
-    characters before re-composition.
+    Normalizes each input path by resolving the target item and normalizing the final path component.
+    Preserves parent directories and converts invalid file name characters as needed.
+    Use `-Compatible` for compatibility normalization forms and `-Decompose` to decompose Unicode characters before re-composition.
 
   .PARAMETER Path
     Specifies wildcard-compatible paths to normalize.
@@ -468,10 +458,8 @@ function Move-NormalizedPath {
     Moves items using normalized paths.
 
   .DESCRIPTION
-    Move-NormalizedPath resolves each specified path, normalizes the final path
-    component, and moves the item to the normalized destination when the path
-    changes. It supports wildcard and literal paths, and it uses ShouldProcess
-    support to allow previewing changes with `-WhatIf`.
+    Resolves each specified path, normalizes the final path component, and moves the item to the normalized destination when the path changes.
+    Supports wildcard and literal paths.
 
   .PARAMETER Path
     Specifies wildcard-compatible paths to move and normalize.

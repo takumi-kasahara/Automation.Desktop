@@ -56,10 +56,8 @@ function Get-DuplicateFile {
     Finds duplicate files in directories by extension, size, and hash.
 
   .DESCRIPTION
-    Get-DuplicateFile scans one or more directories, groups files by extension and length, computes
-    SHA256 hashes for matching candidates, and returns duplicate file objects.
-    The command sorts each duplicate group according to the specified properties and skips the first item
-    in each group, so only duplicate copies are returned.
+    Scans one or more directories, groups files by extension and length, computes SHA256 hashes for matching candidates, and returns duplicate file objects.
+    Sorts each duplicate group according to the specified properties and skips the first item in each group, so only duplicate copies are returned.
 
   .PARAMETER Path
     Specifies directory paths to search. Supports wildcards.
@@ -166,9 +164,8 @@ function Get-EmptyDirectory {
     Gets empty directories from one or more paths.
 
   .DESCRIPTION
-    Get-EmptyDirectory returns directories that contain no child items.
-    It accepts wildcards or literal paths and can search recursively when the
-    -Recurse switch is specified.
+    Returns directories that contain no child items.
+    Accepts wildcards or literal paths and can search recursively when the `-Recurse` switch is specified.
 
   .PARAMETER Path
     Specifies directory paths to search. Supports wildcards.
@@ -240,10 +237,8 @@ function Measure-Directory {
     Calculates directory statistics and metadata summaries.
 
   .DESCRIPTION
-    Measure-Directory evaluates one or more directories and returns
-    a `MeasureDirectoryInfo` object containing requested statistics such as recent
-    file and directory listings, large files, long names, and similar directory names.
-    It supports wildcard-aware `-Path` input and exact `-LiteralPath` input.
+    Evaluates one or more directories and returns a `MeasureDirectoryInfo` object containing requested statistics such as recent file and directory listings, large files, long names, and similar directory names.
+    Supports wildcard-aware `-Path` input and exact `-LiteralPath` input.
 
   .PARAMETER Path
     Specifies one or more directory paths to analyze. Wildcards are supported.
@@ -442,9 +437,8 @@ function Set-ItemAttribute {
     Sets one or more file or directory attributes.
 
   .DESCRIPTION
-    Set-ItemAttribute updates the specified item's file attributes by adding the
-    requested attribute flags. It supports wildcards via `-Path` and literal paths
-    via `-LiteralPath`, and uses `ShouldProcess` so that `-WhatIf` is supported.
+    Updates the specified item's file attributes by adding the requested attribute flags.
+    Supports wildcards via `-Path` and literal paths via `-LiteralPath`.
 
   .PARAMETER Path
     Specifies one or more paths to files or directories. Wildcards are supported.
@@ -531,9 +525,8 @@ function Remove-ItemAttribute {
     Removes one or more file or directory attributes.
 
   .DESCRIPTION
-    Remove-ItemAttribute clears the specified attribute flags from the target item.
-    It supports wildcards via `-Path` and literal paths via `-LiteralPath`,
-    and honors `ShouldProcess` so that `-WhatIf` can be used safely.
+    Clears the specified attribute flags from the target item.
+    Supports wildcards via `-Path` and literal paths via `-LiteralPath`.
 
   .PARAMETER Path
     Specifies one or more paths to files or directories. Wildcards are supported.
@@ -618,7 +611,9 @@ function Set-ItemDate {
     Sets or fixes file and directory timestamps, optionally using EXIF data.
 
   .DESCRIPTION
-    The Set-ItemDate command sets CreationTime, LastWriteTime, and LastAccessTime for files or directories. You can set all timestamps at once, set them individually, or update them from EXIF metadata. Supports wildcards and literal paths. If CreationTime is later than LastWriteTime, TimeFix will automatically correct it.
+    Sets CreationTime, LastWriteTime, and LastAccessTime for files or directories.
+    You can set all timestamps at once, set them individually, or update them from EXIF metadata.
+    Supports wildcards and literal paths. If CreationTime is later than LastWriteTime, `-TimeFix` will automatically correct it.
 
   .PARAMETER Path
     Path(s) to the target file(s) or directory(ies). Wildcards supported.
@@ -790,10 +785,9 @@ function Sync-DirectoryDate {
     Synchronizes directory timestamps from child file timestamps.
 
   .DESCRIPTION
-    Sync-DirectoryDate updates the CreationTime, LastWriteTime, and LastAccessTime of one or more directories
-    based on the timestamps of child files. The command computes the earliest CreationTime and the latest
-    LastWriteTime and LastAccessTime among all nested files, then applies those values to each target directory.
-    If a directory contains no files, the command writes a warning and does not modify that directory.
+    Updates the CreationTime, LastWriteTime, and LastAccessTime of one or more directories based on the timestamps of child files.
+    Computes the earliest CreationTime and the latest LastWriteTime and LastAccessTime among all nested files, then applies those values to each target directory.
+    If a directory contains no files, writes a warning and does not modify that directory.
 
   .PARAMETER Path
     Path(s) to target directories. Wildcards supported.
@@ -869,7 +863,8 @@ function Sync-ItemDate {
     Bulk synchronizes and fixes timestamps for files and directories.
 
   .DESCRIPTION
-    Sync-ItemDate unblocks and fixes timestamps for files or directories, updates file timestamps using EXIF data when available, and synchronizes directory timestamps to match nested child items. The command processes each target path, updates file timestamps, and then refreshes directory timestamps for any nested directories.
+    Unblocks and fixes timestamps for files or directories, updates file timestamps using EXIF data when available, and synchronizes directory timestamps to match nested child items.
+    Processes each target path, updates file timestamps, and then refreshes directory timestamps for any nested directories.
 
   .PARAMETER Path
     Path(s) to the target file(s) or directory(ies). Wildcards supported.
@@ -1028,17 +1023,13 @@ function Export-ItemDate {
     Exports file and directory timestamps to a JSON file.
 
   .DESCRIPTION
-    Export-ItemDate reads the CreationTime, LastWriteTime, and LastAccessTime of one or more
-    files or directories specified by Path or LiteralPath and writes them to a JSON file
-    specified by Destination. The command supports wildcards via -Path and literal paths via
-    -LiteralPath. When an input item is a directory, the command recursively enumerates every
-    file within it, including files in subfolders, and exports each file's timestamps. The
-    Path property in the JSON output is written as a path relative to a base directory.
-    When the input is a directory, the base directory is the parent of that directory, so the
-    exported paths include the directory name (for example 'dir\file.txt'). When the input is
-    one or more files, the base directory is their common parent directory, so the data can be
-    re-applied on another machine or under a different root. Use -Force to overwrite an existing
-    destination file, or -NoClobber to fail if the destination already exists.
+    Reads the CreationTime, LastWriteTime, and LastAccessTime of one or more files or directories specified by Path or LiteralPath and writes them to a JSON file specified by Destination.
+    Supports wildcards via -Path and literal paths via `-LiteralPath`.
+    When an input item is a directory, recursively enumerates every file within it, including files in subfolders, and exports each file's timestamps.
+    The Path property in the JSON output is written as a path relative to a base directory.
+    When the input is a directory, the base directory is the parent of that directory, so the exported paths include the directory name (for example 'dir\file.txt').
+    When the input is one or more files, the base directory is their common parent directory, so the data can be re-applied on another machine or under a different root.
+    Use `-Force` to overwrite an existing destination file, or `-NoClobber` to fail if the destination already exists.
 
   .PARAMETER Path
     Path(s) to the target file(s) or directory(ies). Wildcards supported. When a directory is
@@ -1195,14 +1186,9 @@ function Import-ItemDate {
     Imports file and directory timestamps from a JSON file.
 
   .DESCRIPTION
-    Import-ItemDate reads one or more JSON files produced by Export-ItemDate and applies the
-    CreationTime, LastWriteTime, and LastAccessTime values to each corresponding
-    file or directory. When a record's Path property is a relative path, it is
-    interpreted as relative to the folder that contains the JSON file, so the data
-    exported by Export-ItemDate can be re-applied under the same relative layout.
-    The command supports -WhatIf and -Confirm via ShouldProcess, and -Force to set
-    timestamps on read-only items. By default the command does not emit output; use
-    -PassThru to return each successfully updated file as a FileInfo object.
+    Reads one or more JSON files produced by Export-ItemDate and applies the CreationTime, LastWriteTime, and LastAccessTime values to each corresponding file or directory.
+    When a record's Path property is a relative path, it is interpreted as relative to the folder that contains the JSON file, so the data exported by `Export-ItemDate` can be re-applied under the same relative layout.
+    By default the command does not emit output; use -PassThru to return each successfully updated file as a FileInfo object.
 
   .PARAMETER Path
     Path(s) to the JSON file(s) that contain the timestamp data. Accepts an array of paths.

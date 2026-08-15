@@ -17,10 +17,8 @@ function Get-ArchivedItem {
     Reads archived file metadata from a 7-Zip archive.
 
   .DESCRIPTION
-    Get-ArchivedItem inspects archive files specified by Path or LiteralPath and
-    returns metadata for the items contained in each archive. It invokes
-    `7z.exe l -ba -slt -sccUTF-8` to obtain a machine-readable listing, then parses
-    each entry's `Path`, `Created`, `Modified`, and `Accessed` values.
+    Reads archived file metadata from a 7-Zip archive.
+    It uses `7z.exe` to list entries and parse their details.
 
   .PARAMETER Path
     Specifies wildcard-compatible archive paths to inspect.
@@ -29,8 +27,7 @@ function Get-ArchivedItem {
     Specifies literal archive paths to inspect.
 
   .PARAMETER Encoding
-    Specifies the text encoding to use for 7-Zip output.
-    When provided, the function passes `-mcp=<codepage>` to `7z.exe`.
+    Specifies the text encoding to use for 7-Zip output. When provided, the function passes `-mcp=<codepage>` to `7z.exe`.
 
   .EXAMPLE
     ``` powershell
@@ -114,8 +111,7 @@ function Get-ArchivedItem {
                 LastWriteTime  = -not [string]::IsNullOrEmpty($modified) ? [datetime]::Parse($modified) : $null
                 LastAccessTime = -not [string]::IsNullOrEmpty($accessed) ? [datetime]::Parse($accessed) : $null
               }
-            }
-            finally {
+            } finally {
               $created = $null
               $modified = $null
               $accessed = $null
@@ -129,8 +125,7 @@ function Get-ArchivedItem {
     if (Test-Path -LiteralPath $log) {
       if (@(Get-Content -LiteralPath $log).Count -gt 0) {
         "LOG:`t$log" | Out-Host
-      }
-      else {
+      } else {
         Remove-Item -LiteralPath $log -Force
       }
     }
@@ -142,10 +137,8 @@ function Sync-ArchivedItemDate {
     Updates a file's timestamp from archive metadata.
 
   .DESCRIPTION
-    Sync-ArchivedItemDate reads archive metadata from Get-ArchivedItem and applies
-    the reported creation, modification, and access times to the archive file
-    itself. It supports wildcard and literal paths and honors the built-in
-    `-WhatIf` common parameter.
+    Reads archive metadata from Get-ArchivedItem and applies the reported creation, modification, and access times to the archive file itself.
+    It uses `7z.exe` to read archive metadata.
 
   .PARAMETER Path
     Specifies wildcard-compatible archive paths to update.

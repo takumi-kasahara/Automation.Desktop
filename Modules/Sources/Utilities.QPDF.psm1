@@ -20,8 +20,9 @@ function ConvertTo-Qdf {
     Converts a PDF file to QDF format using QPDF.
 
   .DESCRIPTION
-    ConvertTo-Qdf reads a PDF file specified by FilePath and converts it to
-    QDF format, writing the result to the specified Destination.
+  Converts a PDF file to QDF format using QPDF.
+  Uses `qpdf.exe` to perform the conversion.
+  Supports -WhatIf for previewing changes without execution.
 
   .PARAMETER Path
     Specifies the path of the PDF file to convert.
@@ -125,8 +126,9 @@ function ConvertFrom-Qdf {
     Converts a QDF file back to PDF format using QPDF.
 
   .DESCRIPTION
-    ConvertFrom-Qdf reads a QDF file specified by FilePath and converts it
-    back to PDF format, writing the result to the specified Destination.
+  Converts a QDF file back to PDF format using QPDF.
+  Uses `qpdf.exe` to perform the conversion.
+  Supports -WhatIf for previewing changes without execution.
 
   .PARAMETER Path
     Specifies the path of the QDF file to convert.

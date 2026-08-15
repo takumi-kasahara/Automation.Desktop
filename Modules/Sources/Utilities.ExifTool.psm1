@@ -9,10 +9,8 @@ function Get-ExifDate {
     Reads Exif timestamp metadata from image files.
 
   .DESCRIPTION
-    Get-ExifDate reads files specified by Path or LiteralPath, invokes `ExifTool.exe`
-    to retrieve Exif date metadata, and returns objects containing `Path`,
-    `CreationTime`, and `LastWriteTime` values. It supports recursive file
-    enumeration with `-Recurse` and JSON output from ExifTool with `-AsJson`.
+    Reads Exif timestamps from image files.
+    It uses `ExifTool.exe` to extract Exif date tags and returns the results as PathInfo objects.
 
   .PARAMETER Path
     Specifies wildcard-compatible file paths to inspect.
@@ -153,10 +151,8 @@ function Set-ExifDate {
     Sets Exif timestamps on image files.
 
   .DESCRIPTION
-    Set-ExifDate updates image files specified by Path or LiteralPath with a
-    supplied timestamp. It invokes `ExifTool.exe` with `-AllDates` and supports
-    recursive file enumeration with `-Recurse`. The function uses `SupportsShouldProcess`
-    to allow previewing changes with `-WhatIf`.
+    Updates image files specified by Path or LiteralPath with a supplied timestamp.
+    It uses `ExifTool.exe` to set Exif date tags.
 
   .PARAMETER Path
     Specifies wildcard-compatible file paths to update.
@@ -258,10 +254,8 @@ function Remove-ExifDate {
     Removes Exif timestamps from image files.
 
   .DESCRIPTION
-    Remove-ExifDate clears Exif date metadata from files specified by Path or
-    LiteralPath. It invokes `ExifTool.exe` with `-AllDates=` to remove Exif date
-    tags, supports recursive file enumeration with `-Recurse`, and uses
-    `SupportsShouldProcess` so changes can be previewed with `-WhatIf`.
+    Removes Exif date metadata from files.
+    It uses `ExifTool.exe` to clear Exif date tags.
 
   .PARAMETER Path
     Specifies wildcard-compatible file paths to update.

@@ -11,10 +11,9 @@ function Export-PdfDump {
     Exports PDF metadata dump information using PDFtk.
 
   .DESCRIPTION
-    Export-PdfDump reads a PDF file specified by FilePath and
-    invokes `pdftk.exe` to write PDF metadata dump output in UTF-8 format to the
-    specified Destination. Standard error output from PDFtk is collected to a temporary
-    log file and the log is removed when it is empty.
+    Exports PDF metadata dump information using PDFtk.
+    It uses `pdftk.exe` to write metadata dump output in UTF-8 format to the destination.
+    Collects standard error to a temporary log file and removes it when empty.
 
   .PARAMETER Path
     Specifies the path of the PDF file to export metadata from.
@@ -36,8 +35,8 @@ function Export-PdfDump {
 
   .EXAMPLE
     ``` powershell
-  Export-PdfDump -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\dump.txt'
-  ```
+    Export-PdfDump -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\dump.txt'
+    ```
 
   Exports metadata from manual.pdf to a text dump.
 
@@ -125,10 +124,8 @@ function Import-PdfDump {
     Imports PDF metadata dump information into PDF files using PDFtk.
 
   .DESCRIPTION
-    Import-PdfDump reads a PDF file specified by FilePath
-    and applies metadata from a PDF dump file to the target PDF using
-    `pdftk.exe update_info_utf8`. The command supports `-WhatIf` through
-    `SupportsShouldProcess` so metadata changes can be previewed without writing.
+    Imports PDF metadata dump information into PDF files using PDFtk.
+    It uses `pdftk.exe update_info_utf8` to apply metadata from a dump file.
 
   .PARAMETER Path
     Specifies the path of the PDF file to update.
@@ -234,24 +231,12 @@ function Join-Pdf {
     Joins PDF files into a single PDF by using PDFtk.
 
   .DESCRIPTION
-    Join-Pdf accepts either Path or LiteralPath and resolves it to one or more
-    items. If all resolved items are PDF files, those files are joined in the
-    resolved order. When Path contains wildcard characters, Join-Pdf does not
-    expand them and passes each wildcard path to PDFtk as specified. If the
-    resolved input is a single directory, all PDF files under the directory are
-    joined by using the pattern '<directory>\*.pdf'.
-
-    The function rejects inputs that resolve to two or more directories, or a
-    mixture of files and directories.
-
-    The function invokes `pdftk.exe` with `cat output` and always appends
-    `verbose`. It supports `-WhatIf` and `-Confirm` through
-    `SupportsShouldProcess`.
+    Joins PDF files into a single PDF by using PDFtk.
+    It uses `pdftk.exe cat output` to merge files.
 
   .PARAMETER Path
     Specifies wildcard-compatible paths to source items.
-    Wildcard paths are passed to PDFtk without expansion. The source items must
-    otherwise resolve to PDF files only, or to a single directory.
+    Wildcard paths are passed to PDFtk without expansion. The source items must otherwise resolve to PDF files only, or to a single directory.
 
   .PARAMETER LiteralPath
     Specifies literal paths to source items.
@@ -259,13 +244,11 @@ function Join-Pdf {
 
   .PARAMETER Destination
     Specifies the output PDF path.
-    When omitted and the source is a single directory, the output defaults to
-    '{directoryName}.pdf' in the parent folder of the directory.
+    When omitted and the source is a single directory, the output defaults to '{directoryName}.pdf' in the parent folder of the directory.
     This parameter is optional only when the source is a single directory.
 
   .PARAMETER Force
-    If specified, allows overwrite behavior for an existing read-only
-    destination file by temporarily clearing the read-only attribute.
+    If specified, allows overwrite behavior for an existing read-only destination file by temporarily clearing the read-only attribute.
 
   .PARAMETER NoClobber
     If specified, the function throws an error when Destination already exists.

@@ -3,13 +3,12 @@
   Mirrors a source directory to a destination using Robocopy.
 
 .DESCRIPTION
-  Invokes Robocopy.exe with mirroring options to replicate a source directory
-  to a destination. Displays progress, writes a log to the TEMP directory, and
-  returns an object describing the operation. Warnings are emitted if Robocopy
-  reports a serious error (exit code >= 8).
-
-  Supports -WhatIf. When -WhatIf is specified, Robocopy runs with the /L
-  (list only) switch so no files are actually copied, moved, or deleted.
+  Mirrors a source directory to a destination using Robocopy.
+  It uses `Robocopy.exe` with mirroring options to replicate files.
+  Displays progress, writes a log to the TEMP directory.
+  Returns an object describing the operation.
+  Emits warnings if Robocopy reports a serious error (exit code >= 8).
+  Supports -WhatIf. When specified, Robocopy runs with /L so no files are copied, moved, or deleted.
 
 .PARAMETER Source
   The source directory path to copy from. Must exist.

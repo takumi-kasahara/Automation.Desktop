@@ -26,9 +26,8 @@ function Get-ItemDetail {
     Retrieves Windows shell property details for files and folders.
 
   .DESCRIPTION
-    Get-ItemDetail resolves each specified item and enumerates shell metadata for the
-    item using the Windows Shell.Application COM interface. It returns `ItemDetail`
-    objects containing the detail index, property name, and corresponding value.
+    Resolves each specified item and enumerates shell metadata for the item using the Windows Shell.Application COM interface.
+    Returns `ItemDetail` objects containing the detail index, property name, and corresponding value.
 
   .PARAMETER Path
     Specifies one or more item paths to search. Wildcards are supported.
@@ -350,17 +349,14 @@ function Move-ItemToRecycleBin {
     Moves files or directories to the Windows Recycle Bin.
 
   .DESCRIPTION
-    Move-ItemToRecycleBin sends the specified items to the Recycle Bin using the
-    Windows Shell.Application COM interface. It supports wildcards via `-Path` and
-    literal paths via `-LiteralPath`, and honors `ShouldProcess` so that `-WhatIf`
-    can be used safely.
+    Sends the specified items to the Recycle Bin using the Windows `Shell.Application` COM interface.
+    Supports wildcards via `-Path` and literal paths via `-LiteralPath`.
 
   .PARAMETER Path
     Specifies one or more paths to files or directories. Wildcards are supported.
 
   .PARAMETER LiteralPath
     Specifies one or more literal paths to files or directories.
-
 
   .EXAMPLE
     ``` powershell
@@ -434,18 +430,14 @@ function New-Shortcut {
     Creates a Windows shortcut file (.lnk).
 
   .DESCRIPTION
-    New-Shortcut creates a Windows Shell shortcut at the specified destination.
-    If the destination path does not end with `.lnk`, the cmdlet appends the
-    extension automatically. The command supports `-WhatIf` and `-Confirm` via
-    `ShouldProcess` and can overwrite existing files with `-Force`.
+    Creates a Windows Shell shortcut at the specified destination.
+    If the destination path does not end with `.lnk`, the cmdlet appends the extension automatically.
 
   .PARAMETER Path
-    Specifies the shortcut file path to create. If the path has no extension,
-    `.lnk` is appended automatically.
+    Specifies the shortcut file path to create. If the path has no extension, `.lnk` is appended automatically.
 
   .PARAMETER TargetPath
-    Specifies the target file or URL for the shortcut. If the path exists, it is
-    resolved to the canonical path.
+    Specifies the target file or URL for the shortcut. If the path exists, it is resolved to the canonical path.
 
   .PARAMETER WorkingDirectory
     Specifies the working directory for the shortcut.
@@ -570,10 +562,8 @@ function New-UrlShortcut {
     Creates an Internet shortcut file (.url).
 
   .DESCRIPTION
-    New-UrlShortcut creates a Windows Internet Shortcut file that points to a
-    well-formed absolute URI. If the destination path does not end with `.url`, the
-    cmdlet appends the extension automatically. The cmdlet supports `-WhatIf`
-    through `ShouldProcess` and can overwrite an existing file with `-Force`.
+    Creates a Windows Internet Shortcut file that points to a well-formed absolute URI.
+    If the destination path does not end with `.url`, the cmdlet appends the extension automatically.
 
   .PARAMETER Path
     Specifies the shortcut file path to create. If the path has no extension,
@@ -650,8 +640,8 @@ function Get-Shortcut {
     Returns a Windows shortcut object for the specified file path.
 
   .DESCRIPTION
-    Get-Shortcut resolves the specified shortcut path and returns a
-    `WScript.Shell` shortcut object. The cmdlet supports both wildcard-aware
+    Resolves the specified shortcut path and returns a
+    `WScript.Shell` shortcut object. Supports both wildcard-aware
     `-Path` input and literal `-LiteralPath` input.
 
   .PARAMETER Path
@@ -724,9 +714,9 @@ function Test-Shortcut {
     Verifies that a shortcut points to an existing target.
 
   .DESCRIPTION
-    Test-Shortcut resolves the specified shortcut file path, reads the target path
-    from the shortcut, and returns `True` when the shortcut target exists. It
-    supports wildcard-aware `-Path` input and exact `-LiteralPath` input.
+    Resolves the specified shortcut file path, reads the target path
+    from the shortcut, and returns `True` when the shortcut target exists.
+    Supports wildcard-aware `-Path` input and exact `-LiteralPath` input.
 
   .PARAMETER Path
     Specifies one or more shortcut file paths, with wildcard support.
@@ -795,10 +785,8 @@ function New-NetworkDrive {
     Creates a persistent mapped network drive.
 
   .DESCRIPTION
-    New-NetworkDrive maps a network location to a drive letter using a
-    persistent PowerShell drive. If the drive letter is already in use,
-    specifying `-Force` removes the existing mapping before creating a new one.
-    The cmdlet supports `-WhatIf` via `ShouldProcess`.
+    Maps a network location to a drive letter using a persistent PowerShell drive.
+    If the drive letter is already in use, specifying `-Force` removes the existing mapping before creating the new one.
 
   .PARAMETER Name
     Specifies the drive letter to assign to the network location.
@@ -850,8 +838,8 @@ function New-NetworkShortcut {
     Creates a Network Shortcuts folder item that points to a specified path.
 
   .DESCRIPTION
-    New-NetworkShortcut creates a folder under the Windows Network Shortcuts
-    folder and configures it with the required desktop.ini settings. It also
+    Creates a folder under the Windows Network Shortcuts
+    folder and configures it with the required desktop.ini settings. Also
     creates a target shortcut inside the new folder. If the destination already
     exists, `-Force` removes it before recreating it.
 
