@@ -48,6 +48,7 @@ InModuleScope 'Utilities.7z' {
     Context 'Output' {
       It 'returns archived items with Path and timestamp properties' {
         $result = Get-ArchivedItem -Path 'C:\Archive\*.7z'
+
         $result | Should-BeCollection -Count 1
         $result[0].Path | Should-BeString 'file1.txt'
         $result[0].CreationTime | Should-Be ([datetime]'2025-01-02 03:04:05')
@@ -56,6 +57,7 @@ InModuleScope 'Utilities.7z' {
       }
       It 'returns archived items with Path property by LiteralPath' {
         $result = Get-ArchivedItem -LiteralPath 'C:\Archive\sample.7z'
+
         $result | Should-BeCollection -Count 1
         $result[0].Path | Should-BeString 'file1.txt'
       }
@@ -78,7 +80,9 @@ InModuleScope 'Utilities.7z' {
     Context 'Edge cases' {
       It 'returns empty array when no archive metadata is returned' {
         Mock -CommandName 7z.exe
+
         $result = Get-ArchivedItem -LiteralPath 'C:\Archive\sample.7z'
+
         $result | Should-BeCollection -Count 0
       }
     }
@@ -105,29 +109,35 @@ InModuleScope 'Utilities.7z' {
     Context 'ParameterSetName' {
       It 'applies archive timestamps using Path' {
         Sync-ArchivedItemDate -Path 'C:\Archive\*.7z'
+
         Should-Invoke -CommandName Set-ItemDate -Times 1 -Exactly
         Should-Invoke -CommandName Get-ArchivedItem -Times 1 -Exactly
       }
       It 'applies archive timestamps using Path with ValueFromPipeline' {
         'C:\Archive\*.7z' | Sync-ArchivedItemDate
+
         Should-Invoke -CommandName Set-ItemDate -Times 1 -Exactly
       }
       It 'applies archive timestamps using Path with ValueFromPipelineByPropertyName' {
         [PSCustomObject]@{ Path = 'C:\Archive\*.7z' } | Sync-ArchivedItemDate
+
         Should-Invoke -CommandName Set-ItemDate -Times 1 -Exactly
       }
       It 'applies archive timestamps using LiteralPath' {
         Sync-ArchivedItemDate -LiteralPath 'C:\Archive\sample.7z'
+
         Should-Invoke -CommandName Set-ItemDate -Times 1 -Exactly
       }
       It 'applies archive timestamps using LiteralPath with ValueFromPipelineByPropertyName' {
         [PSCustomObject]@{ LiteralPath = 'C:\Archive\sample.7z' } | Sync-ArchivedItemDate
+
         Should-Invoke -CommandName Set-ItemDate -Times 1 -Exactly
       }
     }
     Context 'SupportsShouldProcess' {
       It 'passes WhatIf through to Set-ItemDate' {
         Sync-ArchivedItemDate -LiteralPath 'C:\Archive\sample.7z' -WhatIf
+
         Should-Invoke -CommandName Set-ItemDate -Times 1 -Exactly
       }
     }
@@ -135,6 +145,7 @@ InModuleScope 'Utilities.7z' {
       It 'does not update when no archive metadata is returned' {
         Mock -CommandName Get-ArchivedItem
         Sync-ArchivedItemDate -Path 'C:\Archive\*.7z'
+
         Should-Invoke -CommandName Set-ItemDate -Times 0 -Exactly
       }
     }

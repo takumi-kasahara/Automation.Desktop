@@ -14,7 +14,8 @@ InModuleScope 'Utilities.PDFtk' {
       [OutputType([SecureString])]
       [SuppressMessage('PSAvoidUsingConvertToSecureStringWithPlainText', '', Justification = 'Used in tests to generate random passwords for verification purposes')]
       param (
-        [string]$Text
+        [string]
+        $Text
       )
       return ConvertTo-SecureString -String $Text -AsPlainText -Force
     }
@@ -239,24 +240,29 @@ InModuleScope 'Utilities.PDFtk' {
     Context 'ParameterSetName' {
       It 'calls pdftk.exe with Path parameter set' {
         Join-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\merged.pdf'
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly
       }
       It 'calls pdftk.exe with wildcard Path parameter set' {
         Join-Pdf -Path 'C:\Docs\*.pdf' -Destination 'C:\Temp\merged.pdf'
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly
       }
       It 'calls pdftk.exe with multiple file paths' {
         Join-Pdf -Path 'C:\Docs\chapter1.pdf', 'C:\Docs\chapter2.pdf' -Destination 'C:\Temp\merged.pdf'
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly
       }
       It 'calls pdftk.exe with LiteralPath parameter set' {
         Join-Pdf -LiteralPath 'C:\Docs\manual.pdf' -Destination 'C:\Temp\merged.pdf'
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly
       }
     }
     Context 'Other parameters' {
       It 'passes quoted file path and verbose when source is a file' {
         Join-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\merged.pdf'
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
           $args[0] -eq '"C:\Docs\manual.pdf"' -and
           $args -contains 'cat' -and
@@ -267,6 +273,7 @@ InModuleScope 'Utilities.PDFtk' {
       }
       It 'passes quoted file list and verbose when multiple files are specified' {
         Join-Pdf -Path 'C:\Docs\chapter1.pdf', 'C:\Docs\chapter2.pdf' -Destination 'C:\Temp\merged.pdf'
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
           $args[0] -eq '"C:\Docs\chapter1.pdf" "C:\Docs\chapter2.pdf"' -and
           $args -contains 'cat' -and
@@ -277,6 +284,7 @@ InModuleScope 'Utilities.PDFtk' {
       }
       It 'passes wildcard Path as specified without expanding it' {
         Join-Pdf -Path 'C:\Docs\*.pdf' -Destination 'C:\Temp\merged.pdf'
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
           $args[0] -eq '"C:\Docs\*.pdf"' -and
           $args -contains 'cat' -and
@@ -287,6 +295,7 @@ InModuleScope 'Utilities.PDFtk' {
       }
       It 'passes quoted directory wildcard and verbose when source is a directory' {
         Join-Pdf -Path 'C:\Docs' -Destination 'C:\Temp\merged.pdf'
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
           $args[0] -eq '"C:\Docs\*.pdf"' -and
           $args -contains 'cat' -and
@@ -297,6 +306,7 @@ InModuleScope 'Utilities.PDFtk' {
       }
       It 'uses directory name as default output when Destination is omitted' {
         Join-Pdf -Path 'C:\Docs'
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
           $args[0] -eq '"C:\Docs\*.pdf"' -and
           $args -contains 'cat' -and
@@ -309,6 +319,7 @@ InModuleScope 'Utilities.PDFtk' {
     Context 'SupportsShouldProcess' {
       It 'does not call pdftk.exe when WhatIf is specified' {
         Join-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\merged.pdf' -WhatIf
+
         Should-Invoke -CommandName pdftk.exe -Times 0 -Exactly
       }
     }
@@ -332,6 +343,7 @@ InModuleScope 'Utilities.PDFtk' {
     Context 'Other parameters' {
       It 'passes owner_pw to pdftk.exe when OwnerPassword is specified' {
         Join-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\merged.pdf' -OwnerPassword (Get-Password -Text 'owner') -Force
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
           $args -contains 'owner_pw' -and
           $args -contains 'cat'
@@ -339,6 +351,7 @@ InModuleScope 'Utilities.PDFtk' {
       }
       It 'passes user_pw to pdftk.exe when UserPassword is specified' {
         Join-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\merged.pdf' -UserPassword (Get-Password -Text 'user') -Force
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
           $args -contains 'user_pw' -and
           $args -contains 'cat'
@@ -391,22 +404,26 @@ InModuleScope 'Utilities.PDFtk' {
     Context 'ParameterSetName' {
       It 'calls pdftk.exe with Path parameter set' {
         Split-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\page_%04d.pdf'
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly
       }
       It 'calls pdftk.exe with LiteralPath parameter set' {
         Split-Pdf -LiteralPath 'C:\Docs\manual.pdf' -Destination 'C:\Temp\page_%04d.pdf'
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly
       }
     }
     Context 'SupportsShouldProcess' {
       It 'does not call pdftk.exe when WhatIf is specified' {
         Split-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\page_%04d.pdf' -WhatIf
+
         Should-Invoke -CommandName pdftk.exe -Times 0 -Exactly
       }
     }
     Context 'Other parameters' {
       It 'passes burst, output and verbose to pdftk.exe' {
         Split-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\page_%04d.pdf'
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
           $args -contains 'C:\Docs\manual.pdf' -and
           $args -contains 'burst' -and
@@ -427,6 +444,7 @@ InModuleScope 'Utilities.PDFtk' {
     Context 'Other parameters' {
       It 'passes owner_pw to pdftk.exe when OwnerPassword is specified' {
         Split-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\page_%04d.pdf' -OwnerPassword (Get-Password -Text 'owner')
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
           $args -contains 'owner_pw' -and
           $args -contains 'burst'
@@ -434,6 +452,7 @@ InModuleScope 'Utilities.PDFtk' {
       }
       It 'passes user_pw to pdftk.exe when UserPassword is specified' {
         Split-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\page_%04d.pdf' -UserPassword (Get-Password -Text 'user')
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
           $args -contains 'user_pw' -and
           $args -contains 'burst'

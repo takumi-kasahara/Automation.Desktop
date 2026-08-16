@@ -1,3 +1,5 @@
+using namespace System.Management.Automation
+
 [CmdletBinding()]
 param ()
 
@@ -27,14 +29,18 @@ InModuleScope 'Path' {
     Context 'Output' {
       It 'replaces environment variable values with percent-wrapped names' {
         $inputString = 'Begin C:\Users\User and then C:\Users end'
+
         $result = Compress-EnvironmentVariable -InputString $inputString
+
         $result | Should-BeString 'Begin %HOME% and then %PATH% end'
       }
     }
     Context 'Edge cases' {
       It 'skips empty environment variable values' {
         $inputString = 'Value C:\Users\User and empty text'
+
         $result = Compress-EnvironmentVariable -InputString $inputString
+
         $result | Should-NotMatchString '%EMPTY%'
       }
       It 'replaces longer matches before shorter substrings' {
@@ -77,16 +83,19 @@ InModuleScope 'Path' {
     Context 'Output' {
       It 'expands a single environment variable' {
         $result = Expand-EnvironmentVariable -InputString '%TEST_EXPAND_VAR1%\file.txt'
+
         $result | Should-BeString 'C:\Users\User\file.txt'
       }
       It 'expands multiple environment variables' {
         $result = Expand-EnvironmentVariable -InputString '%TEST_EXPAND_VAR1%\%TEST_EXPAND_VAR2%'
+
         $result | Should-BeString 'C:\Users\User\C:\Temp'
       }
     }
     Context 'Edge cases' {
       It 'leaves unknown environment variables unchanged' {
         $result = Expand-EnvironmentVariable -InputString '%UNKNOWN_ENV_VAR%'
+
         $result | Should-BeString '%UNKNOWN_ENV_VAR%'
       }
     }
@@ -125,6 +134,7 @@ InModuleScope 'Path' {
     Context 'ParameterSetName' {
       It 'converts UNC share paths by Path with wildcards' {
         $result = ConvertTo-LocalPath -Path '\\server\share\*'
+
         $result | Should-BeString 'C:\share\dir\file.txt'
       }
       It 'converts UNC share paths by Path with ValueFromPipeline' {
@@ -135,12 +145,14 @@ InModuleScope 'Path' {
       }
       It 'converts UNC share paths by LiteralPath' {
         $result = ConvertTo-LocalPath -LiteralPath '\\server\share\dir\file.txt'
+
         $result | Should-BeString 'C:\share\dir\file.txt'
       }
     }
     Context 'Edge cases' {
       It 'returns a non-UNC local path unchanged' {
         $result = ConvertTo-LocalPath -Path 'C:\local\dir\file.txt'
+
         $result | Should-BeString 'C:\local\dir\file.txt'
       }
     }
@@ -181,6 +193,7 @@ InModuleScope 'Path' {
     Context 'ParameterSetName' {
       It 'converts local paths to UNC paths by Path with wildcards' {
         $result = ConvertTo-NetworkPath -Path 'C:\share\dir\*'
+
         $result | Should-BeString '\\server\share\dir\file.txt'
       }
       It 'converts local paths to UNC paths by Path with ValueFromPipeline' {
@@ -191,12 +204,14 @@ InModuleScope 'Path' {
       }
       It 'converts local paths to UNC paths by LiteralPath' {
         $result = ConvertTo-NetworkPath -LiteralPath 'C:\share\dir\file.txt'
+
         $result | Should-BeString '\\server\share\dir\file.txt'
       }
     }
     Context 'Edge cases' {
       It 'returns an already UNC path unchanged' {
         $result = ConvertTo-NetworkPath -Path '\\server\share\dir\file.txt'
+
         $result | Should-BeString '\\server\share\dir\file.txt'
       }
     }
@@ -215,6 +230,7 @@ InModuleScope 'Path' {
     Context 'ParameterSetName' {
       It 'converts a Path Windows path to WSL path' {
         $result = ConvertTo-WSLPath -Path 'C:\Users\User\file.txt'
+
         $result | Should-BeString 'WSL_PATH:wslpath -a -u C:/Users/User/file.txt'
       }
       It 'converts a Path Windows path to WSL path with ValueFromPipeline' {
@@ -225,12 +241,14 @@ InModuleScope 'Path' {
       }
       It 'converts a LiteralPath Windows path to WSL path' {
         $result = ConvertTo-WSLPath -LiteralPath 'C:\Users\User\file.txt'
+
         $result | Should-BeString 'WSL_PATH:wslpath -a -u C:/Users/User/file.txt'
       }
     }
     Context 'Other parameters' {
       It 'passes additional arguments to wsl.exe' {
         $result = ConvertTo-WSLPath -Path 'C:\Users\User\file.txt' -ArgumentList '--quiet'
+
         $result | Should-BeString 'WSL_PATH:--quiet wslpath -a -u C:/Users/User/file.txt'
       }
     }
@@ -266,6 +284,7 @@ InModuleScope 'Path' {
     Context 'ParameterSetName' {
       It 'normalizes a wildcard Path using Get-Item' {
         $result = Get-NormalizedPath -Path 'C:\dir\*'
+
         $result | Should -HaveCount 2
         $result | Should-BeCollection @(
           'C:\dir\file1.txt',
@@ -280,12 +299,14 @@ InModuleScope 'Path' {
       }
       It 'normalizes a LiteralPath directly' {
         $result = Get-NormalizedPath -LiteralPath 'C:\dir\file.txt'
+
         $result | Should-BeString 'C:\dir\file.txt'
       }
     }
     Context 'Other parameters' {
       It 'supports compatible normalization mode' {
         $result = Get-NormalizedPath -Path 'C:\dir\*' -Compatible
+
         $result | Should -HaveCount 2
         $result | Should-BeCollection @(
           'C:\dir\file1.txt',
@@ -348,6 +369,7 @@ InModuleScope 'Path' {
     Context 'ParameterSetName' {
       It 'moves a item to its normalized destination by Path' {
         Move-NormalizedPath -Path $mockSource
+
         Should-Invoke -CommandName Move-Item -Times 1 -Exactly
       }
       It 'moves a item to its normalized destination by Path with ValueFromPipeline' {
@@ -360,22 +382,26 @@ InModuleScope 'Path' {
       }
       It 'moves a item to its normalized destination by LiteralPath' {
         Move-NormalizedPath -LiteralPath $mockSource
+
         Should-Invoke -CommandName Move-Item -Times 1 -Exactly
       }
     }
     Context 'SupportsShouldProcess' {
       It 'does not move the item when WhatIf is specified' {
         Move-NormalizedPath -Path $mockSource -Force -WhatIf
+
         Should-Invoke -CommandName Move-Item -Times 0 -Exactly
       }
       It 'suppresses ShouldProcess when Force is supplied with Confirm' {
         Move-NormalizedPath -Path $mockSource -Force -Confirm
+
         Should-Invoke -CommandName Move-Item -Times 1 -Exactly
       }
     }
     Context 'Other parameters' {
       It 'returns PSObject when PassThru is specified' {
         $result = Move-NormalizedPath -Path $mockSource -PassThru
+
         $result | Should -BeOfType [PSObject]
         $result.Source | Should-BeString $mockSource
         $result.Destination | Should-BeString $mockDest
@@ -449,7 +475,7 @@ InModuleScope 'Path' {
       }
       It 'returns false when Get-Item throws ItemNotFoundException' {
         Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\Docs\missing.*' } -MockWith {
-          throw [System.Management.Automation.ItemNotFoundException]::new('Not found')
+          throw [ItemNotFoundException]::new('Not found')
         }
         Test-ArchiveExtension -Path 'C:\Docs\missing.*' | Should -BeFalse
       }
@@ -520,7 +546,7 @@ InModuleScope 'Path' {
       }
       It 'returns false when Get-Item throws ItemNotFoundException' {
         Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\Docs\missing.pdf' } -MockWith {
-          throw [System.Management.Automation.ItemNotFoundException]::new('Not found')
+          throw [ItemNotFoundException]::new('Not found')
         }
         Test-PdfExtension -Path 'C:\Docs\missing.pdf' | Should -BeFalse
       }
@@ -591,7 +617,7 @@ InModuleScope 'Path' {
       }
       It 'returns false when Get-Item throws ItemNotFoundException' {
         Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\Pictures\missing.*' } -MockWith {
-          throw [System.Management.Automation.ItemNotFoundException]::new('Not found')
+          throw [ItemNotFoundException]::new('Not found')
         }
         Test-PictureExtension -Path 'C:\Pictures\missing.*' | Should -BeFalse
       }

@@ -83,6 +83,7 @@ InModuleScope 'Shell' {
     Context 'Output' {
       It 'returns item details with Name and Value properties' {
         $result = Get-ItemDetail -Path 'C:\dir\file.txt' -Min 0 -Max 2
+
         $result | Should-BeCollection -Count 3
         $result[0].Name | Should-BeString 'Name'
         $result[0].Value | Should-BeString 'file.txt'
@@ -93,6 +94,7 @@ InModuleScope 'Shell' {
       }
       It 'returns item details with Name and Value properties by LiteralPath' {
         $result = Get-ItemDetail -LiteralPath 'C:\dir\file.txt' -Min 0 -Max 2
+
         $result | Should-BeCollection -Count 3
         $result[0].Name | Should-BeString 'Name'
         $result[0].Value | Should-BeString 'file.txt'
@@ -101,10 +103,12 @@ InModuleScope 'Shell' {
     Context 'Other parameters' {
       It 'calls Get-Item with Path when using Path parameter set' {
         Get-ItemDetail -Path 'C:\dir\file.txt' -Min 0 -Max 0 | Out-Null
+
         Should-Invoke -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\dir\file.txt' -and $Force -eq $true } -Times 1 -Exactly
       }
       It 'calls Get-Item with LiteralPath when using LiteralPath parameter set' {
         Get-ItemDetail -LiteralPath 'C:\dir\file.txt' -Min 0 -Max 0 | Out-Null
+
         Should-Invoke -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\dir\file.txt' -and $Force -eq $true } -Times 1 -Exactly
       }
     }
@@ -123,55 +127,49 @@ InModuleScope 'Shell' {
   Describe 'Find-Application' {
     Context 'Other parameters' {
       It 'returns applications found in PATH without searching other locations' {
-        Set-Item -LiteralPath 'Function:\where.exe' -Value {
+        Mock -CommandName where.exe -MockWith {
           if ($args[0] -eq 'notepad.exe') {
             'C:\Windows\notepad.exe'
           }
         }
-        try {
-          Mock -CommandName Get-Application
-          $result = @(Find-Application -Name 'notepad.exe')
-          $result | Should-BeCollection -Count 1
-          $result[0] | Should-BeString 'C:\Windows\notepad.exe'
-          Should-Invoke -CommandName Get-Application -Times 0 -Exactly
-        } finally {
-          Remove-Item -LiteralPath 'Function:\where.exe' -ErrorAction SilentlyContinue
-        }
+        Mock -CommandName Get-Application
+
+        $result = @(Find-Application -Name 'notepad.exe')
+
+        $result | Should-BeCollection -Count 1
+        $result[0] | Should-BeString 'C:\Windows\notepad.exe'
+        Should-Invoke -CommandName Get-Application -Times 0 -Exactly
       }
       It 'returns applications found in Program Files when PATH search fails' {
-        Set-Item -LiteralPath 'Function:\where.exe' -Value {
+        Mock -CommandName where.exe -MockWith {
           if ($args[0] -eq '/r' -and $args[1] -eq $env:ProgramFiles) {
             'C:\Program Files\Example\app.exe'
           }
         }
-        try {
-          Mock -CommandName Get-Application
-          Mock -CommandName Test-Path -MockWith { $true }
-          $result = @(Find-Application -Name 'app.exe')
-          $result | Should-BeCollection -Count 1
-          $result[0] | Should-BeString 'C:\Program Files\Example\app.exe'
-          Should-Invoke -CommandName Get-Application -Times 0 -Exactly
-        } finally {
-          Remove-Item -LiteralPath 'Function:\where.exe' -ErrorAction SilentlyContinue
-        }
+        Mock -CommandName Get-Application
+        Mock -CommandName Test-Path -MockWith { $true }
+
+        $result = @(Find-Application -Name 'app.exe')
+        $result | Should-BeCollection -Count 1
+        $result[0] | Should-BeString 'C:\Program Files\Example\app.exe'
+
+        Should-Invoke -CommandName Get-Application -Times 0 -Exactly
       }
       It 'returns registered applications when all where.exe searches fail' {
-        Set-Item -LiteralPath 'Function:\where.exe' -Value { @() }
-        try {
-          Mock -CommandName Test-Path -MockWith { $true }
-          Mock -CommandName Get-Application -MockWith {
-            [PSCustomObject]@{
-              Name = 'notepad.exe'
-              Path = 'C:\Program Files\notepad.exe'
-            }
+        Mock -CommandName where.exe -MockWith { @() }
+        Mock -CommandName Test-Path -MockWith { $true }
+        Mock -CommandName Get-Application -MockWith {
+          [PSCustomObject]@{
+            Name = 'notepad.exe'
+            Path = 'C:\Program Files\notepad.exe'
           }
-          $result = @(Find-Application -Name 'notepad.exe')
-          $result | Should-BeCollection -Count 1
-          $result[0] | Should-BeString 'C:\Program Files\notepad.exe'
-          Should-Invoke -CommandName Get-Application -Times 1 -Exactly
-        } finally {
-          Remove-Item -LiteralPath 'Function:\where.exe' -ErrorAction SilentlyContinue
         }
+
+        $result = @(Find-Application -Name 'notepad.exe')
+
+        $result | Should-BeCollection -Count 1
+        $result[0] | Should-BeString 'C:\Program Files\notepad.exe'
+        Should-Invoke -CommandName Get-Application -Times 1 -Exactly
       }
     }
   }
@@ -208,6 +206,7 @@ InModuleScope 'Shell' {
     Context 'Output' {
       It 'returns applications with Name and Path properties' {
         $result = Get-Application
+
         $result | Should-BeCollection -Count 2
         $result.Name | Should-ContainCollection 'notepad.exe'
         $result.Name | Should-ContainCollection 'calc.exe'
@@ -216,6 +215,7 @@ InModuleScope 'Shell' {
       }
       It 'returns the requested application with Name and Path properties' {
         $result = Get-Application -Name 'notepad.exe'
+
         $result | Should-BeCollection -Count 1
         $result[0].Name | Should-BeString 'notepad.exe'
         $result[0].Path | Should-BeString 'C:\Program Files\notepad.exe'
@@ -269,6 +269,7 @@ InModuleScope 'Shell' {
     Context 'Output' {
       It 'returns special folders with Name and Path properties' {
         $result = Get-SpecialFolder
+
         $result | Should-BeCollection -Count 2
         $result.Name | Should-ContainCollection 'Startup'
         $result.Name | Should-ContainCollection 'Common Startup'
@@ -366,6 +367,7 @@ InModuleScope 'Shell' {
     Context 'Output' {
       It 'returns startup items with Name and CommandLine properties' {
         $result = @(Get-Startup)
+
         $result | Should-BeCollection -Count 4
         $result | Where-Object { $_.Name -eq 'app' } | Select-Object -ExpandProperty CommandLine | Should-ContainCollection '"C:\Program Files\App\app.exe" -arg'
         $result | Where-Object { $_.Name -eq 'script' } | Select-Object -ExpandProperty CommandLine | Should-ContainCollection 'C:\Common Startup\script.ps1'
@@ -404,6 +406,7 @@ InModuleScope 'Shell' {
     Context 'ParameterSetName' {
       It 'moves the item to recycle bin by Path' {
         Move-ItemToRecycleBin -Path 'C:\dir\file.txt'
+
         $movedItems | Should-BeCollection -Count 1
         $movedItems[0] | Should-BeString 'C:\dir\file.txt'
       }
@@ -419,6 +422,7 @@ InModuleScope 'Shell' {
       }
       It 'moves the item to recycle bin by LiteralPath' {
         Move-ItemToRecycleBin -LiteralPath 'C:\dir\file.txt'
+
         $movedItems | Should-BeCollection -Count 1
         $movedItems[0] | Should-BeString 'C:\dir\file.txt'
       }
@@ -431,6 +435,7 @@ InModuleScope 'Shell' {
     Context 'SupportsShouldProcess' {
       It 'does not move the item when WhatIf is supplied' {
         Move-ItemToRecycleBin -Path 'C:\dir\file.txt' -WhatIf | Out-Null
+
         $movedItems.Count | Should-Be 0
       }
     }
@@ -483,26 +488,31 @@ InModuleScope 'Shell' {
       }
       It 'appends .lnk extension when needed' {
         New-Shortcut -Path 'C:\dir\shortcut' -TargetPath 'C:\Windows\notepad.exe' | Out-Null
+
         Should-Invoke -CommandName New-Object -ParameterFilter { $ComObject -eq 'WScript.Shell' } -Times 1 -Exactly
       }
     }
     Context 'Output' {
       It 'returns the created shortcut with FullName property' {
         $result = New-Shortcut -Path 'C:\dir\shortcut.lnk' -TargetPath 'C:\Windows\notepad.exe'
+
         $result.FullName | Should-BeString 'C:\dir\shortcut.lnk'
       }
       It 'returns the created shortcut with FullName property by ValueFromPipeline' {
         $result = 'C:\dir\shortcut' | New-Shortcut -TargetPath 'C:\Windows\notepad.exe'
+
         $result.FullName | Should-BeString 'C:\dir\shortcut.lnk'
       }
       It 'returns the created shortcut with FullName property by ValueFromPipelineByPropertyName' {
         $result = [PSCustomObject]@{ Path = 'C:\dir\shortcut' } | New-Shortcut -TargetPath 'C:\Windows\notepad.exe'
+
         $result.FullName | Should-BeString 'C:\dir\shortcut.lnk'
       }
     }
     Context 'SupportsShouldProcess' {
       It 'does not create a shortcut when WhatIf is specified' {
         New-Shortcut -Path 'C:\dir\shortcut' -TargetPath 'C:\Windows\notepad.exe' -Force -WhatIf | Out-Null
+
         Should-Invoke -CommandName New-Object -ParameterFilter { $ComObject -eq 'WScript.Shell' } -Times 0 -Exactly
       }
       It 'suppresses ShouldProcess when Force is supplied with Confirm' {
@@ -516,6 +526,7 @@ InModuleScope 'Shell' {
     Context 'Other parameters' {
       It 'sets HotKey and WindowStyle on the shortcut' {
         $mockShortcut = [PSCustomObject]@{
+
           TargetPath       = $null
           WorkingDirectory = $null
           Arguments        = $null
@@ -572,6 +583,7 @@ InModuleScope 'Shell' {
     Context 'SupportsShouldProcess' {
       It 'does not create a shortcut when WhatIf is specified' {
         New-UrlShortcut -Path 'C:\dir\shortcut' -TargetPath 'https://example.com' -Force -WhatIf | Out-Null
+
         Should-Invoke -CommandName New-Object -ParameterFilter { $ComObject -eq 'WScript.Shell' } -Times 0 -Exactly
       }
       It 'suppresses ShouldProcess when Force is supplied with Confirm' {
@@ -676,6 +688,7 @@ InModuleScope 'Shell' {
     Context 'Edge cases' {
       It 'returns False when shortcut file is not found' {
         Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\dir\missing.lnk' } -MockWith {
+
           throw [ItemNotFoundException]::new('Item not found')
         }
         $result = Test-Shortcut -Path 'C:\dir\missing.lnk'
@@ -692,16 +705,19 @@ InModuleScope 'Shell' {
     Context 'ParameterSetName' {
       It 'creates a persistent network drive for the specified name and root' {
         New-NetworkDrive -Name Z -Root '\\server\share'
+
         Should-Invoke -CommandName New-PSDrive -ParameterFilter { $Name -eq 'Z' -and $Root -eq '\\server\share' -and $Scope -eq 'Global' -and $Persist -eq $true } -Times 1 -Exactly
       }
     }
     Context 'SupportsShouldProcess' {
       It 'supports WhatIf without throwing errors' {
         New-NetworkDrive -Name Z -Root '\\server\share' -Force -WhatIf | Out-Null
+
         Should-Invoke -CommandName New-PSDrive -Times 1 -Exactly
       }
       It 'suppresses ShouldProcess when Force is supplied with Confirm' {
         New-NetworkDrive -Name Z -Root '\\server\share' -Force -Confirm | Out-Null
+
         Should-Invoke -CommandName Remove-PSDrive -ParameterFilter { $Name -eq 'Z' -and $Scope -eq 'Global' -and $Force -eq $true } -Times 1 -Exactly
         Should-Invoke -CommandName New-PSDrive -ParameterFilter { $Name -eq 'Z' -and $Root -eq '\\server\share' -and $Scope -eq 'Global' -and $Persist -eq $true } -Times 1 -Exactly
       }
@@ -745,7 +761,9 @@ InModuleScope 'Shell' {
     Context 'ParameterSetName' {
       It 'creates a network shortcut folder and target shortcut' {
         $networkShortcutExists = $false
+
         New-NetworkShortcut -Path '\\server\share' | Out-Null
+
         Should-Invoke -CommandName New-Item -Times 1 -Exactly
         Should-Invoke -CommandName New-Shortcut -Times 1 -Exactly
         Should-Invoke -CommandName Set-ItemProperty -Times 2 -Exactly
@@ -754,13 +772,17 @@ InModuleScope 'Shell' {
     Context 'SupportsShouldProcess' {
       It 'supports WhatIf without throwing errors' {
         $networkShortcutExists = $false
+
         New-NetworkShortcut -Path '\\server\share' -Force -WhatIf | Out-Null
+
         Should-Invoke -CommandName New-Item -Times 0 -Exactly
         Should-Invoke -CommandName New-Shortcut -Times 0 -Exactly
       }
       It 'suppresses ShouldProcess when Force is supplied with Confirm' {
         $networkShortcutExists = $true
+
         New-NetworkShortcut -Path '\\server\share' -Force -Confirm | Out-Null
+
         Should-Invoke -CommandName Remove-Item -Times 1 -Exactly
         Should-Invoke -CommandName New-Shortcut -Times 1 -Exactly
         Should-Invoke -CommandName Set-ItemProperty -Times 2 -Exactly
