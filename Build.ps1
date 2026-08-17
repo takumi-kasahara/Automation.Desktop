@@ -8,6 +8,7 @@ Get-ChildItem -LiteralPath 'Scripts' -File -Recurse -Include @(
   '*.bat'
   '*.ps1'
   '*.js'
+  '*.py'
 ) |
 ForEach-Object {
   if ($_.Name -eq 'Run.bat') {
@@ -28,6 +29,12 @@ ForEach-Object {
       @{
         LiteralPath = '.templates\wsh.wsf'
         Destination = $directory | Join-Path -ChildPath 'Run.wsf'
+      }
+    }
+    { $_ -cin 'main.py' } {
+      @{
+        LiteralPath = '.templates\python.bat'
+        Destination = $directory | Join-Path -ChildPath 'Run.bat'
       }
     }
     default {

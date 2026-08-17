@@ -1,4 +1,7 @@
 {
+  "python.testing.pytestArgs": ["tests"],
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
   "cSpell.userWords": [
     "CLSID",
     "conv",
@@ -10,6 +13,6 @@
     "LCID",
     "pdftk",
     "qpdf",
-    "runas",
-  ],
+    "runas"
+  ]
 }
