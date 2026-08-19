@@ -102,6 +102,19 @@ class TestExtractNotes:
         )
         return result
 
+    def test_extract_notes_stdout(self, script_path: Path, sample_pptx: Path) -> None:
+        """
+        Test stdout output when --output is not specified.
+        """
+        with tempfile.TemporaryDirectory() as tmpdir:
+            result = self.run_script(script_path, ["-i", str(sample_pptx)])
+            assert result.returncode == 0
+            stdout_content = result.stdout
+            assert "This is note 1 for slide 1" in stdout_content
+            assert "This is note 2 for slide 2" in stdout_content
+            # Check no files were created
+            assert not any(f.exists() for f in Path(tmpdir).iterdir())
+
     def test_extract_notes_basic(self, script_path: Path, sample_pptx: Path) -> None:
         """
         Test basic note extraction to a single output file.

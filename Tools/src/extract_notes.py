@@ -77,25 +77,30 @@ def extract_notes_from_presentation(file_path: str) -> list[str]:
 
 def main() -> None:
     """
-    Extract notes from PowerPoint presentations and save to text files.
+    Extract notes from PowerPoint presentations and save to text files or output to stdout.
     Supports single files or glob patterns for batch processing.
     """
     parser = argparse.ArgumentParser(
         description="Extract notes from PowerPoint presentations"
     )
     parser.add_argument(
+        "input",
+        nargs="?",
+        type=str,
+        help="Input PowerPoint file or glob pattern (pptx, odp, etc.)",
+    )
+    parser.add_argument(
         "-i",
         "--input",
+        dest="input_opt",
         type=str,
-        required=True,
         help="Input PowerPoint file or glob pattern (pptx, odp, etc.)",
     )
     parser.add_argument(
         "-o",
         "--output",
         type=str,
-        required=True,
-        help="Output text file or directory if input is a pattern",
+        help="Output text file or directory if input is a pattern (optional, outputs to stdout if not specified)",
     )
     parser.add_argument(
         "-f",
@@ -110,7 +115,10 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    input_pattern = args.input
+    # Use positional argument if provided, otherwise use -i/--input option
+    input_pattern = args.input if args.input is not None else args.input_opt
+    if input_pattern is None:
+        parser.error("the following arguments are required: input (or -i/--input)")
     output_option = args.output
 
     files = glob.glob(input_pattern, recursive=True)
@@ -122,25 +130,26 @@ def main() -> None:
 
     if is_pattern:
         # Multiple files matched, output must be a directory.
-        if not os.path.isdir(output_option):
+        if output_option is None or not os.path.isdir(output_option):
             print(
                 "Error: When using wildcards for input, --output must be an existing directory."
             )
             return
     else:
         # Single file specified, if output is a directory (and not split mode), generate a file name automatically
-        if not args.split and os.path.isdir(output_option):
-            base_name = os.path.splitext(os.path.basename(input_pattern))[0]
-            output_option = os.path.join(output_option, f"{base_name}.txt")
-        elif (
-            args.split
-            and not os.path.isdir(output_option)
-            and not is_sequence_template(output_option)
-        ):
-            print(
-                "Error: When using --split, --output must be an existing directory or a template string like 'output_%03d.txt'."
-            )
-            return
+        if output_option is not None:
+            if not args.split and os.path.isdir(output_option):
+                base_name = os.path.splitext(os.path.basename(input_pattern))[0]
+                output_option = os.path.join(output_option, f"{base_name}.txt")
+            elif (
+                args.split
+                and not os.path.isdir(output_option)
+                and not is_sequence_template(output_option)
+            ):
+                print(
+                    "Error: When using --split, --output must be an existing directory or a template string like 'output_%03d.txt'."
+                )
+                return
 
     for input_file in files:
         if not os.path.exists(input_file):
@@ -161,6 +170,7 @@ def main() -> None:
 
         if (
             not args.split
+            and output_file is not None
             and os.path.exists(output_file)
             and not args.force
             and input(f"File {output_file} already exists. Overwrite? (y/N): ").lower()
@@ -177,7 +187,10 @@ def main() -> None:
             continue
 
         if args.split:
-            paths = build_split_paths(output_option, input_file, len(lines), ".txt")
+            if output_file is None:
+                print("Error: --split requires --output to be specified")
+                return
+            paths = build_split_paths(output_file, input_file, len(lines), ".txt")
             for i, line in enumerate(lines):
                 text = re.sub(r"\n+", "\n", clean(line)).strip() + "\n"
                 out_path = paths[i]
@@ -198,9 +211,13 @@ def main() -> None:
             print(f"Successfully saved {len(lines)} notes to {paths[0]} etc.")
         else:
             text = f"{'\n\n'.join([re.sub(r'\n+', '\n', clean(line)).strip() for line in lines])}\n"
-            with open(output_file, "w", encoding="utf-8") as f:
-                f.write(text)
-            print(f"Successfully saved {len(lines)} notes to {output_file}")
+            if output_file is None:
+                # Output to stdout
+                print(text, end="")
+            else:
+                with open(output_file, "w", encoding="utf-8") as f:
+                    f.write(text)
+                print(f"Successfully saved {len(lines)} notes to {output_file}")
 
 
 if __name__ == "__main__":
