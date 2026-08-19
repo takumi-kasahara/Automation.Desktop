@@ -8,7 +8,6 @@ Get-ChildItem -LiteralPath 'Scripts' -File -Recurse -Include @(
   '*.bat'
   '*.ps1'
   '*.js'
-  '*.py'
 ) |
 ForEach-Object {
   if ($_.Name -eq 'Run.bat') {
@@ -31,12 +30,6 @@ ForEach-Object {
         Destination = $directory | Join-Path -ChildPath 'Run.wsf'
       }
     }
-    { $_ -cin 'main.py' } {
-      @{
-        LiteralPath = '.templates\python.bat'
-        Destination = $directory | Join-Path -ChildPath 'Run.bat'
-      }
-    }
     default {
       return
     }
@@ -46,4 +39,12 @@ ForEach-Object {
     $item | Set-ItemProperty -Name IsReadOnly -Value $true
     return $item
   }
+}
+Get-ChildItem -LiteralPath 'Tools\src' -File -Filter '*.py' |
+ForEach-Object {
+  $baseName = $_.BaseName
+  $destination = Join-Path -Path $_.DirectoryName -ChildPath "$baseName.bat"
+  $item = Copy-Item -LiteralPath '.templates\python.bat' -Destination $destination -Force -PassThru
+  $item | Set-ItemProperty -Name IsReadOnly -Value $true
+  return $item
 }

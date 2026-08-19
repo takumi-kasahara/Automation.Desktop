@@ -17,6 +17,9 @@ from pathlib import Path
 import pytest
 from pptx import Presentation
 
+# Add Tools directory to path so src.extract_notes can be imported
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from src.extract_notes import build_split_paths, clean, is_sequence_template
 
 

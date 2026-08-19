@@ -4,7 +4,7 @@ setlocal
 :begin
 
 :process
-uv run --project "%~dp0..\..\.." python "%~dp0main.py" %*
+uv run --project "%~dp0..\..\.." python "%~dp0%~n0.py" %*
 
 :end
 pause
