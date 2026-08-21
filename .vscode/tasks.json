@@ -3,30 +3,25 @@
   "options": {},
   "presentation": {
     "reveal": "silent",
-    "revealProblems": "onProblem",
+    "revealProblems": "onProblem"
   },
   "tasks": [
     {
       "label": "build",
       "type": "shell",
       "command": "pwsh.exe",
-      "args": [
-        "-NoLogo",
-        "-NoProfile",
-        "-File",
-        "Build.ps1",
-      ],
+      "args": ["-NoLogo", "-NoProfile", "-File", "Build.ps1"],
       "problemMatcher": [],
       "group": {
         "kind": "build",
-        "isDefault": true,
-      },
+        "isDefault": true
+      }
     },
     {
       "label": "install",
       "type": "shell",
       "command": "${workspaceFolder}\\Install.bat",
-      "problemMatcher": [],
+      "problemMatcher": []
     },
     {
       "label": "pester current file",
@@ -38,15 +33,13 @@
         "-File",
         "Pester.ps1",
         "-Path",
-        "${file}",
+        "${file}"
       ],
-      "problemMatcher": [
-        "$pester",
-      ],
+      "problemMatcher": ["$pester"],
       "group": {
         "kind": "test",
-        "isDefault": true,
-      },
-    },
-  ],
+        "isDefault": true
+      }
+    }
+  ]
 }

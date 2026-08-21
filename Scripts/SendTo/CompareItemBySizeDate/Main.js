@@ -6,14 +6,13 @@ var files = [];
 var folders = [];
 for (var i = 0; i < WScript.Arguments.length; i++) {
   var path = WScript.Arguments.Item(i);
-  if (FileSystemObject.FileExists(path))
-    files.push(path);
-  else if (FileSystemObject.FolderExists(path))
-    folders.push(path);
+  if (FileSystemObject.FileExists(path)) files.push(path);
+  else if (FileSystemObject.FolderExists(path)) folders.push(path);
 }
-if (files.length == 1)
-  WshShell.Run('WinMerge.exe /e /u /self-compare "' + files[0] + '"', 1, false);
+var winmerge = 'WinMerge.exe /e /u /x /m SizeDate';
+if (files.length === 1)
+  WshShell.Run(winmerge + ' /self-compare "' + files[0] + '"', 1, false);
 else if (2 <= files.length && files.length <= 3)
-  WshShell.Run('WinMerge.exe /e /u /x /m SizeDate "' + files.join('" "') + '"', 1, false);
+  WshShell.Run(winmerge + ' "' + files.join('" "') + '"', 1, false);
 else if (2 <= folders.length && folders.length <= 3)
-  WshShell.Run('WinMerge.exe /e /u /x /m SizeDate /r "' + folders.join('" "') + '"', 1, false);
+  WshShell.Run(winmerge + ' /r "' + folders.join('" "') + '"', 1, false);

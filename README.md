@@ -14,18 +14,18 @@ A collection of PowerShell modules and helper scripts for Windows file system, p
 
 Run from the repository root:
 
-``` powershell
+```powershell
 ./Install.bat
 ```
 
 If you want to install Pester v6, run:
 
-``` powershell
+```powershell
 Install-Module -Name Pester -Scope CurrentUser
 ```
 
 If you want to run tests:
 
-``` powershell
+```powershell
 . .\Pester.ps1
 ```
