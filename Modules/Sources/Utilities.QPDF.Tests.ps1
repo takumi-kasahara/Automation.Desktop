@@ -409,7 +409,7 @@ InModuleScope 'Utilities.QPDF' {
 
         Unblock-Pdf -LiteralPath 'C:\docs\manual.pdf' -OwnerPassword (Get-Password -Text 'owner123') -Confirm:$false
 
-        Should-Invoke -CommandName qpdf.exe -ParameterFilter { $args -contains '--owner-password=owner123' } -Times 1 -Exactly
+        Should-Invoke -CommandName qpdf.exe -ParameterFilter { $args -contains '--owner-password=owner123' } -Times 2 -Exactly
       }
       It 'passes --password to qpdf.exe when decrypting with UserPassword' {
         Mock -CommandName qpdf.exe -ParameterFilter { $args -contains '--show-encryption' } -MockWith {
@@ -417,7 +417,7 @@ InModuleScope 'Utilities.QPDF' {
         }
         Mock -CommandName qpdf.exe -ParameterFilter { $args -contains '--decrypt' } -MockWith { }
         Unblock-Pdf -LiteralPath 'C:\docs\manual.pdf' -UserPassword (Get-Password -Text 'user123') -Confirm:$false
-        Should-Invoke -CommandName qpdf.exe -ParameterFilter { $args -contains '--password=user123' } -Times 1 -Exactly
+        Should-Invoke -CommandName qpdf.exe -ParameterFilter { $args -contains '--password=user123' } -Times 2 -Exactly
       }
     }
     Context 'SupportsShouldProcess' {
