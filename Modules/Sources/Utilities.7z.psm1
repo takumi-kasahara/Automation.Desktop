@@ -41,6 +41,8 @@ function Get-ArchivedItem {
     Get-ArchivedItem -LiteralPath 'C:\Archives\release.7z' -Encoding ([System.Text.Encoding]::UTF8)
     ```
 
+    Lists the contents of the specified archive with UTF-8 encoding.
+
   .OUTPUTS
     ArchivedItem. Objects containing the relative path and timestamps of each archived item.
 
@@ -157,6 +159,8 @@ function Sync-ArchivedItemDate {
     ``` powershell
     Sync-ArchivedItemDate -LiteralPath 'C:\Archive\release.7z' -WhatIf
     ```
+
+    Shows how timestamps for items in the specified archive would be synchronized.
 
   .OUTPUTS
     None. Only updates archive file timestamps.

@@ -86,8 +86,10 @@ function Get-DuplicateFile {
 
   .EXAMPLE
     ``` powershell
-    Get-DuplicateFile -LiteralPath 'C:\Temp' -Property 'CreationTime','LastWriteTime' -Descending -Skip 2
+    Get-DuplicateFile -LiteralPath 'C:\dir' -Property 'CreationTime','LastWriteTime' -Descending -Skip 2
     ```
+
+    Returns duplicate files in C:\dir, sorted by CreationTime and LastWriteTime in descending order, skipping the first 2 items in each duplicate group.
 
   .OUTPUTS
     System.IO.FileInfo
@@ -187,6 +189,8 @@ function Get-EmptyDirectory {
     ``` powershell
     Get-EmptyDirectory -LiteralPath 'C:\dir' -Recurse
     ```
+
+    Returns empty directories directly below C:\dir when searching recursively.
 
   .OUTPUTS
     System.IO.DirectoryInfo
@@ -290,6 +294,8 @@ function Measure-Directory {
     ``` powershell
     Measure-Directory -LiteralPath 'C:\dir' -AllStats -Recurse -Depth 2
     ```
+
+    Measures child directories and includes their most recently modified files, large files, long names, and similar directory names.
 
   .OUTPUTS
     MeasureDirectoryInfo
@@ -464,6 +470,8 @@ function Set-ItemAttribute {
     Set-ItemAttribute -LiteralPath 'C:\dir\file.txt' -Attribute Hidden -Force
     ```
 
+    Sets the Hidden attribute on file.txt and forces the update even if the file is read-only.
+
   .OUTPUTS
     None.
 
@@ -551,6 +559,8 @@ function Remove-ItemAttribute {
     ``` powershell
     Remove-ItemAttribute -LiteralPath 'C:\dir\file.txt' -Attribute Hidden -Force
     ```
+
+    Removes the Hidden attribute from file.txt and forces the update even if the file is read-only.
 
   .OUTPUTS
     None.
@@ -646,12 +656,14 @@ function Set-ItemDate {
     ``` powershell
     Set-ItemDate -Path 'C:\file.txt' -Date (Get-Date)
     ```
+
     Sets all timestamps of file.txt to the current date and time.
 
   .EXAMPLE
     ``` powershell
     Set-ItemDate -Path 'C:\image.jpg' -UseExif
     ```
+
     Sets timestamps of image.jpg from its EXIF metadata.
 
   .OUTPUTS
@@ -810,6 +822,8 @@ function Sync-DirectoryDate {
     Sync-DirectoryDate -LiteralPath 'C:\dir\subdir' -Force
     ```
 
+    Synchronizes the timestamp of subdir with its contents and suppresses confirmation prompts.
+
   .OUTPUTS
     None.
   #>
@@ -886,6 +900,8 @@ function Sync-ItemDate {
     ``` powershell
     Sync-ItemDate -Path 'C:\dir\*' -Force
     ```
+
+    Bulk synchronizes and fixes timestamps for files and directories, updating file timestamps using EXIF data when available and synchronizing directory timestamps to match nested child items.
 
   .OUTPUTS
     None.
@@ -1055,30 +1071,29 @@ function Export-ItemDate {
 
   .EXAMPLE
     ``` powershell
-    Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\Temp\timestamps.json'
+    Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\dir\timestamps.json'
     ```
 
     Exports timestamps for every matching item to a JSON file.
 
   .EXAMPLE
     ``` powershell
-    Export-ItemDate -LiteralPath 'C:\dir\file.txt' -Destination 'C:\Temp\timestamps.json' -Force
+    Export-ItemDate -LiteralPath 'C:\dir\file.txt' -Destination 'C:\dir\timestamps.json' -Force
     ```
 
     Exports file.txt timestamps and overwrites an existing JSON file.
 
   .EXAMPLE
     ``` powershell
-    Export-ItemDate -LiteralPath 'C:\dir' -Destination 'C:\Temp\timestamps.json'
+    Export-ItemDate -LiteralPath 'C:\dir' -Destination 'C:\dir\timestamps.json'
     ```
 
-    Exports the CreationTime, LastWriteTime, and LastAccessTime of every file under C:\dir,
-    including files in subfolders, to a single JSON file.
+    Exports the CreationTime, LastWriteTime, and LastAccessTime of every file under C:\dir, including files in subfolders, to a single JSON file.
 
   .OUTPUTS
-    System.IO.FileInfo[]. Returns one FileInfo object per output file. When -Destination is
-    supplied, a single-element array is returned. When -Destination is omitted, one element is
-    returned per input directory.
+    System.IO.FileInfo[].
+      Returns one FileInfo object per output file. When -Destination is supplied, a single-element array is returned.
+      When -Destination is omitted, one element is returned per input directory.
 
   .NOTES
     This function supports ShouldProcess and can be used with -WhatIf and -Confirm.
@@ -1201,35 +1216,35 @@ function Import-ItemDate {
 
   .EXAMPLE
     ``` powershell
-    Import-ItemDate -Path 'C:\Temp\timestamps.json'
+    Import-ItemDate -Path 'C:\dir\timestamps.json'
     ```
 
     Restores timestamps from timestamps.json.
 
   .EXAMPLE
     ``` powershell
-    Import-ItemDate -Path 'C:\Temp\timestamps.json' -Force
+    Import-ItemDate -Path 'C:\dir\timestamps.json' -Force
     ```
 
     Restores timestamps from timestamps.json, including protected files.
 
   .EXAMPLE
     ``` powershell
-    Import-ItemDate -Path @('C:\Temp\a.json', 'C:\Temp\b.json')
+    Import-ItemDate -Path @('C:\dir\a.json', 'C:\dir\b.json')
     ```
 
     Restores timestamps from both JSON files.
 
   .EXAMPLE
     ``` powershell
-    Import-ItemDate -Path 'C:\Temp\timestamps.json' -PassThru
+    Import-ItemDate -Path 'C:\dir\timestamps.json' -PassThru
     ```
 
     Applies the timestamp data and returns the FileInfo objects for the updated files.
 
   .OUTPUTS
-    None by default. When -PassThru is specified, returns System.IO.FileInfo objects
-    for each successfully updated file.
+    System.IO.FileInfo
+      When `-PassThru` is specified, returns a FileInfo object for each successfully updated file.
 
   .NOTES
     This function supports ShouldProcess and can be used with -WhatIf and -Confirm.

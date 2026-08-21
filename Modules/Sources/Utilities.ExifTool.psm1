@@ -36,6 +36,8 @@ function Get-ExifDate {
     Get-ExifDate -LiteralPath 'C:\Pictures\IMG_0001.JPG' -AsJson
     ```
 
+    Returns EXIF timestamps for the specified file in JSON format.
+
   .OUTPUTS
     System.Management.Automation.PathInfo.
       Objects containing the full path and Exif date metadata of each file.
@@ -181,6 +183,8 @@ function Set-ExifDate {
     Set-ExifDate -LiteralPath 'C:\Photos\IMG_0001.jpg' -Date ([datetime]'2024-01-02 03:04:05') -WhatIf
     ```
 
+    Shows the timestamp setting operation for a specific file without making actual changes.
+
   .OUTPUTS
     None.
       Only sets Exif timestamps.
@@ -281,8 +285,11 @@ function Remove-ExifDate {
     Remove-ExifDate -LiteralPath 'C:\Photos\IMG_0001.jpg' -WhatIf
     ```
 
+    Shows the EXIF timestamp removal operation for a specific file without making actual changes.
+
   .OUTPUTS
-    None. Only removes Exif timestamps.
+    None.
+      Only removes Exif timestamps.
 
   .NOTES
     This function writes ExifTool stderr output to a temporary log file and

@@ -1169,9 +1169,9 @@ InModuleScope 'Item' {
           IsReadOnly = $false
         }
       }
-      Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -like 'C:\Temp\*.json' -or $PSPath -like 'C:\Temp\*.json' } -MockWith {
+      Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -like 'C:\dir\*.json' -or $PSPath -like 'C:\dir\*.json' } -MockWith {
         [PSCustomObject]@{
-          FullName   = 'C:\Temp\timestamps.json'
+          FullName   = 'C:\dir\timestamps.json'
           IsReadOnly = $false
         }
       }
@@ -1221,22 +1221,22 @@ InModuleScope 'Item' {
     }
     Context 'ParameterSetName' {
       It 'exports timestamps by Path with wildcard' {
-        Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\Temp\timestamps.json'
+        Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\dir\timestamps.json'
 
         Should-Invoke -CommandName Set-Content -Times 1 -Exactly
       }
       It 'exports timestamps by Path with ValueFromPipeline' {
-        'C:\dir\*' | Export-ItemDate -Destination 'C:\Temp\timestamps.json'
+        'C:\dir\*' | Export-ItemDate -Destination 'C:\dir\timestamps.json'
 
         Should-Invoke -CommandName Set-Content -Times 1 -Exactly
       }
       It 'exports timestamps by Path with ValueFromPipelineByPropertyName' {
-        [PSCustomObject]@{ Path = 'C:\dir\*' } | Export-ItemDate -Destination 'C:\Temp\timestamps.json'
+        [PSCustomObject]@{ Path = 'C:\dir\*' } | Export-ItemDate -Destination 'C:\dir\timestamps.json'
 
         Should-Invoke -CommandName Set-Content -Times 1 -Exactly
       }
       It 'exports timestamps by LiteralPath for a file' {
-        Export-ItemDate -LiteralPath 'C:\dir\file.txt' -Destination 'C:\Temp\timestamps.json'
+        Export-ItemDate -LiteralPath 'C:\dir\file.txt' -Destination 'C:\dir\timestamps.json'
 
         Should-Invoke -CommandName Set-Content -Times 1 -Exactly -ParameterFilter {
           $null -ne $Value -and
@@ -1249,7 +1249,7 @@ InModuleScope 'Item' {
         }
       }
       It 'exports timestamps by LiteralPath for a directory recursively enumerates all files relative to the parent folder' {
-        Export-ItemDate -LiteralPath 'C:\dir' -Destination 'C:\Temp\timestamps.json'
+        Export-ItemDate -LiteralPath 'C:\dir' -Destination 'C:\dir\timestamps.json'
 
         Should-Invoke -CommandName Set-Content -Times 1 -Exactly -ParameterFilter {
           $null -ne $Value -and
@@ -1261,31 +1261,31 @@ InModuleScope 'Item' {
         }
       }
       It 'exports timestamps by LiteralPath with ValueFromPipelineByPropertyName' {
-        [PSCustomObject]@{ LiteralPath = 'C:\dir\file.txt' } | Export-ItemDate -Destination 'C:\Temp\timestamps.json'
+        [PSCustomObject]@{ LiteralPath = 'C:\dir\file.txt' } | Export-ItemDate -Destination 'C:\dir\timestamps.json'
 
         Should-Invoke -CommandName Set-Content -Times 1 -Exactly
       }
     }
     Context 'SupportsShouldProcess' {
       It 'does not write content when WhatIf is specified' {
-        Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\Temp\timestamps.json' -Force -WhatIf
+        Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\dir\timestamps.json' -Force -WhatIf
 
         Should-Invoke -CommandName Set-Content -Times 0 -Exactly
       }
       It 'writes content when Force is specified with Confirm' {
-        Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\Temp\timestamps.json' -Force -Confirm
+        Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\dir\timestamps.json' -Force -Confirm
 
         Should-Invoke -CommandName Set-Content -Times 1 -Exactly
       }
       It 'fails when NoClobber is specified and destination exists' {
-        Mock -CommandName Test-Path -ParameterFilter { $LiteralPath -eq 'C:\Temp\timestamps.json' } -MockWith { $true }
+        Mock -CommandName Test-Path -ParameterFilter { $LiteralPath -eq 'C:\dir\timestamps.json' } -MockWith { $true }
 
-        { Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\Temp\timestamps.json' -NoClobber } | Should-Throw
+        { Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\dir\timestamps.json' -NoClobber } | Should-Throw
       }
     }
     Context 'Other parameters' {
       It 'writes JSON containing the item path relative to the input folder and timestamps' {
-        Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\Temp\timestamps.json'
+        Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\dir\timestamps.json'
 
         Should-Invoke -CommandName Set-Content -Times 1 -Exactly -ParameterFilter {
           $null -ne $Value -and
@@ -1425,18 +1425,18 @@ InModuleScope 'Item' {
     }
     Context 'Output' {
       It 'returns a single-element array with the destination file path' {
-        $result = Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\Temp\timestamps.json'
+        $result = Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\dir\timestamps.json'
 
         $result.Count | Should-Be 1
-        $result.FullName | Should-BeString 'C:\Temp\timestamps.json'
+        $result.FullName | Should-BeString 'C:\dir\timestamps.json'
       }
       It 'writes content to exactly one destination file' {
-        Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\Temp\timestamps.json'
+        Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\dir\timestamps.json'
 
         Should-Invoke -CommandName Set-Content -Times 1 -Exactly
       }
       It 'does not accept an array of destinations because only one output file is produced' {
-        { Export-ItemDate -Path 'C:\dir\*' -Destination @('C:\Temp\a.json', 'C:\Temp\b.json') } | Should-Throw
+        { Export-ItemDate -Path 'C:\dir\*' -Destination @('C:\dir\a.json', 'C:\dir\b.json') } | Should-Throw
       }
       It 'returns one destination path per directory when Destination is omitted for multiple directories' {
         Mock -CommandName Get-Item -ParameterFilter { ($LiteralPath -is [array]) -and ($LiteralPath -contains 'C:\dir1') -and ($LiteralPath -contains 'C:\dir2') } -MockWith {
@@ -1489,7 +1489,7 @@ InModuleScope 'Item' {
       Mock -CommandName Test-Path -ParameterFilter { $PathType -eq 'Container' } -MockWith { $false }
       Mock -CommandName Test-Path -MockWith { $true }
       Mock -CommandName Get-FileHash -MockWith { [PSCustomObject]@{ Hash = 'abc123' } }
-      Mock -CommandName Get-Content -ParameterFilter { $LiteralPath -eq 'C:\Temp\timestamps.json' } -MockWith {
+      Mock -CommandName Get-Content -ParameterFilter { $LiteralPath -eq 'C:\dir\timestamps.json' } -MockWith {
         '[{"Path":"C:\\dir\\file.txt","CreationTime":"2025-01-01T00:00:00","LastWriteTime":"2025-01-02T00:00:00","LastAccessTime":"2025-01-03T00:00:00","Hash":"abc123"}]'
       }
       Mock -CommandName Get-Item -MockWith {
@@ -1505,69 +1505,69 @@ InModuleScope 'Item' {
     }
     Context 'ParameterSetName' {
       It 'imports timestamps by Path' {
-        Import-ItemDate -Path 'C:\Temp\timestamps.json'
+        Import-ItemDate -Path 'C:\dir\timestamps.json'
 
         Should-Invoke -CommandName Set-ItemProperty -Times 3 -Exactly
       }
       It 'imports timestamps by Path with ValueFromPipeline' {
-        'C:\Temp\timestamps.json' | Import-ItemDate
+        'C:\dir\timestamps.json' | Import-ItemDate
 
         Should-Invoke -CommandName Set-ItemProperty -Times 3 -Exactly
       }
       It 'imports timestamps by Path with ValueFromPipelineByPropertyName' {
-        [PSCustomObject]@{ Path = 'C:\Temp\timestamps.json' } | Import-ItemDate
+        [PSCustomObject]@{ Path = 'C:\dir\timestamps.json' } | Import-ItemDate
 
         Should-Invoke -CommandName Set-ItemProperty -Times 3 -Exactly
       }
       It 'imports timestamps by FilePath alias' {
-        Import-ItemDate -FilePath 'C:\Temp\timestamps.json'
+        Import-ItemDate -FilePath 'C:\dir\timestamps.json'
 
         Should-Invoke -CommandName Set-ItemProperty -Times 3 -Exactly
       }
       It 'imports timestamps by FullName alias' {
-        Import-ItemDate -FullName 'C:\Temp\timestamps.json'
+        Import-ItemDate -FullName 'C:\dir\timestamps.json'
 
         Should-Invoke -CommandName Set-ItemProperty -Times 3 -Exactly
       }
     }
     Context 'SupportsShouldProcess' {
       It 'does not set properties when WhatIf is specified' {
-        Import-ItemDate -Path 'C:\Temp\timestamps.json' -WhatIf
+        Import-ItemDate -Path 'C:\dir\timestamps.json' -WhatIf
 
         Should-Invoke -CommandName Set-ItemProperty -Times 0 -Exactly
       }
       It 'sets properties when Force is specified with Confirm' {
-        Import-ItemDate -Path 'C:\Temp\timestamps.json' -Force -Confirm
+        Import-ItemDate -Path 'C:\dir\timestamps.json' -Force -Confirm
 
         Should-Invoke -CommandName Set-ItemProperty -Times 3 -Exactly
       }
     }
     Context 'Other parameters' {
       It 'sets each timestamp property with the value from JSON' {
-        Import-ItemDate -Path 'C:\Temp\timestamps.json'
+        Import-ItemDate -Path 'C:\dir\timestamps.json'
 
         Should-Invoke -CommandName Set-ItemProperty -Times 1 -Exactly -ParameterFilter { $Name -eq 'CreationTime' -and $Value -eq '2025-01-01T00:00:00' }
         Should-Invoke -CommandName Set-ItemProperty -Times 1 -Exactly -ParameterFilter { $Name -eq 'LastWriteTime' -and $Value -eq '2025-01-02T00:00:00' }
         Should-Invoke -CommandName Set-ItemProperty -Times 1 -Exactly -ParameterFilter { $Name -eq 'LastAccessTime' -and $Value -eq '2025-01-03T00:00:00' }
       }
       It 'resolves a relative Path (including the folder name) against the JSON file folder' {
-        Mock -CommandName Get-Content -ParameterFilter { $LiteralPath -eq 'C:\Temp\relative.json' } -MockWith {
+        Mock -CommandName Get-Content -ParameterFilter { $LiteralPath -eq 'C:\dir\relative.json' } -MockWith {
           '[{"Path":"dir\\file.txt","CreationTime":"2025-01-01T00:00:00","LastWriteTime":"2025-01-02T00:00:00","LastAccessTime":"2025-01-03T00:00:00","Hash":"abc123"}]'
         }
 
-        Import-ItemDate -Path 'C:\Temp\relative.json'
+        Import-ItemDate -Path 'C:\dir\relative.json'
 
-        Should-Invoke -CommandName Set-ItemProperty -Times 3 -Exactly -ParameterFilter { $LiteralPath -eq 'C:\Temp\dir\file.txt' }
+        Should-Invoke -CommandName Set-ItemProperty -Times 3 -Exactly -ParameterFilter { $LiteralPath -eq 'C:\dir\dir\file.txt' }
       }
       It 'returns the updated FileInfo object when PassThru is specified' {
-        $result = Import-ItemDate -Path 'C:\Temp\timestamps.json' -PassThru
+        $result = Import-ItemDate -Path 'C:\dir\timestamps.json' -PassThru
 
         $result | Should-NotBeNull
         $result.FullName | Should-BeString 'C:\dir\file.txt'
         Should-Invoke -CommandName Get-Item -Times 1 -Exactly -ParameterFilter { $LiteralPath -eq 'C:\dir\file.txt' }
       }
       It 'does not return output by default' {
-        $result = Import-ItemDate -Path 'C:\Temp\timestamps.json'
+        $result = Import-ItemDate -Path 'C:\dir\timestamps.json'
 
         $result | Should-BeNull
         Should-Invoke -CommandName Get-Item -Times 0 -Exactly
@@ -1575,11 +1575,11 @@ InModuleScope 'Item' {
     }
     Context 'Other parameters' {
       It 'imports timestamps from multiple JSON files passed as an array' {
-        Mock -CommandName Get-Content -ParameterFilter { $LiteralPath -eq 'C:\Temp\second.json' } -MockWith {
+        Mock -CommandName Get-Content -ParameterFilter { $LiteralPath -eq 'C:\dir\second.json' } -MockWith {
           '[{"Path":"C:\\dir\\file2.txt","CreationTime":"2025-02-01T00:00:00","LastWriteTime":"2025-02-02T00:00:00","LastAccessTime":"2025-02-03T00:00:00","Hash":"abc123"}]'
         }
 
-        Import-ItemDate -Path @('C:\Temp\timestamps.json', 'C:\Temp\second.json')
+        Import-ItemDate -Path @('C:\dir\timestamps.json', 'C:\dir\second.json')
 
         Should-Invoke -CommandName Set-ItemProperty -Times 6 -Exactly
       }
@@ -1589,7 +1589,7 @@ InModuleScope 'Item' {
         Mock -CommandName Get-FileHash -MockWith { [PSCustomObject]@{ Hash = 'mismatch' } }
 
         $warnings = @()
-        Import-ItemDate -Path 'C:\Temp\timestamps.json' -WarningVariable warnings
+        Import-ItemDate -Path 'C:\dir\timestamps.json' -WarningVariable warnings
 
         Should-Invoke -CommandName Set-ItemProperty -Times 0 -Exactly
         $warnings.Count | Should-Be 1
@@ -1599,7 +1599,7 @@ InModuleScope 'Item' {
         Mock -CommandName Test-Path -ParameterFilter { $LiteralPath -eq 'C:\dir\file.txt' } -MockWith { $false }
 
         $warnings = @()
-        Import-ItemDate -Path 'C:\Temp\timestamps.json' -WarningVariable warnings
+        Import-ItemDate -Path 'C:\dir\timestamps.json' -WarningVariable warnings
 
         Should-Invoke -CommandName Set-ItemProperty -Times 0 -Exactly
         $warnings.Count | Should-Be 1
@@ -1611,7 +1611,7 @@ InModuleScope 'Item' {
         Mock -CommandName Test-Path -ParameterFilter { $LiteralPath -eq 'C:\dir\file.txt' -and $PathType -eq 'Leaf' } -MockWith { $false }
 
         $warnings = @()
-        Import-ItemDate -Path 'C:\Temp\timestamps.json' -WarningVariable warnings
+        Import-ItemDate -Path 'C:\dir\timestamps.json' -WarningVariable warnings
 
         Should-Invoke -CommandName Set-ItemProperty -Times 0 -Exactly
         $warnings.Count | Should-Be 1
@@ -1620,9 +1620,9 @@ InModuleScope 'Item' {
     }
     Context 'Edge cases' {
       It 'does not set properties when the JSON array is empty' {
-        Mock -CommandName Get-Content -ParameterFilter { $LiteralPath -eq 'C:\Temp\empty.json' } -MockWith { '[]' }
+        Mock -CommandName Get-Content -ParameterFilter { $LiteralPath -eq 'C:\dir\empty.json' } -MockWith { '[]' }
 
-        Import-ItemDate -Path 'C:\Temp\empty.json'
+        Import-ItemDate -Path 'C:\dir\empty.json'
 
         Should-Invoke -CommandName Set-ItemProperty -Times 0 -Exactly
       }

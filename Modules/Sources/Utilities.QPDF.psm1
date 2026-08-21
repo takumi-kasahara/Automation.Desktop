@@ -44,16 +44,18 @@ function ConvertTo-Qdf {
 
   .EXAMPLE
     ``` powershell
-  ConvertTo-Qdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\manual.qdf'
-  ```
+    ConvertTo-Qdf -Path 'C:\docs\manual.pdf' -Destination 'C:\dir\manual.qdf'
+    ```
 
-  Converts manual.pdf to an editable QDF file in C:\Temp.
+    Converts manual.pdf to an editable QDF file in C:\dir.
 
   .EXAMPLE
     ``` powershell
     $ownerPw = ConvertTo-SecureString -String 'owner123' -AsPlainText -Force
-    ConvertTo-Qdf -Path 'C:\Docs\encrypted.pdf' -Destination 'C:\Temp\manual.qdf' -OwnerPassword $ownerPw
+    ConvertTo-Qdf -Path 'C:\docs\encrypted.pdf' -Destination 'C:\dir\manual.qdf' -OwnerPassword $ownerPw
     ```
+
+    Converts an encrypted PDF to QDF format using the owner password.
 
   .OUTPUTS
     None. Only converts PDF to QDF.
@@ -150,16 +152,18 @@ function ConvertFrom-Qdf {
 
   .EXAMPLE
     ``` powershell
-  ConvertFrom-Qdf -Path 'C:\Temp\manual.qdf' -Destination 'C:\Docs\manual.pdf'
-  ```
+    ConvertFrom-Qdf -Path 'C:\dir\manual.qdf' -Destination 'C:\docs\manual.pdf'
+    ```
 
-  Converts the QDF file back to a PDF document.
+    Converts the QDF file back to a PDF document.
 
   .EXAMPLE
     ``` powershell
     $ownerPw = ConvertTo-SecureString -String 'owner123' -AsPlainText -Force
-    ConvertFrom-Qdf -Path 'C:\Temp\encrypted.qdf' -Destination 'C:\Docs\manual.pdf' -OwnerPassword $ownerPw
+    ConvertFrom-Qdf -Path 'C:\dir\encrypted.qdf' -Destination 'C:\docs\manual.pdf' -OwnerPassword $ownerPw
     ```
+
+    Converts an encrypted QDF file back to PDF using the owner password.
 
   .OUTPUTS
     None. Only converts QDF to PDF.
@@ -253,26 +257,29 @@ function Unblock-Pdf {
 
   .EXAMPLE
     ``` powershell
-  Unblock-Pdf -Path 'C:\Docs\*.pdf'
-  ```
+    Unblock-Pdf -Path 'C:\docs\*.pdf'
+    ```
 
-  Removes encryption from every PDF that matches the path.
+    Removes encryption from every PDF that matches the path.
 
   .EXAMPLE
     ``` powershell
-  Unblock-Pdf -LiteralPath 'C:\Docs\manual.pdf' -WhatIf
-  ```
+    Unblock-Pdf -LiteralPath 'C:\docs\manual.pdf' -WhatIf
+    ```
 
-  Shows the decryption operation for manual.pdf without modifying it.
+    Shows the decryption operation for manual.pdf without modifying it.
 
   .EXAMPLE
     ``` powershell
     $ownerPw = ConvertTo-SecureString -String 'ownerpass' -AsPlainText -Force
-    Unblock-Pdf -LiteralPath 'C:\Docs\encrypted.pdf' -OwnerPassword $ownerPw
+    Unblock-Pdf -LiteralPath 'C:\docs\encrypted.pdf' -OwnerPassword $ownerPw
     ```
 
+    Removes encryption from a password-protected PDF file.
+
   .OUTPUTS
-    None. Only removes PDF encryption.
+    None.
+      Only removes PDF encryption.
 
   .NOTES
     This function requires `qpdf.exe` to be available in the system PATH.
@@ -370,23 +377,25 @@ function Get-PdfPage {
 
   .EXAMPLE
     ``` powershell
-  Get-PdfPage -Path 'C:\Docs\*.pdf'
-  ```
+    Get-PdfPage -Path 'C:\docs\*.pdf'
+    ```
 
-  Returns the page count for each matching PDF file.
+    Returns the page count for each matching PDF file.
 
   .EXAMPLE
     ``` powershell
-  Get-PdfPage -LiteralPath 'C:\Docs\manual.pdf'
-  ```
+    Get-PdfPage -LiteralPath 'C:\docs\manual.pdf'
+    ```
 
-  Returns the page count for manual.pdf.
+    Returns the page count for manual.pdf.
 
   .EXAMPLE
     ``` powershell
     $ownerPw = ConvertTo-SecureString -String 'owner123' -AsPlainText -Force
-    Get-PdfPage -LiteralPath 'C:\Docs\encrypted.pdf' -OwnerPassword $ownerPw
+    Get-PdfPage -LiteralPath 'C:\docs\encrypted.pdf' -OwnerPassword $ownerPw
     ```
+
+    Returns the page count for an encrypted PDF file using the owner password.
 
   .OUTPUTS
     PdfInfo

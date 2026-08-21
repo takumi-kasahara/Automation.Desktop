@@ -66,7 +66,7 @@ InModuleScope 'Path' {
       $oldTestExpandVar1 = $env:TEST_EXPAND_VAR1
       $oldTestExpandVar2 = $env:TEST_EXPAND_VAR2
       $env:TEST_EXPAND_VAR1 = 'C:\Users\User'
-      $env:TEST_EXPAND_VAR2 = 'C:\Temp'
+      $env:TEST_EXPAND_VAR2 = 'C:\dir'
     }
     AfterAll {
       if ($null -ne $oldTestExpandVar1) {
@@ -89,7 +89,7 @@ InModuleScope 'Path' {
       It 'expands multiple environment variables' {
         $result = Expand-EnvironmentVariable -InputString '%TEST_EXPAND_VAR1%\%TEST_EXPAND_VAR2%'
 
-        $result | Should-BeString 'C:\Users\User\C:\Temp'
+        $result | Should-BeString 'C:\Users\User\C:\dir'
       }
     }
     Context 'Edge cases' {
@@ -428,56 +428,56 @@ InModuleScope 'Path' {
         }
         return $true
       }
-      Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\Docs\*' } -MockWith {
+      Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\docs\*' } -MockWith {
         @(
-          [PSCustomObject]@{ FullName = 'C:\Docs\archive.zip' }
-          [PSCustomObject]@{ FullName = 'C:\Docs\notes.txt' }
+          [PSCustomObject]@{ FullName = 'C:\docs\archive.zip' }
+          [PSCustomObject]@{ FullName = 'C:\docs\notes.txt' }
         )
       }
-      Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\Docs\archive.zip' } -MockWith {
-        [PSCustomObject]@{ FullName = 'C:\Docs\archive.zip' }
+      Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\docs\archive.zip' } -MockWith {
+        [PSCustomObject]@{ FullName = 'C:\docs\archive.zip' }
       }
-      Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\Docs\notes.txt' } -MockWith {
-        [PSCustomObject]@{ FullName = 'C:\Docs\notes.txt' }
+      Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\docs\notes.txt' } -MockWith {
+        [PSCustomObject]@{ FullName = 'C:\docs\notes.txt' }
       }
-      Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\Docs\folder' } -MockWith {
-        [PSCustomObject]@{ FullName = 'C:\Docs\folder' }
+      Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\docs\folder' } -MockWith {
+        [PSCustomObject]@{ FullName = 'C:\docs\folder' }
       }
     }
     Context 'ParameterSetName' {
       It 'returns true for archive files by Path with wildcards' {
-        Test-ArchiveExtension -Path 'C:\Docs\*' | Should -BeTrue
+        Test-ArchiveExtension -Path 'C:\docs\*' | Should -BeTrue
       }
       It 'returns true by Path with ValueFromPipeline' {
-        'C:\Docs\*' | Test-ArchiveExtension | Should -BeTrue
+        'C:\docs\*' | Test-ArchiveExtension | Should -BeTrue
       }
       It 'returns true by Path with ValueFromPipelineByPropertyName' {
-        [PSCustomObject]@{ Path = 'C:\Docs\*' } | Test-ArchiveExtension | Should -BeTrue
+        [PSCustomObject]@{ Path = 'C:\docs\*' } | Test-ArchiveExtension | Should -BeTrue
       }
       It 'returns true by LiteralPath' {
-        Test-ArchiveExtension -LiteralPath 'C:\Docs\archive.zip' | Should -BeTrue
+        Test-ArchiveExtension -LiteralPath 'C:\docs\archive.zip' | Should -BeTrue
       }
       It 'returns true by LiteralPath with ValueFromPipelineByPropertyName' {
-        [PSCustomObject]@{ LiteralPath = 'C:\Docs\archive.zip' } | Test-ArchiveExtension | Should -BeTrue
+        [PSCustomObject]@{ LiteralPath = 'C:\docs\archive.zip' } | Test-ArchiveExtension | Should -BeTrue
       }
     }
     Context 'Other parameters' {
       It 'returns false when none of the files have archive extensions' {
-        Test-ArchiveExtension -LiteralPath 'C:\Docs\notes.txt' | Should -BeFalse
+        Test-ArchiveExtension -LiteralPath 'C:\docs\notes.txt' | Should -BeFalse
       }
       It 'matches archive extensions case-insensitively' {
-        Test-ArchiveExtension -LiteralPath 'C:\Docs\archive.ZIP' | Should -BeTrue
+        Test-ArchiveExtension -LiteralPath 'C:\docs\archive.ZIP' | Should -BeTrue
       }
     }
     Context 'Edge cases' {
       It 'returns false for non-leaf items' {
-        Test-ArchiveExtension -LiteralPath 'C:\Docs\folder' | Should -BeFalse
+        Test-ArchiveExtension -LiteralPath 'C:\docs\folder' | Should -BeFalse
       }
       It 'returns false when Get-Item throws ItemNotFoundException' {
-        Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\Docs\missing.*' } -MockWith {
+        Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\docs\missing.*' } -MockWith {
           throw [ItemNotFoundException]::new('Not found')
         }
-        Test-ArchiveExtension -Path 'C:\Docs\missing.*' | Should -BeFalse
+        Test-ArchiveExtension -Path 'C:\docs\missing.*' | Should -BeFalse
       }
     }
   }
@@ -499,56 +499,56 @@ InModuleScope 'Path' {
         }
         return $true
       }
-      Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\Docs\*.pdf' } -MockWith {
+      Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\docs\*.pdf' } -MockWith {
         @(
-          [PSCustomObject]@{ FullName = 'C:\Docs\manual.pdf' }
-          [PSCustomObject]@{ FullName = 'C:\Docs\notes.txt' }
+          [PSCustomObject]@{ FullName = 'C:\docs\manual.pdf' }
+          [PSCustomObject]@{ FullName = 'C:\docs\notes.txt' }
         )
       }
-      Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\Docs\manual.pdf' } -MockWith {
-        [PSCustomObject]@{ FullName = 'C:\Docs\manual.pdf' }
+      Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\docs\manual.pdf' } -MockWith {
+        [PSCustomObject]@{ FullName = 'C:\docs\manual.pdf' }
       }
-      Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\Docs\notes.txt' } -MockWith {
-        [PSCustomObject]@{ FullName = 'C:\Docs\notes.txt' }
+      Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\docs\notes.txt' } -MockWith {
+        [PSCustomObject]@{ FullName = 'C:\docs\notes.txt' }
       }
-      Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\Docs\folder' } -MockWith {
-        [PSCustomObject]@{ FullName = 'C:\Docs\folder' }
+      Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\docs\folder' } -MockWith {
+        [PSCustomObject]@{ FullName = 'C:\docs\folder' }
       }
     }
     Context 'ParameterSetName' {
       It 'returns true for PDF files by Path with wildcards' {
-        Test-PdfExtension -Path 'C:\Docs\*.pdf' | Should -BeTrue
+        Test-PdfExtension -Path 'C:\docs\*.pdf' | Should -BeTrue
       }
       It 'returns true by Path with ValueFromPipeline' {
-        'C:\Docs\*.pdf' | Test-PdfExtension | Should -BeTrue
+        'C:\docs\*.pdf' | Test-PdfExtension | Should -BeTrue
       }
       It 'returns true by Path with ValueFromPipelineByPropertyName' {
-        [PSCustomObject]@{ Path = 'C:\Docs\*.pdf' } | Test-PdfExtension | Should -BeTrue
+        [PSCustomObject]@{ Path = 'C:\docs\*.pdf' } | Test-PdfExtension | Should -BeTrue
       }
       It 'returns true by LiteralPath' {
-        Test-PdfExtension -LiteralPath 'C:\Docs\manual.pdf' | Should -BeTrue
+        Test-PdfExtension -LiteralPath 'C:\docs\manual.pdf' | Should -BeTrue
       }
       It 'returns true by LiteralPath with ValueFromPipelineByPropertyName' {
-        [PSCustomObject]@{ LiteralPath = 'C:\Docs\manual.pdf' } | Test-PdfExtension | Should -BeTrue
+        [PSCustomObject]@{ LiteralPath = 'C:\docs\manual.pdf' } | Test-PdfExtension | Should -BeTrue
       }
     }
     Context 'Other parameters' {
       It 'returns false when none of the files are PDFs' {
-        Test-PdfExtension -LiteralPath 'C:\Docs\notes.txt' | Should -BeFalse
+        Test-PdfExtension -LiteralPath 'C:\docs\notes.txt' | Should -BeFalse
       }
       It 'matches PDF extensions case-insensitively' {
-        Test-PdfExtension -LiteralPath 'C:\Docs\manual.PDF' | Should -BeTrue
+        Test-PdfExtension -LiteralPath 'C:\docs\manual.PDF' | Should -BeTrue
       }
     }
     Context 'Edge cases' {
       It 'returns false for non-leaf items' {
-        Test-PdfExtension -LiteralPath 'C:\Docs\folder' | Should -BeFalse
+        Test-PdfExtension -LiteralPath 'C:\docs\folder' | Should -BeFalse
       }
       It 'returns false when Get-Item throws ItemNotFoundException' {
-        Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\Docs\missing.pdf' } -MockWith {
+        Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\docs\missing.pdf' } -MockWith {
           throw [ItemNotFoundException]::new('Not found')
         }
-        Test-PdfExtension -Path 'C:\Docs\missing.pdf' | Should -BeFalse
+        Test-PdfExtension -Path 'C:\docs\missing.pdf' | Should -BeFalse
       }
     }
   }

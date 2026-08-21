@@ -46,6 +46,8 @@ function Get-ItemDetail {
     Get-ItemDetail -Path 'C:\dir\file.txt' -Min 0 -Max 10
     ```
 
+    Retrieves shell detail fields 0 through 10 for the specified file.
+
   .OUTPUTS
     ItemDetail.
       Objects for all non-empty shell detail fields in the requested index range.
@@ -370,6 +372,8 @@ function Move-ItemToRecycleBin {
     Move-ItemToRecycleBin -LiteralPath 'C:\dir\file.txt'
     ```
 
+    Moves the specified file to the Recycle Bin.
+
   .NOTES
     This cmdlet moves items to the Recycle Bin and does not return any object on success.
 
@@ -469,8 +473,10 @@ function New-Shortcut {
 
   .EXAMPLE
     ``` powershell
-    New-Shortcut -Path 'C:\Users\Public\Desktop\Example' -TargetPath 'C:\Windows\System32\notepad.exe' -WorkingDirectory 'C:\Temp' -Arguments '/A /B' -Description 'Example shortcut' -IconLocation 'C:\Windows\System32\shell32.dll,1' -HotKey 'F5' -WindowStyle Maximum -Force
+    New-Shortcut -Path 'C:\Users\Public\Desktop\Example' -TargetPath 'C:\Windows\System32\notepad.exe' -WorkingDirectory 'C:\dir' -Arguments '/A /B' -Description 'Example shortcut' -IconLocation 'C:\Windows\System32\shell32.dll,1' -HotKey 'F5' -WindowStyle Maximum -Force
     ```
+
+    Creates a desktop shortcut with custom properties including working directory, arguments, description, icon, and hotkey.
 
   .OUTPUTS
     System.IO.FileInfo
@@ -586,6 +592,8 @@ function New-UrlShortcut {
     ``` powershell
     New-UrlShortcut -Path 'C:\Users\Public\Desktop\Example' -TargetPath 'https://example.com' -Force
     ```
+
+    Creates a desktop shortcut to the specified website, overwriting any existing shortcut.
 
   .OUTPUTS
     System.IO.FileInfo
@@ -736,6 +744,8 @@ function Test-Shortcut {
     Test-Shortcut -LiteralPath 'C:\Users\Public\Desktop\Example.lnk'
     ```
 
+    Tests whether the specified shortcut target is valid.
+
   .NOTES
     Returns a boolean value indicating whether the shortcut target exists.
 
@@ -809,6 +819,8 @@ function New-NetworkDrive {
     New-NetworkDrive -Name Z -Root '\\server\share' -Force
     ```
 
+    Removes the existing mapping and creates a new one.
+
   .OUTPUTS
     None.
 
@@ -860,6 +872,8 @@ function New-NetworkShortcut {
     ``` powershell
     New-NetworkShortcut -Path '\\server\share' -Force
     ```
+
+    Removes the existing network shortcut before creating a new one.
 
   .OUTPUTS
   System.IO.DirectoryInfo

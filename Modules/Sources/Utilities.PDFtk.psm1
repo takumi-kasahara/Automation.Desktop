@@ -35,17 +35,19 @@ function Export-PdfDump {
 
   .EXAMPLE
     ``` powershell
-    Export-PdfDump -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\dump.txt'
+    Export-PdfDump -Path 'C:\docs\manual.pdf' -Destination 'C:\dir\dump.txt'
     ```
 
-  Exports metadata from manual.pdf to a text dump.
+    Exports metadata from manual.pdf to a text dump.
 
   .EXAMPLE
     ``` powershell
     $ownerPw = ConvertTo-SecureString -String 'ownerpass' -AsPlainText -Force
     $userPw = ConvertTo-SecureString -String 'userpass' -AsPlainText -Force
-    Export-PdfDump -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\dump.txt' -OwnerPassword $ownerPw -UserPassword $userPw
+    Export-PdfDump -Path 'C:\docs\manual.pdf' -Destination 'C:\dir\dump.txt' -OwnerPassword $ownerPw -UserPassword $userPw
     ```
+
+    Exports metadata from a password-protected PDF file to a text dump.
 
   .OUTPUTS
     None. Only exports PDF metadata dump.
@@ -147,16 +149,16 @@ function Import-PdfDump {
 
   .EXAMPLE
     ``` powershell
-  Import-PdfDump -Path 'C:\Docs\manual.pdf' -Source 'C:\Temp\meta.dump' -Destination 'C:\Temp\updated.pdf'
-  ```
+    Import-PdfDump -Path 'C:\docs\manual.pdf' -Source 'C:\dir\meta.dump' -Destination 'C:\dir\updated.pdf'
+    ```
 
-  Applies metadata from meta.dump and writes the updated PDF to C:\Temp.
+    Applies metadata from meta.dump and writes the updated PDF to C:\dir.
 
   .EXAMPLE
     ``` powershell
     $ownerPw = ConvertTo-SecureString -String 'ownerpass' -AsPlainText -Force
     $userPw = ConvertTo-SecureString -String 'userpass' -AsPlainText -Force
-    Import-PdfDump -Path 'C:\Docs\manual.pdf' -Source 'C:\Temp\meta.dump' -Destination 'C:\Temp\updated.pdf' -OwnerPassword $ownerPw -UserPassword $userPw
+    Import-PdfDump -Path 'C:\docs\manual.pdf' -Source 'C:\dir\meta.dump' -Destination 'C:\dir\updated.pdf' -OwnerPassword $ownerPw -UserPassword $userPw
     ```
 
   .OUTPUTS
@@ -261,57 +263,58 @@ function Join-Pdf {
 
   .EXAMPLE
     ``` powershell
-    Join-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\merged.pdf'
+    Join-Pdf -Path 'C:\docs\manual.pdf' -Destination 'C:\dir\merged.pdf'
     ```
 
-    Joins a single PDF file and writes the result to C:\Temp\merged.pdf.
+    Joins a single PDF file and writes the result to C:\dir\merged.pdf.
 
   .EXAMPLE
     ``` powershell
-    Join-Pdf -Path 'C:\Docs\chapter1.pdf', 'C:\Docs\chapter2.pdf' -Destination 'C:\Temp\merged.pdf'
+    Join-Pdf -Path 'C:\docs\chapter1.pdf', 'C:\docs\chapter2.pdf' -Destination 'C:\dir\merged.pdf'
     ```
 
     Joins multiple PDF files in the specified order.
 
   .EXAMPLE
     ``` powershell
-    Join-Pdf -Path 'C:\Docs\*.pdf' -Destination 'C:\Temp\merged.pdf'
+    Join-Pdf -Path 'C:\docs\*.pdf' -Destination 'C:\dir\merged.pdf'
     ```
 
     Passes the wildcard path directly to PDFtk without expanding it in PowerShell.
 
   .EXAMPLE
     ``` powershell
-    Join-Pdf -Path 'C:\Docs'
+    Join-Pdf -Path 'C:\docs'
     ```
 
-    Joins all PDF files that match C:\Docs\*.pdf and writes C:\Docs.pdf.
+    Joins all PDF files that match C:\docs\*.pdf and writes C:\docs.pdf.
 
   .EXAMPLE
     ``` powershell
-    Join-Pdf -LiteralPath 'C:\Docs' -Destination 'C:\Temp\merged.pdf' -WhatIf
+    Join-Pdf -LiteralPath 'C:\docs' -Destination 'C:\dir\merged.pdf' -WhatIf
     ```
 
     Shows what would happen without running pdftk.
 
   .EXAMPLE
     ``` powershell
-    Join-Pdf -LiteralPath 'C:\Docs'
+    Join-Pdf -LiteralPath 'C:\docs'
     ```
 
-    Joins all PDF files under C:\Docs and writes C:\Docs.pdf. Destination is
+    Joins all PDF files under C:\docs and writes C:\docs.pdf. Destination is
     omitted because the source is a single directory.
 
   .EXAMPLE
     ``` powershell
     $ownerPw = ConvertTo-SecureString -String 'ownerpass' -AsPlainText -Force
-    Join-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\merged.pdf' -OwnerPassword $ownerPw
+    Join-Pdf -Path 'C:\docs\manual.pdf' -Destination 'C:\dir\merged.pdf' -OwnerPassword $ownerPw
     ```
 
     Joins a password-protected PDF file.
 
   .OUTPUTS
-    None. Only creates a merged PDF file.
+    None.
+      Only creates a merged PDF file.
 
   .NOTES
     This function requires `pdftk.exe` to be available in the system PATH.
@@ -482,19 +485,22 @@ function Split-Pdf {
 
   .EXAMPLE
     ``` powershell
-  Split-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\page_%04d.pdf'
-  ```
+    Split-Pdf -Path 'C:\docs\manual.pdf' -Destination 'C:\dir\page_%04d.pdf'
+    ```
 
-  Splits manual.pdf into numbered page files in C:\Temp.
+    Splits manual.pdf into numbered page files in C:\dir.
 
   .EXAMPLE
     ``` powershell
     $ownerPw = ConvertTo-SecureString -String 'ownerpass' -AsPlainText -Force
-    Split-Pdf -Path 'C:\Docs\manual.pdf' -Destination 'C:\Temp\page_%04d.pdf' -OwnerPassword $ownerPw
+    Split-Pdf -Path 'C:\docs\manual.pdf' -Destination 'C:\dir\page_%04d.pdf' -OwnerPassword $ownerPw
     ```
 
+    Splits a password-protected PDF into numbered page files.
+
   .OUTPUTS
-    None. Only splits the PDF into page files.
+    None.
+      Only splits the PDF into page files.
 
   .NOTES
     This function requires `pdftk.exe` to be available in the system PATH.
