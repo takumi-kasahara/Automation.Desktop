@@ -19,14 +19,14 @@ function Compress-EnvironmentVariable {
     The string to compress by replacing environment variable values.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     Compress-EnvironmentVariable -InputString 'Path is C:\Users\User; temp is C:\dir'
     ```
 
     Replaces matching path values with environment-variable references.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     Compress-EnvironmentVariable -InputString 'My home is C:\Users\User and path is C:\Users'
     ```
 
@@ -65,14 +65,14 @@ function Expand-EnvironmentVariable {
     The string containing environment variable references to expand.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     Expand-EnvironmentVariable -InputString '%USERPROFILE%\Documents'
     ```
 
     Expands USERPROFILE to return the full Documents path.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     Expand-EnvironmentVariable -InputString 'Path is %PATH%'
     ```
 
@@ -109,14 +109,14 @@ function ConvertTo-LocalPath {
     Specifies literal UNC or local paths to convert.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     ConvertTo-LocalPath -Path '\\MYPC\Share\Folder\File.txt'
     ```
 
     Converts a UNC path to its local path when the share is available locally.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     ConvertTo-LocalPath -LiteralPath '\\MYPC\Share\Folder\File.txt'
     ```
 
@@ -190,14 +190,14 @@ function ConvertTo-NetworkPath {
     Specifies literal local or UNC paths to convert.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     ConvertTo-NetworkPath -Path 'C:\Shared\Folder\File.txt'
     ```
 
     Converts a local path to its corresponding UNC path.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     ConvertTo-NetworkPath -LiteralPath 'C:\Shared\Folder\File.txt'
     ```
 
@@ -276,14 +276,14 @@ function ConvertTo-WSLPath {
     Specifies additional arguments passed to `wsl.exe` before `wslpath`.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     ConvertTo-WSLPath -Path 'C:\Users\User\file.txt'
     ```
 
     Converts the Windows path to its WSL representation.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     ConvertTo-WSLPath -LiteralPath 'C:\Users\User\file.txt' -ArgumentList '--quiet'
     ```
 
@@ -351,14 +351,14 @@ function Get-NormalizedPath {
     Uses compatibility normalization forms for path component normalization.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     Get-NormalizedPath -Path 'C:\Users\Public\Document.txt'
     ```
 
     Returns the normalized form of the specified path.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     Get-NormalizedPath -LiteralPath 'C:\Users\Public\Document.txt' -Compatible
     ```
 
@@ -486,14 +486,14 @@ function Move-NormalizedPath {
     Returns moved items when the operation succeeds.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     Move-NormalizedPath -Path 'C:\dir\*' -WhatIf
     ```
 
     Shows how matching paths would be renamed to their normalized forms.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     Move-NormalizedPath -LiteralPath 'C:\dir\file.txt' -Force
     ```
 

@@ -43,14 +43,14 @@ function ConvertTo-Qdf {
     Specifies the user password for encrypted PDF files. Use a SecureString for secure input.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     ConvertTo-Qdf -Path 'C:\docs\manual.pdf' -Destination 'C:\dir\manual.qdf'
     ```
 
     Converts manual.pdf to an editable QDF file in C:\dir.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     $ownerPw = ConvertTo-SecureString -String 'owner123' -AsPlainText -Force
     ConvertTo-Qdf -Path 'C:\docs\encrypted.pdf' -Destination 'C:\dir\manual.qdf' -OwnerPassword $ownerPw
     ```
@@ -151,14 +151,14 @@ function ConvertFrom-Qdf {
     Specifies the user password for encrypted QDF files. Use a SecureString for secure input.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     ConvertFrom-Qdf -Path 'C:\dir\manual.qdf' -Destination 'C:\docs\manual.pdf'
     ```
 
     Converts the QDF file back to a PDF document.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     $ownerPw = ConvertTo-SecureString -String 'owner123' -AsPlainText -Force
     ConvertFrom-Qdf -Path 'C:\dir\encrypted.qdf' -Destination 'C:\docs\manual.pdf' -OwnerPassword $ownerPw
     ```
@@ -256,21 +256,21 @@ function Unblock-Pdf {
     Specifies the user password for encrypted PDF files. Use a SecureString for secure input.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     Unblock-Pdf -Path 'C:\docs\*.pdf'
     ```
 
     Removes encryption from every PDF that matches the path.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     Unblock-Pdf -LiteralPath 'C:\docs\manual.pdf' -WhatIf
     ```
 
     Shows the decryption operation for manual.pdf without modifying it.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     $ownerPw = ConvertTo-SecureString -String 'ownerpass' -AsPlainText -Force
     Unblock-Pdf -LiteralPath 'C:\docs\encrypted.pdf' -OwnerPassword $ownerPw
     ```
@@ -376,21 +376,21 @@ function Get-PdfPage {
     Specifies the user password for encrypted PDF files. Use a SecureString for secure input.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     Get-PdfPage -Path 'C:\docs\*.pdf'
     ```
 
     Returns the page count for each matching PDF file.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     Get-PdfPage -LiteralPath 'C:\docs\manual.pdf'
     ```
 
     Returns the page count for manual.pdf.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     $ownerPw = ConvertTo-SecureString -String 'owner123' -AsPlainText -Force
     Get-PdfPage -LiteralPath 'C:\docs\encrypted.pdf' -OwnerPassword $ownerPw
     ```

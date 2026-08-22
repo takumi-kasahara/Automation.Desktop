@@ -23,14 +23,14 @@
   No File List: Do not output file names during the Robocopy operation.
 
 .EXAMPLE
-  ``` powershell
+  ```powershell
   Invoke-Robocopy -Source 'C:\Data' -Destination 'D:\Backup\Data'
   ```
 
   Mirrors C:\Data to D:\Backup\Data and returns the operation details.
 
 .EXAMPLE
-  ``` powershell
+  ```powershell
   Invoke-Robocopy -Source 'C:\Data' -Destination 'D:\Backup\Data' -WhatIf
   ```
 

@@ -30,14 +30,14 @@ function Get-ArchivedItem {
     Specifies the text encoding to use for 7-Zip output. When provided, the function passes `-mcp=<codepage>` to `7z.exe`.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     Get-ArchivedItem -Path 'C:\Archives\*.7z'
     ```
 
     Lists the contents of every matching 7z archive.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     Get-ArchivedItem -LiteralPath 'C:\Archives\release.7z' -Encoding ([System.Text.Encoding]::UTF8)
     ```
 
@@ -149,14 +149,14 @@ function Sync-ArchivedItemDate {
     Specifies literal archive paths to update.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     Sync-ArchivedItemDate -Path 'C:\Archive\*.7z'
     ```
 
     Synchronizes timestamps for items in every matching archive.
 
   .EXAMPLE
-    ``` powershell
+    ```powershell
     Sync-ArchivedItemDate -LiteralPath 'C:\Archive\release.7z' -WhatIf
     ```
 
