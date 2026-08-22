@@ -1,12 +1,13 @@
 {
   "scripts": {
-    "lint": "prettier --write . && eslint --fix ."
+    "lint": "prettier --write . && markdownlint-cli2 --fix . && eslint --fix ."
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@stylistic/eslint-plugin": "^5.10.0",
     "eslint": "^10.8.0",
     "globals": "^17.8.0",
+    "markdownlint-cli2": "^0.23.2",
     "prettier": "^3.9.6"
   }
 }

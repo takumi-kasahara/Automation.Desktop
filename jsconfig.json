@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "lib": ["ESNext", "ScriptHost"],
     "allowJs": true,
-    "checkJs": true
+    "checkJs": true,
+    "lib": ["ESNext", "ScriptHost"],
+    "target": "esnext"
   },
   "include": ["**/*.js"]
 }
