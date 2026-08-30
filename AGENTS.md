@@ -18,6 +18,15 @@ This repository is a collection of PowerShell modules and helper scripts for Win
 2. When editing `Modules/Sources/Module.psm1`, also update or create the corresponding test file `Modules/Sources/Module.Tests.ps1` and ensure tests cover your changes.
 3. When adding or removing cmdlets, also update the module manifest files (`Modules/*.psd1`) to reflect the changes.
 
+#### Pester Invocation
+
+Run tests with `Pester.ps1`:
+
+- `powershell.exe -NoLogo -NoProfile -ExecutionPolicy RemoteSigned -File "Pester.ps1" -Path ".\Module.Tests.ps1"`
+- Filter by line: add `-LineNumber 42`
+
+Requires PowerShell Core (`$PSEdition -eq 'Core'`).
+
 ### PowerShell script development cycle
 
 1. Edit files under `Scripts/`.
