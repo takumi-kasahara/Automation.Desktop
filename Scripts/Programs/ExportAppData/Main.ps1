@@ -93,7 +93,7 @@ try {
   $json.Sources |
   ForEach-Object { $_.Packages = $_.Packages | Sort-Object -Property PackageIdentifier }
   $json |
-  ConvertTo-Json |
+  ConvertTo-Json -Depth 100 |
   Out-File -LiteralPath $destination
   Get-Item -LiteralPath $destination
 } catch {
