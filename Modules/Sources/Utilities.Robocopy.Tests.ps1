@@ -42,6 +42,11 @@ InModuleScope 'Utilities.Robocopy' {
         $script:robocopyArguments | Should -Contain '/NDL'
         $script:robocopyArguments | Should -Contain '/NFL'
       }
+      It 'fails when NoClobber is specified and destination exists' {
+        Mock -CommandName Test-Path -MockWith { $true }
+
+        { Invoke-Robocopy -Source 'C:\Source' -Destination 'C:\Destination' -NoClobber } | Should -Throw
+      }
     }
     Context 'Output' {
       It 'returns PSCustomObject with Source, Destination, and Log properties' {

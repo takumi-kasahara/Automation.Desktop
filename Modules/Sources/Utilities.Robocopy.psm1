@@ -16,6 +16,10 @@
 .PARAMETER Destination
   The destination directory path to copy to. Must be a valid path.
 
+.PARAMETER NoClobber
+  Exclude Changed files: Do not overwrite files that exist in the destination but have changed in the source.
+  Throws an exception if the destination path already exists.
+
 .PARAMETER NDL
   No Directory List: Do not output directory names during the Robocopy operation.
 
@@ -57,10 +61,20 @@ function Invoke-Robocopy {
     [string]
     $Destination,
     [switch]
+    $NoClobber,
+    [switch]
     $NDL,
     [switch]
     $NFL
   )
+  if ($NoClobber -and (Test-Path -LiteralPath $Destination)) {
+    $PSCmdlet.ThrowTerminatingError([ErrorRecord]::new(
+        [IOException]::new("$Destination already exists.")
+        , 'ItemAlreadyExists'
+        , [ErrorCategory]::ResourceExists
+        , $Destination
+      ))
+  }
   try {
     $log = $env:TEMP | Join-Path -ChildPath "Robocopy.$(Get-Date -Format 'yyyyMMddHHmmss').log"
     Write-Progress -Activity 'Backup' -Status $Source
