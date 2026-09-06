@@ -20,6 +20,7 @@ powershell -NoLogo -NoProfile -Command "Update-Module -ErrorAction SilentlyConti
 powershell -NoLogo -NoProfile -Command "Update-Help -ErrorAction SilentlyContinue"
 where /q apm >nul 2>&1 && apm update --global --yes
 where /q dotnet >nul 2>&1 && dotnet tool update --global --all
+where /q nuget >nul 2>&1 && nuget update -Self
 where /q npx >nul 2>&1 && cmd /c npx npm-check-updates --global --upgrade
 where /q npm >nul 2>&1 && cmd /c npm update --global --no-fund
 
