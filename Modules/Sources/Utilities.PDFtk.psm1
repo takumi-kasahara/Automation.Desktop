@@ -405,7 +405,7 @@ function Join-Pdf {
     } else {
       @($sourceItems + @($files | ForEach-Object { $_.FullName }))
     }
-    $source = "`"$($sourceItems -join '" "')`""
+    $source = $sourceItems -join '" "'
     $outputDestination = if ($PSBoundParameters.ContainsKey('Destination')) {
       $Destination
     } elseif ($directories.Count -eq 1) {
