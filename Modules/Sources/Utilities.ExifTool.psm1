@@ -240,6 +240,7 @@ function Set-ExifDate {
         $arguments += '-recurse'
       }
       ExifTool.exe $_ @arguments 2>>$log
+      Sync-ItemDate -LiteralPath $_.FullName -Force -WhatIf:$WhatIfPreference
     }
   }
   clean {

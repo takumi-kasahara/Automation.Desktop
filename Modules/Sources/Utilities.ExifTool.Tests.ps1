@@ -164,6 +164,7 @@ InModuleScope 'Utilities.ExifTool' {
   Describe 'Set-ExifDate' {
     BeforeAll {
       Mock -CommandName ExifTool.exe
+      Mock -CommandName Sync-ItemDate
       Mock -CommandName Get-Content
       Mock -CommandName Out-File
       Mock -CommandName Remove-Item
@@ -180,26 +181,31 @@ InModuleScope 'Utilities.ExifTool' {
         Set-ExifDate -Path 'C:\Photos\*.jpg' -Date ([datetime]'2025-01-02 03:04:05')
 
         Should-Invoke -CommandName ExifTool.exe -Times 1 -Exactly
+        Should-Invoke -CommandName Sync-ItemDate -Times 1 -Exactly
       }
       It 'calls ExifTool.exe by Path with ValueFromPipeline' {
         'C:\Photos\*.jpg' | Set-ExifDate -Date ([datetime]'2025-01-02 03:04:05')
 
         Should-Invoke -CommandName ExifTool.exe -Times 1 -Exactly
+        Should-Invoke -CommandName Sync-ItemDate -Times 1 -Exactly
       }
       It 'calls ExifTool.exe by Path with ValueFromPipelineByPropertyName' {
         [PSCustomObject]@{ Path = 'C:\Photos\*.jpg' } | Set-ExifDate -Date ([datetime]'2025-01-02 03:04:05')
 
         Should-Invoke -CommandName ExifTool.exe -Times 1 -Exactly
+        Should-Invoke -CommandName Sync-ItemDate -Times 1 -Exactly
       }
       It 'calls ExifTool.exe by LiteralPath' {
         Set-ExifDate -LiteralPath 'C:\Photos\IMG_0001.jpg' -Date ([datetime]'2025-01-02 03:04:05')
 
         Should-Invoke -CommandName ExifTool.exe -Times 1 -Exactly
+        Should-Invoke -CommandName Sync-ItemDate -Times 1 -Exactly
       }
       It 'calls ExifTool.exe by LiteralPath with ValueFromPipelineByPropertyName' {
         [PSCustomObject]@{ LiteralPath = 'C:\Photos\IMG_0001.jpg' } | Set-ExifDate -Date ([datetime]'2025-01-02 03:04:05')
 
         Should-Invoke -CommandName ExifTool.exe -Times 1 -Exactly
+        Should-Invoke -CommandName Sync-ItemDate -Times 1 -Exactly
       }
     }
     Context 'SupportsShouldProcess' {
@@ -207,6 +213,7 @@ InModuleScope 'Utilities.ExifTool' {
         Set-ExifDate -LiteralPath 'C:\Photos\IMG_0001.jpg' -Date ([datetime]'2025-01-02 03:04:05') -Force -WhatIf
 
         Should-Invoke -CommandName ExifTool.exe -Times 0 -Exactly
+        Should-Invoke -CommandName Sync-ItemDate -Times 0 -Exactly
       }
     }
     Context 'Other parameters' {
