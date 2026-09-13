@@ -257,10 +257,10 @@ function Get-SpecialFolder {
   [OutputType([ShellFolder], [string])]
   param ()
   dynamicparam {
-    $parameter = [Parameter]::new()
+    $parameter = [ParameterAttribute]::new()
     $attributeCollection = [Collection[Attribute]]::new()
     $attributeCollection.Add($parameter)
-    $validateSet = [ValidateSet]::new(
+    $validateSet = [ValidateSetAttribute]::new(
       (
         'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions' |
         Get-ChildItem |
