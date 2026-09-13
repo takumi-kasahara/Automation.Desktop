@@ -22,7 +22,7 @@ This repository is a collection of PowerShell modules and helper scripts for Win
 
 Run tests with `Pester.ps1`:
 
-- `powershell.exe -NoLogo -NoProfile -ExecutionPolicy RemoteSigned -File "Pester.ps1" -Path ".\Module.Tests.ps1"`
+- `pwsh.exe -NoLogo -NoProfile -ExecutionPolicy RemoteSigned -File ".agents\skills\powershell-7-pester-v6\scripts\Pester.ps1" -Path ".\Module.Tests.ps1"`
 - Filter by line: add `-LineNumber 42`
 
 Requires PowerShell Core (`$PSEdition -eq 'Core'`).
