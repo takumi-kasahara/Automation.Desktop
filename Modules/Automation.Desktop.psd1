@@ -57,6 +57,11 @@
     'Unblock-Pdf'
     'Get-PdfPage'
     'Invoke-Robocopy'
+    'Get-OllamaModel'
+    'Remove-OllamaModel'
+    'Update-OllamaModel'
+    'Invoke-OllamaModel'
+    'Stop-OllamaModel'
     #endregion
   )
   CmdletsToExport      = @()
