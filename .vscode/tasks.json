@@ -18,12 +18,6 @@
       }
     },
     {
-      "label": "install",
-      "type": "shell",
-      "command": "${workspaceFolder}\\Install.bat",
-      "problemMatcher": []
-    },
-    {
       "label": "pester current file",
       "type": "shell",
       "command": "pwsh.exe",
