@@ -8,7 +8,6 @@ where /q choco >nul 2>&1 && choco upgrade all --accept-license --pre --yes
 where /q winget >nul 2>&1 && winget upgrade --all --include-unknown --silent --accept-package-agreements --accept-source-agreements
 where /q store >nul 2>&1 && store updates --apply
 where /q pwsh >nul 2>&1 &&^
-pwsh -NoLogo -NoProfile -Command "Get-ExperimentalFeature | Where-Object -Property Enabled -Not | Enable-ExperimentalFeature" &&^
 pwsh -NoLogo -NoProfile -Command "Get-PackageSource | Set-PackageSource -Trusted" &&^
 pwsh -NoLogo -NoProfile -Command "Get-PSRepository | ForEach-Object { Set-PSRepository -Name $_.Name -InstallationPolicy Trusted }" &&^
 pwsh -NoLogo -NoProfile -Command "Update-Module -ErrorAction SilentlyContinue" &&^
