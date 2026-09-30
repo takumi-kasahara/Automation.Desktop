@@ -1,0 +1,354 @@
+using namespace System.Globalization
+using namespace System.IO
+
+Set-StrictMode -Version Latest
+
+function Get-ExifDate {
+  <#
+  .SYNOPSIS
+    Reads Exif timestamp metadata from image files.
+
+  .DESCRIPTION
+    Reads Exif timestamps from image files.
+    It uses `ExifTool.exe` to extract Exif date tags and returns the results as PathInfo objects.
+
+  .PARAMETER Path
+    Specifies wildcard-compatible file paths to inspect.
+
+  .PARAMETER LiteralPath
+    Specifies literal file paths to inspect.
+
+  .PARAMETER Recurse
+    Recursively scans child files when the path resolves to a directory.
+
+  .PARAMETER AsJson
+    Treats ExifTool output as JSON instead of CSV.
+
+  .EXAMPLE
+    ```powershell
+    Get-ExifDate -Path 'C:\Pictures\*.jpg'
+    ```
+
+    Returns EXIF timestamps for every matching JPEG file.
+
+  .EXAMPLE
+    ```powershell
+    Get-ExifDate -LiteralPath 'C:\Pictures\IMG_0001.JPG' -AsJson
+    ```
+
+    Returns EXIF timestamps for the specified file in JSON format.
+
+  .OUTPUTS
+    System.Management.Automation.PathInfo.
+      Objects containing the full path and Exif date metadata of each file.
+
+  .NOTES
+    This function writes ExifTool stderr output to a temporary log file and
+    removes the log file when it remains empty.
+  #>
+  [CmdletBinding(DefaultParameterSetName = 'PathSet')]
+  [OutputType([System.Management.Automation.PathInfo])]
+  param (
+    [Parameter(Mandatory, ParameterSetName = 'PathSet', Position = 0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+    [SupportsWildcards()]
+    [ValidateScript({ Test-Path -Path $_ })]
+    [string[]]
+    $Path,
+    [Alias('PSPath', 'LP')]
+    [Parameter(Mandatory, ParameterSetName = 'LiteralPathSet', ValueFromPipelineByPropertyName)]
+    [ValidateScript({ Test-Path -LiteralPath $_ })]
+    [string[]]
+    $LiteralPath,
+    [switch]
+    $Recurse,
+    [switch]
+    $AsJson
+  )
+  begin {
+    $log = $env:TEMP | Join-Path -ChildPath "ExifTool.$(Get-Date -Format 'yyyyMMddHHmmss').log"
+  }
+  process {
+    $items = @(
+      switch -Exact -CaseSensitive ($PSCmdlet.ParameterSetName) {
+        'PathSet' {
+          Get-Item -Path $Path -Force
+        }
+        'LiteralPathSet' {
+          Get-Item -LiteralPath $LiteralPath -Force
+        }
+      }
+    )
+    $items |
+    ForEach-Object {
+      $parent = [WildcardPattern]::Escape($_.FullName) | Split-Path -Parent
+      $arguments = @(
+        '-allDates',
+        '-dateFormat'
+        '%Y-%m-%dT%H:%M:%S%z'
+      )
+      if ($Recurse) {
+        $arguments += '-recurse'
+      }
+      $output = $AsJson ?
+      (ExifTool.exe $_ @arguments -json 2>>$log | ConvertFrom-Json) :
+      (ExifTool.exe $_ @arguments -csv 2>>$log | ConvertFrom-Csv)
+      $output |
+      ForEach-Object {
+        if ($_.SourceFile -match 'base64:') {
+          Write-Verbose -Message 'Convert from Base64.'
+          $b = [Convert]::FromBase64String($_.SourceFile -replace 'base64:')
+          $_.SourceFile = [Console]::OutputEncoding.GetString($b)
+        }
+        if (-not ([Path]::IsPathRooted($_.SourceFile))) {
+          $_.SourceFile = $parent | Join-Path -ChildPath $_.SourceFile
+        }
+        $fmt = 'yyyy-MM-ddTHH:mm:sszzz'
+        if (@($_ | Get-Member -MemberType NoteProperty) -match 'DateTimeOriginal') {
+          $_.DateTimeOriginal = try {
+            [datetime]::ParseExact($_.DateTimeOriginal, $fmt, [DateTimeFormatInfo]::InvariantInfo, [DateTimeStyles]::None)
+          } catch {
+            $null
+          }
+        } else {
+          $_ | Add-Member -MemberType NoteProperty -Name 'DateTimeOriginal' -Value $null
+        }
+        if (@($_ | Get-Member -MemberType NoteProperty) -match 'CreateDate') {
+          $_.CreateDate = try {
+            [datetime]::ParseExact($_.CreateDate, $fmt, [DateTimeFormatInfo]::InvariantInfo, [DateTimeStyles]::None)
+          } catch {
+            $null
+          }
+        } else {
+          $_ | Add-Member -MemberType NoteProperty -Name 'CreateDate' -Value $null
+        }
+        if (@($_ | Get-Member -MemberType NoteProperty) -match 'ModifyDate') {
+          $_.ModifyDate = try {
+            [datetime]::ParseExact($_.ModifyDate, $fmt, [DateTimeFormatInfo]::InvariantInfo, [DateTimeStyles]::None)
+          } catch {
+            $null
+          }
+        } else {
+          $_ | Add-Member -MemberType NoteProperty -Name 'ModifyDate' -Value $null
+        }
+        $result = Resolve-Path -LiteralPath $_.SourceFile
+        $result | Add-Member -MemberType NoteProperty -Name 'CreationTime' -Value ($_.DateTimeOriginal ?? $_.CreateDate)
+        $result | Add-Member -MemberType NoteProperty -Name 'LastWriteTime' -Value $_.ModifyDate
+        return $result
+      }
+    }
+  }
+  clean {
+    if (Test-Path -LiteralPath $log) {
+      if (@(Get-Content -LiteralPath $log).Count -gt 0) {
+        "LOG:`t$log" | Out-Host
+      } else {
+        Remove-Item -LiteralPath $log -Force
+      }
+    }
+  }
+}
+function Set-ExifDate {
+  <#
+  .SYNOPSIS
+    Sets Exif timestamps on image files.
+
+  .DESCRIPTION
+    Updates image files specified by Path or LiteralPath with a supplied timestamp.
+    It uses `ExifTool.exe` to set Exif date tags.
+
+  .PARAMETER Path
+    Specifies wildcard-compatible file paths to update.
+
+  .PARAMETER LiteralPath
+    Specifies literal file paths to update.
+
+  .PARAMETER Date
+    Specifies the timestamp to apply to Exif date fields.
+
+  .PARAMETER Recurse
+    Recursively processes files when the path resolves to a directory.
+
+  .PARAMETER Force
+    Bypasses confirmation prompts from `ShouldProcess`.
+
+  .EXAMPLE
+    ```powershell
+    Set-ExifDate -Path 'C:\Photos\*.jpg' -Date ([datetime]'2024-01-02 03:04:05') -Force
+    ```
+
+    Sets the EXIF timestamp for every matching JPEG file.
+
+  .EXAMPLE
+    ```powershell
+    Set-ExifDate -LiteralPath 'C:\Photos\IMG_0001.jpg' -Date ([datetime]'2024-01-02 03:04:05') -WhatIf
+    ```
+
+    Shows the timestamp setting operation for a specific file without making actual changes.
+
+  .OUTPUTS
+    None.
+      Only sets Exif timestamps.
+
+  .NOTES
+    This function writes ExifTool stderr output to a temporary log file and
+    removes the log file when it remains empty.
+  #>
+  [CmdletBinding(DefaultParameterSetName = 'PathSet', SupportsShouldProcess)]
+  [OutputType([void])]
+  param (
+    [Parameter(Mandatory, ParameterSetName = 'PathSet', Position = 0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+    [SupportsWildcards()]
+    [ValidateScript({ Test-Path -Path $_ })]
+    [string[]]
+    $Path,
+    [Alias('PSPath', 'LP')]
+    [Parameter(Mandatory, ParameterSetName = 'LiteralPathSet', ValueFromPipelineByPropertyName)]
+    [ValidateScript({ Test-Path -LiteralPath $_ })]
+    [string[]]
+    $LiteralPath,
+    [Parameter(Mandatory, Position = 1)]
+    [datetime]
+    $Date,
+    [switch]
+    $Recurse,
+    [switch]
+    $Force
+  )
+  begin {
+    $log = $env:TEMP | Join-Path -ChildPath "ExifTool.$(Get-Date -Format 'yyyyMMddHHmmss').log"
+  }
+  process {
+    $items = @(
+      switch -Exact -CaseSensitive ($PSCmdlet.ParameterSetName) {
+        'PathSet' {
+          Get-Item -Path $Path -Force
+        }
+        'LiteralPathSet' {
+          Get-Item -LiteralPath $LiteralPath -Force
+        }
+      }
+    )
+    $items |
+    ForEach-Object {
+      $target = "Item: $($_.FullName)"
+      $action = 'Set Exif `AllDates` tag'
+      if (-not (($Force -and -not $WhatIfPreference) -or $PSCmdlet.ShouldProcess($target, $action))) {
+        return
+      }
+      $arguments = @("-AllDates=$($Date.ToString('yyyy:MM:d H:m:s'))")
+      if ($Recurse) {
+        $arguments += '-recurse'
+      }
+      ExifTool.exe $_ @arguments 2>>$log
+      Sync-ItemDate -LiteralPath $_.FullName -Force -WhatIf:$WhatIfPreference
+    }
+  }
+  clean {
+    if (Test-Path -LiteralPath $log) {
+      if (@(Get-Content -LiteralPath $log).Count -gt 0) {
+        "LOG:`t$log" | Out-Host
+      } else {
+        Remove-Item -LiteralPath $log -Force
+      }
+    }
+  }
+}
+function Remove-ExifDate {
+  <#
+  .SYNOPSIS
+    Removes Exif timestamps from image files.
+
+  .DESCRIPTION
+    Removes Exif date metadata from files.
+    It uses `ExifTool.exe` to clear Exif date tags.
+
+  .PARAMETER Path
+    Specifies wildcard-compatible file paths to update.
+
+  .PARAMETER LiteralPath
+    Specifies literal file paths to update.
+
+  .PARAMETER Recurse
+    Recursively processes files when the path resolves to a directory.
+
+  .PARAMETER Force
+    Bypasses confirmation prompts from `ShouldProcess`.
+
+  .EXAMPLE
+    ```powershell
+    Remove-ExifDate -Path 'C:\Photos\*.jpg' -Force
+    ```
+
+    Removes EXIF timestamps from every matching JPEG file.
+
+  .EXAMPLE
+    ```powershell
+    Remove-ExifDate -LiteralPath 'C:\Photos\IMG_0001.jpg' -WhatIf
+    ```
+
+    Shows the EXIF timestamp removal operation for a specific file without making actual changes.
+
+  .OUTPUTS
+    None.
+      Only removes Exif timestamps.
+
+  .NOTES
+    This function writes ExifTool stderr output to a temporary log file and
+    removes the log file when it remains empty.
+  #>
+  [CmdletBinding(DefaultParameterSetName = 'PathSet', SupportsShouldProcess)]
+  [OutputType([void])]
+  param (
+    [Parameter(Mandatory, ParameterSetName = 'PathSet', Position = 0, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+    [SupportsWildcards()]
+    [ValidateScript({ Test-Path -Path $_ })]
+    [string[]]
+    $Path,
+    [Alias('PSPath', 'LP')]
+    [Parameter(Mandatory, ParameterSetName = 'LiteralPathSet', ValueFromPipelineByPropertyName)]
+    [ValidateScript({ Test-Path -LiteralPath $_ })]
+    [string[]]
+    $LiteralPath,
+    [switch]
+    $Recurse,
+    [switch]
+    $Force
+  )
+  begin {
+    $log = $env:TEMP | Join-Path -ChildPath "ExifTool.$(Get-Date -Format 'yyyyMMddHHmmss').log"
+  }
+  process {
+    $items = @(
+      switch -Exact -CaseSensitive ($PSCmdlet.ParameterSetName) {
+        'PathSet' {
+          Get-Item -Path $Path -Force
+        }
+        'LiteralPathSet' {
+          Get-Item -LiteralPath $LiteralPath -Force
+        }
+      }
+    )
+    $items |
+    ForEach-Object {
+      $target = "Item: $($_.FullName)"
+      $action = 'Remove Exif `AllDates` tag'
+      if (-not (($Force -and -not $WhatIfPreference) -or $PSCmdlet.ShouldProcess($target, $action))) {
+        return
+      }
+      $arguments = @('-AllDates=')
+      if ($Recurse) {
+        $arguments += '-recurse'
+      }
+      ExifTool.exe $_ @arguments 2>>$log
+    }
+  }
+  clean {
+    if (Test-Path -LiteralPath $log) {
+      if (@(Get-Content -LiteralPath $log).Count -gt 0) {
+        "LOG:`t$log" | Out-Host
+      } else {
+        Remove-Item -LiteralPath $log -Force
+      }
+    }
+  }
+}

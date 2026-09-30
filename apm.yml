@@ -1,0 +1,16 @@
+name: AutoHotkey.Scripts
+version: 1.0.0
+description: APM project for AutoHotkey.Scripts
+author: takumi-kasahara
+targets:
+  - copilot
+dependencies:
+  apm:
+    - takumi-kasahara/Dotfiles/.apm/skills/csharp-for-powershell-7
+    - takumi-kasahara/Dotfiles/.apm/skills/powershell-7
+    - takumi-kasahara/Dotfiles/.apm/skills/powershell-7-cmdlet
+    - takumi-kasahara/Dotfiles/.apm/skills/powershell-7-help
+    - takumi-kasahara/Dotfiles/.apm/skills/powershell-7-pester-v6
+  mcp: []
+includes: auto
+scripts: {}
