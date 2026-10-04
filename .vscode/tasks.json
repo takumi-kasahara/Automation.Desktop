@@ -25,7 +25,7 @@
         "-NoLogo",
         "-NoProfile",
         "-File",
-        ".agents\\skills\\powershell-7-pester-v6\\scripts\\Pester.ps1",
+        ".agents\\skills\\powershell-7\\scripts\\Pester.ps1",
         "-Path",
         "${file}"
       ],
