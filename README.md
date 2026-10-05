@@ -27,5 +27,5 @@ Install-Module -Name Pester -Scope CurrentUser
 If you want to run tests:
 
 ```powershell
-. .\.agents\skills\powershell-7-pester-v6\scripts\Pester.ps1 -Path 'Modules\Sources'
+. .\.agents\skills\powershell-7\scripts\Pester.ps1 -Path 'Modules\Sources'
 ```
