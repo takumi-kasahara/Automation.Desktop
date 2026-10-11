@@ -20,13 +20,14 @@ ForEach-Object {
   $arguments = switch -Exact -CaseSensitive ($_.Name) {
     { $_ -cin 'Main.bat', 'Main.RunAs.bat', 'Main.ps1', 'Main.RunAs.ps1' } {
       @{
-        LiteralPath = '.templates\cmd.bat'
+        LiteralPath = '.\.templates\cmd.bat'
         Destination = $directory | Join-Path -ChildPath 'Run.bat'
       }
     }
     { $_ -cin 'Main.js' } {
+      Copy-Item -LiteralPath '.templates\Run.js' -Destination $directory -Force -PassThru | Set-ItemProperty -Name IsReadOnly -Value $true
       @{
-        LiteralPath = '.templates\wsh.wsf'
+        LiteralPath = '.\.templates\wsh.wsf'
         Destination = $directory | Join-Path -ChildPath 'Run.wsf'
       }
     }
@@ -40,11 +41,11 @@ ForEach-Object {
     return $item
   }
 }
-Get-ChildItem -LiteralPath 'Tools\src' -File -Filter '*.py' |
+Get-ChildItem -LiteralPath '.\Tools\src' -File -Filter '*.py' |
 ForEach-Object {
   $baseName = $_.BaseName
   $destination = Join-Path -Path $_.DirectoryName -ChildPath "$baseName.bat"
-  $item = Copy-Item -LiteralPath '.templates\python.bat' -Destination $destination -Force -PassThru
+  $item = Copy-Item -LiteralPath '.\.templates\python.bat' -Destination $destination -Force -PassThru
   $item | Set-ItemProperty -Name IsReadOnly -Value $true
   return $item
 }

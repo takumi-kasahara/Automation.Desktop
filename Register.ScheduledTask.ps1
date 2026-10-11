@@ -27,9 +27,9 @@ ForEach-Object {
     TaskPath = '\Automation.Desktop\'
     Action   = New-ScheduledTaskAction -Execute 'wscript.exe' -Argument (
       @(
-        '//b'
-        '//nologo'
-        '//job:run'
+        '//B'
+        '//NoLogo'
+        '//Job:Run'
         "`"$destination`""
       ) -join ' ')
     Settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -RunOnlyIfIdle -StartWhenAvailable -DontStopIfGoingOnBatteries -RestartOnIdle

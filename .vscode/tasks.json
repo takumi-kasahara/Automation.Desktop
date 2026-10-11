@@ -34,6 +34,20 @@
         "kind": "test",
         "isDefault": true
       }
+    },
+    {
+      "label": "cscript",
+      "type": "shell",
+      "command": "cscript.exe",
+      "args": ["//NoLogo", "${file}"],
+      "problemMatcher": []
+    },
+    {
+      "label": "cscript (debug)",
+      "type": "shell",
+      "command": "cscript.exe",
+      "args": ["//NoLogo", "//X", "${file}"],
+      "problemMatcher": []
     }
   ]
 }

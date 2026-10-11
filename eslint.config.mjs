@@ -24,6 +24,12 @@ export default [
   },
   {
     files: ['**/*.js'],
+    rules: {
+      '@stylistic/comma-dangle': ['error', 'never'],
+    },
+  },
+  {
+    files: ['**/*.js'],
     languageOptions: {
       globals: {
         ...globals.wsh,
