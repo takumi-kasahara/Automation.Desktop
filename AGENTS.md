@@ -32,6 +32,11 @@ Requires PowerShell Core (`$PSEdition -eq 'Core'`).
 1. Edit files under `Scripts/`.
 2. Run `Build.ps1`.
 
+### Windows Script Host development cycle
+
+1. Edit Windows Script Host JScript under `Scripts/`. These `.js` files run in WSH, not in a browser or Node.js.
+2. Run `Build.ps1`.
+
 ## Coding Conventions
 
 - Avoid breaking changes unless necessary, and always seek review for such changes.
@@ -43,6 +48,7 @@ Requires PowerShell Core (`$PSEdition -eq 'Core'`).
 ## Command Execution Guidelines
 
 - Do not run one-line PowerShell commands directly for auditability and reproducibility.
-- Write the command content to `./.temp/execute.ps1` first.
 - Run PowerShell scripts only with:
-  - `pwsh.exe -NoLogo -NoProfile -ExecutionPolicy RemoteSigned -File "./.temp/execute.ps1"`
+  - `pwsh.exe -NoLogo -NoProfile -ExecutionPolicy RemoteSigned -File ".\.temp\execute.ps1"`
+- Run Windows Script Host scripts with:
+  - `cscript.exe //NoLogo ".\.temp\execute.js"`

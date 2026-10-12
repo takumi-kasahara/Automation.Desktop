@@ -3,3 +3,5 @@
 .venv
 apm_modules
 node_modules
+
+Scripts/**/Run.js

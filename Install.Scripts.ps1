@@ -31,9 +31,9 @@ ForEach-Object {
         Path         = $path
         TargetPath   = 'wscript.exe'
         Arguments    = @(
-          '//b'
-          '//nologo'
-          '//job:run'
+          '//B'
+          '//NoLogo'
+          '//Job:run'
           "`"$fullName`""
         ) -join ' '
         IconLocation = 'wscript.exe,1'
@@ -67,9 +67,9 @@ ForEach-Object {
         Path         = $path
         TargetPath   = 'wscript.exe'
         Arguments    = @(
-          '//b'
-          '//nologo'
-          '//job:run'
+          '//B'
+          '//NoLogo'
+          '//Job:run'
           "`"$fullName`""
         ) -join ' '
         IconLocation = 'wscript.exe,1'

@@ -6,8 +6,10 @@ targets:
   - copilot
 dependencies:
   apm:
+    - takumi-kasahara/Dotfiles/.apm/skills/batchfile
     - takumi-kasahara/Dotfiles/.apm/skills/csharp-for-powershell-7
     - takumi-kasahara/Dotfiles/.apm/skills/powershell-7
+    - takumi-kasahara/Dotfiles/.apm/skills/windows-script-host
   mcp: []
 includes: auto
 scripts: {}
