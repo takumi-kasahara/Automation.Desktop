@@ -6,14 +6,17 @@ setlocal
 net session >nul 2>&1
 if errorlevel 1 (
   where /q sudo >nul 2>&1
-  if errorlevel 1 (
-    echo ERROR: Access is denied.
-    goto :end
-  ) else (
-    sudo --inline "%~0" %*
-    exit /b %errorlevel%
-  )
+  if errorlevel 1 goto :no_sudo
+  goto :elevate
 )
+
+:no_sudo
+echo ERROR: Access is denied.
+goto :end
+
+:elevate
+sudo --inline "%~0" %*
+exit /b %errorlevel%
 
 :process
 pwsh -NoLogo -NoProfile -ExecutionPolicy RemoteSigned -File "Register.ScheduledTask.ps1"

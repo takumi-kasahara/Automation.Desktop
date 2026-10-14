@@ -1,4 +1,4 @@
-@@echo off
+@echo off
 cd /d "%~dp0"
 setlocal
 
@@ -10,14 +10,17 @@ if "%~1"=="" (
 net session >nul 2>&1
 if errorlevel 1 (
   where /q sudo >nul 2>&1
-  if errorlevel 1 (
-    echo ERROR: Access is denied.
-    goto :end
-  ) else (
-    sudo --inline "%~0" %*
-    exit /b %errorlevel%
-  )
+  if errorlevel 1 goto :no_sudo
+  goto :elevate
 )
+
+:no_sudo
+echo ERROR: Access is denied.
+goto :end
+
+:elevate
+sudo --inline "%~0" %*
+exit /b %errorlevel%
 
 :process
 winget import --import-file "%~1" --ignore-unavailable --ignore-versions --accept-package-agreements --accept-source-agreements
