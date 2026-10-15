@@ -20,6 +20,7 @@ powershell -NoLogo -NoProfile -Command "Update-Help -ErrorAction SilentlyContinu
 where /q apm >nul 2>&1 && apm update --global --yes
 where /q dotnet >nul 2>&1 && dotnet tool update --global --all
 where /q gh >nul 2>&1 && gh extension upgrade --all
+where /q git >nul 2>&1 && git update-git-for-windows --yes
 where /q nuget >nul 2>&1 && nuget update -Self
 where /q npx >nul 2>&1 && cmd /c npx npm-check-updates --global --upgrade
 where /q npm >nul 2>&1 && cmd /c npm update --global
