@@ -36,6 +36,26 @@ Requires PowerShell Core (`$PSEdition -eq 'Core'`).
 
 1. Edit Windows Script Host JScript under `Scripts/`. These `.js` files run in WSH, not in a browser or Node.js.
 2. Run `Build.ps1`.
+3. If a `Config.psd1` is present next to `Run.wsf`, define one or more shortcuts in its `Shortcuts` key. `Install.Scripts.ps1` reads this file to create multiple shortcuts for the same script.
+
+   Example `Config.psd1`:
+
+   ```powershell
+   @{
+     Shortcuts = @(
+       @{
+         Name      = 'Shortcut1'
+         Arguments = '/mode:1'
+       }
+       @{
+         Name      = 'Shortcut2'
+         Arguments = '/mode:2'
+       }
+     )
+   }
+   ```
+
+   The `Arguments` value is appended to the `wscript.exe` command line. In `Main.js`, use `WScript.Arguments.Named` to read named arguments such as `/mode:1`.
 
 ## Coding Conventions
 
