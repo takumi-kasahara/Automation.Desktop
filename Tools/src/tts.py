@@ -14,7 +14,6 @@ from mimetypes import guess_type
 from typing import Any
 
 import requests
-
 from extract_notes import (
     POWERPOINT_MIME_TYPES,
     build_split_paths,
