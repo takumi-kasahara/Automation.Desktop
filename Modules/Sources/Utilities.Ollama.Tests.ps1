@@ -8,7 +8,10 @@ InModuleScope 'Utilities.Ollama' {
   Describe 'Get-OllamaModel' {
     BeforeAll {
       Mock -CommandName ollama -MockWith {
-        param([string]$Command)
+        param (
+          [string]
+          $Command
+        )
         if ($Command -eq 'list') {
           return @'
 NAME      ID       SIZE  MODIFIED
@@ -36,7 +39,7 @@ mistral   2c1a2b3d 4.1GB 1 week ago
   Describe 'Remove-OllamaModel' {
     BeforeAll {
       Mock -CommandName ollama -MockWith {
-        param(
+        param (
           [string]
           $Command
         )
@@ -79,7 +82,7 @@ codellama a8f8b622 3.8GB 3 days ago
     Context 'Edge Cases' {
       It 'throws when ollama rm fails' {
         Mock -CommandName ollama -MockWith {
-          param(
+          param (
             [string]
             $Command
           )
@@ -93,7 +96,7 @@ codellama a8f8b622 3.8GB 3 days ago
   Describe 'Update-OllamaModel' {
     BeforeAll {
       Mock -CommandName ollama -MockWith {
-        param(
+        param (
           [string]
           $Command
         )
@@ -149,7 +152,7 @@ codellama a8f8b622 3.8GB 3 days ago
     Context 'Edge Cases' {
       It 'throws when ollama pull fails' {
         Mock -CommandName ollama -MockWith {
-          param(
+          param (
             [string]
             $Command
           )
@@ -163,7 +166,7 @@ codellama a8f8b622 3.8GB 3 days ago
   Describe 'Invoke-OllamaModel' {
     BeforeAll {
       Mock -CommandName ollama -MockWith {
-        param(
+        param (
           [string]
           $Command
         )
@@ -207,7 +210,7 @@ codellama a8f8b622 3.8GB 3 days ago
     Context 'Edge Cases' {
       It 'throws when ollama run fails' {
         Mock -CommandName ollama -MockWith {
-          param(
+          param (
             [string]
             $Command
           )
@@ -221,7 +224,7 @@ codellama a8f8b622 3.8GB 3 days ago
   Describe 'Stop-OllamaModel' {
     BeforeAll {
       Mock -CommandName ollama -MockWith {
-        param(
+        param (
           [string]
           $Command
         )
@@ -286,7 +289,7 @@ codellama a8f8b622 3.8GB 3 days ago
     Context 'Edge Cases' {
       It 'throws when ollama stop fails' {
         Mock -CommandName ollama -MockWith {
-          param(
+          param (
             [string]
             $Command
           )

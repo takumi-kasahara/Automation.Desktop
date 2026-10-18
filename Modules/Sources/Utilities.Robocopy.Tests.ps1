@@ -9,7 +9,7 @@ InModuleScope 'Utilities.Robocopy' {
     BeforeAll {
       $script:robocopyArguments = $null
       Mock -CommandName Robocopy.exe -MockWith {
-        param(
+        param (
           [string]
           $Source,
           [string]
