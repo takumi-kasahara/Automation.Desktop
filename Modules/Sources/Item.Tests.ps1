@@ -1353,10 +1353,10 @@ InModuleScope 'Item' {
           $LiteralPath -eq (Join-Path -Path 'C:\' -ChildPath 'dir2.json')
         }
       }
-      It 'throws an error when Destination is omitted for a file' {
+      It 'throws when Destination is omitted for a file' {
         { Export-ItemDate -LiteralPath 'C:\dir\file.txt' } | Should-Throw -Because 'Destination is required for a file input'
       }
-      It 'throws an error when Destination is omitted for two files' {
+      It 'throws when Destination is omitted for two files' {
         Mock -CommandName Get-Item -ParameterFilter { ($LiteralPath -is [array]) -and ($LiteralPath -contains 'C:\dir\a.txt') -and ($LiteralPath -contains 'C:\dir\b.txt') } -MockWith {
           @(
             [PSCustomObject]@{
@@ -1380,7 +1380,7 @@ InModuleScope 'Item' {
 
         { Export-ItemDate -LiteralPath 'C:\dir\a.txt', 'C:\dir\b.txt' } | Should-Throw -Because 'Destination is required when the input is a file'
       }
-      It 'throws an error when Destination is omitted and the first of two paths is a file' {
+      It 'throws when Destination is omitted and the first of two paths is a file' {
         Mock -CommandName Get-Item -ParameterFilter { ($LiteralPath -is [array]) -and ($LiteralPath -contains 'C:\dir\file.txt') -and ($LiteralPath -contains 'C:\dir2') } -MockWith {
           @(
             [PSCustomObject]@{
@@ -1401,7 +1401,7 @@ InModuleScope 'Item' {
 
         { Export-ItemDate -LiteralPath 'C:\dir\file.txt', 'C:\dir2' } | Should-Throw -Because 'Destination is required when the input is a file'
       }
-      It 'throws an error when Destination is omitted and any input is a file' {
+      It 'throws when Destination is omitted and any input is a file' {
         Mock -CommandName Get-Item -ParameterFilter { ($LiteralPath -is [array]) -and ($LiteralPath -contains 'C:\dir') -and ($LiteralPath -contains 'C:\dir\file.txt') } -MockWith {
           @(
             [PSCustomObject]@{
