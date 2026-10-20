@@ -20,7 +20,7 @@ InModuleScope 'Shell' {
         $folder = [PSCustomObject]@{ Item = $item }
         $folder | Add-Member -MemberType ScriptMethod -Name ParseName -Value { $this.Item }
         $folder | Add-Member -MemberType ScriptMethod -Name GetDetailsOf -Value {
-          param(
+          param (
             [string]
             $Target,
             [int]
@@ -177,17 +177,17 @@ InModuleScope 'Shell' {
     BeforeAll {
       Mock -CommandName Test-Path -MockWith { $true }
       Mock -CommandName Get-ChildItem -MockWith {
-        param($Path)
+        param ($Path)
         if ($Path -eq 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths') {
           $app1 = [PSCustomObject]@{ PSChildName = 'notepad.exe' }
           $app1 | Add-Member -MemberType ScriptMethod -Name GetValue -Value {
-            param($name)
+            param ($name)
             [void]$name
             '"C:\Program Files\notepad.exe"'
           }
           $app2 = [PSCustomObject]@{ PSChildName = 'calc.exe' }
           $app2 | Add-Member -MemberType ScriptMethod -Name GetValue -Value {
-            param($name)
+            param ($name)
             [void]$name
             '"C:\Program Files\calc.exe"'
           }
@@ -227,7 +227,7 @@ InModuleScope 'Shell' {
       Mock -CommandName Get-ChildItem -MockWith {
         $startup = [PSCustomObject]@{ PSChildName = 'Startup' }
         $startup | Add-Member -MemberType ScriptMethod -Name GetValue -Value {
-          param($name)
+          param ($name)
           if ($name -eq 'Name') {
             'Startup'
           } else {
@@ -236,7 +236,7 @@ InModuleScope 'Shell' {
         } -Force
         $common = [PSCustomObject]@{ PSChildName = 'Common Startup' }
         $common | Add-Member -MemberType ScriptMethod -Name GetValue -Value {
-          param($name)
+          param ($name)
           if ($name -eq 'Name') {
             'Common Startup'
           } else {
@@ -252,7 +252,7 @@ InModuleScope 'Shell' {
         }
         $shell = [PSCustomObject]@{ Folders = $folders }
         $shell | Add-Member -MemberType ScriptMethod -Name NameSpace -Value {
-          param($path)
+          param ($path)
           return $this.Folders[$path]
         }
         return $shell
@@ -284,7 +284,7 @@ InModuleScope 'Shell' {
       Mock -CommandName Get-ChildItem -ParameterFilter { $Path -eq 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions' } -MockWith {
         $startup = [PSCustomObject]@{ PSChildName = 'Startup' }
         $startup | Add-Member -MemberType ScriptMethod -Name GetValue -Value {
-          param($name)
+          param ($name)
           if ($name -eq 'Name') {
             'Startup'
           } else {
@@ -293,7 +293,7 @@ InModuleScope 'Shell' {
         } -Force
         $common = [PSCustomObject]@{ PSChildName = 'Common Startup' }
         $common | Add-Member -MemberType ScriptMethod -Name GetValue -Value {
-          param($name)
+          param ($name)
           if ($name -eq 'Name') {
             'Common Startup'
           } else {
@@ -309,7 +309,7 @@ InModuleScope 'Shell' {
         }
         $shell = [PSCustomObject]@{ Folders = $folders }
         $shell | Add-Member -MemberType ScriptMethod -Name NameSpace -Value {
-          param($path)
+          param ($path)
           return $this.Folders[$path]
         }
         return $shell
@@ -334,7 +334,7 @@ InModuleScope 'Shell' {
         $reg = [PSCustomObject]@{ PSProvider = [PSCustomObject]@{ Name = 'Registry' } }
         $reg | Add-Member -MemberType ScriptMethod -Name GetValueNames -Value { @('One') }
         $reg | Add-Member -MemberType ScriptMethod -Name GetValue -Value {
-          param($name)
+          param ($name)
           if ($name -eq 'One') {
             'C:\App\one.exe'
           }
@@ -345,7 +345,7 @@ InModuleScope 'Shell' {
         $reg = [PSCustomObject]@{ PSProvider = [PSCustomObject]@{ Name = 'Registry' } }
         $reg | Add-Member -MemberType ScriptMethod -Name GetValueNames -Value { @('Two') }
         $reg | Add-Member -MemberType ScriptMethod -Name GetValue -Value {
-          param($name)
+          param ($name)
           if ($name -eq 'Two') {
             'C:\App\two.exe'
           }
@@ -389,7 +389,7 @@ InModuleScope 'Shell' {
       Mock -CommandName New-Object -ParameterFilter { $ComObject -eq 'Shell.Application' } -MockWith {
         $recycleBin = [PSCustomObject]@{}
         $recycleBin | Add-Member -MemberType ScriptMethod -Name MoveHere -Value {
-          param(
+          param (
             [string]
             $Path
           )
@@ -466,7 +466,7 @@ InModuleScope 'Shell' {
         $shortcut | Add-Member -MemberType ScriptMethod -Name Save -Value { }
         $shell = [PSCustomObject]@{ Shortcut = $shortcut }
         $shell | Add-Member -MemberType ScriptMethod -Name CreateShortcut -Value {
-          param(
+          param (
             [string]
             $Path
           )
@@ -743,7 +743,7 @@ InModuleScope 'Shell' {
       }
       Mock -CommandName Remove-Item -MockWith { $networkShortcutExists = $false }
       Mock -CommandName New-Item -MockWith {
-        param(
+        param (
           [string]
           $Path
         )
@@ -751,7 +751,7 @@ InModuleScope 'Shell' {
         [PSCustomObject]@{ FullName = $Path }
       }
       Mock -CommandName Get-Item -MockWith {
-        param(
+        param (
           [string]
           $LiteralPath
         )

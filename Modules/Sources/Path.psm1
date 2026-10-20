@@ -40,7 +40,7 @@ function Compress-EnvironmentVariable {
   #>
   [CmdletBinding()]
   [OutputType([string])]
-  param(
+  param (
     [string]
     $InputString
   )
@@ -86,7 +86,7 @@ function Expand-EnvironmentVariable {
   #>
   [CmdletBinding()]
   [OutputType([string])]
-  param(
+  param (
     [string]
     $InputString
   )

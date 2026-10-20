@@ -22,7 +22,7 @@ function Get-OllamaModel {
   #>
   [CmdletBinding()]
   [OutputType([PSCustomObject])]
-  param()
+  param ()
   try {
     $global:LASTEXITCODE = 0
     $output = ollama list 2>&1
@@ -73,7 +73,7 @@ function Remove-OllamaModel {
     Removes the llama2 model.
   #>
   [CmdletBinding(SupportsShouldProcess)]
-  param()
+  param ()
   dynamicparam {
     try {
       $models = ([string[]]@(Get-OllamaModel | Select-Object -ExpandProperty Name))
@@ -145,7 +145,7 @@ function Update-OllamaModel {
     None.
   #>
   [CmdletBinding(SupportsShouldProcess)]
-  param(
+  param (
     [Parameter(ParameterSetName = 'All')]
     [switch]
     $All
@@ -229,7 +229,7 @@ function Invoke-OllamaModel {
   #>
   [CmdletBinding(SupportsShouldProcess)]
   [OutputType([string])]
-  param(
+  param (
     [string]
     $Prompt
   )
@@ -306,7 +306,7 @@ function Stop-OllamaModel {
     None.
   #>
   [CmdletBinding(SupportsShouldProcess)]
-  param(
+  param (
     [Parameter(ParameterSetName = 'All')]
     [switch]
     $All

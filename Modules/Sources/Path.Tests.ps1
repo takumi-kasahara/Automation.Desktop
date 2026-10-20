@@ -335,7 +335,7 @@ InModuleScope 'Path' {
         $mockDest
       }
       Mock -CommandName Test-Path -MockWith {
-        param(
+        param (
           [string]
           $Path,
           [string]
@@ -350,7 +350,7 @@ InModuleScope 'Path' {
         return $false
       }
       Mock -CommandName Move-Item -MockWith {
-        param(
+        param (
           [string]
           $LiteralPath,
           [string]
