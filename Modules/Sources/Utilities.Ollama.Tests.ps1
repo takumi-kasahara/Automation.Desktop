@@ -26,10 +26,12 @@ mistral   2c1a2b3d 4.1GB 1 week ago
     Context 'ParameterSetName' {
       It 'returns models' {
         $result = Get-OllamaModel
+
         $result | Should -Not -BeNullOrEmpty
       }
       It 'returns objects with Id and Name' {
         $result = Get-OllamaModel
+
         $result[0].PSObject.Properties.Name | Should -Be @('Id', 'Name')
         $result[0].Name | Should -Be 'llama2'
         $result[0].Id | Should -Be '78e8c1b9'
@@ -89,6 +91,7 @@ codellama a8f8b622 3.8GB 3 days ago
           if ($Command -eq 'rm') { throw 'Failed to remove' }
           return [string]::Empty
         }
+
         { Remove-OllamaModel -Name 'llama2' -Confirm:$false } | Should-Throw
       }
     }
@@ -120,10 +123,12 @@ codellama a8f8b622 3.8GB 3 days ago
     Context 'ParameterSetName' {
       It 'handles Name parameter' {
         Update-OllamaModel -Name 'llama2'
+
         Should-Invoke -CommandName ollama -Times 1
       }
       It 'handles All parameter' {
         Update-OllamaModel -All
+
         Should-Invoke -CommandName ollama -Times 2
       }
     }
@@ -159,6 +164,7 @@ codellama a8f8b622 3.8GB 3 days ago
           if ($Command -eq 'pull') { throw 'Failed to pull' }
           return [string]::Empty
         }
+
         { Update-OllamaModel -Name 'llama2' -Confirm:$false } | Should-Throw
       }
     }
@@ -217,6 +223,7 @@ codellama a8f8b622 3.8GB 3 days ago
           if ($Command -eq 'run') { throw 'Failed to run' }
           return [string]::Empty
         }
+
         { Invoke-OllamaModel -Name 'llama2' -Prompt 'Hello' -Confirm:$false } | Should-Throw
       }
     }
@@ -296,6 +303,7 @@ codellama a8f8b622 3.8GB 3 days ago
           if ($Command -eq 'stop') { throw 'Failed to stop' }
           return [string]::Empty
         }
+
         { Stop-OllamaModel -Name 'llama2' -Confirm:$false } | Should-Throw
       }
     }

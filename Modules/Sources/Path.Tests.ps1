@@ -56,7 +56,9 @@ InModuleScope 'Path' {
             }
           )
         }
+
         $result = Compress-EnvironmentVariable -InputString 'Path C:\Foo\Bar'
+
         $result | Should-BeString 'Path %LONG%'
       }
     }
@@ -374,10 +376,12 @@ InModuleScope 'Path' {
       }
       It 'moves a item to its normalized destination by Path with ValueFromPipeline' {
         $mockSource | Move-NormalizedPath
+
         Should-Invoke -CommandName Move-Item -Times 1 -Exactly
       }
       It 'moves a item to its normalized destination by Path with ValueFromPipelineByPropertyName' {
         [PSCustomObject]@{ Path = $mockSource } | Move-NormalizedPath
+
         Should-Invoke -CommandName Move-Item -Times 1 -Exactly
       }
       It 'moves a item to its normalized destination by LiteralPath' {
@@ -477,6 +481,7 @@ InModuleScope 'Path' {
         Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\docs\missing.*' } -MockWith {
           throw [ItemNotFoundException]::new('Not found')
         }
+
         Test-ArchiveExtension -Path 'C:\docs\missing.*' | Should -BeFalse
       }
     }
@@ -548,6 +553,7 @@ InModuleScope 'Path' {
         Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\docs\missing.pdf' } -MockWith {
           throw [ItemNotFoundException]::new('Not found')
         }
+
         Test-PdfExtension -Path 'C:\docs\missing.pdf' | Should -BeFalse
       }
     }
@@ -619,6 +625,7 @@ InModuleScope 'Path' {
         Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\Pictures\missing.*' } -MockWith {
           throw [ItemNotFoundException]::new('Not found')
         }
+
         Test-PictureExtension -Path 'C:\Pictures\missing.*' | Should -BeFalse
       }
     }

@@ -86,6 +86,7 @@ InModuleScope 'Utilities.QPDF' {
     Context 'Other parameters' {
       It 'fails when NoClobber is specified and destination exists' {
         Mock -CommandName Test-Path -ParameterFilter { $LiteralPath -eq 'C:\dir\manual.qdf' } -MockWith { $true }
+
         { ConvertTo-Qdf -Path 'C:\docs\manual.pdf' -Destination 'C:\dir\manual.qdf' -NoClobber } | Should-Throw
       }
       It 'removes the log file when it is empty' {
@@ -416,7 +417,9 @@ InModuleScope 'Utilities.QPDF' {
           return 'R = 6'
         }
         Mock -CommandName qpdf.exe -ParameterFilter { $args -contains '--decrypt' } -MockWith { }
+
         Unblock-Pdf -LiteralPath 'C:\docs\manual.pdf' -UserPassword (Get-Password -Text 'user123') -Confirm:$false
+
         Should-Invoke -CommandName qpdf.exe -ParameterFilter { $args -contains '--password=user123' } -Times 2 -Exactly
       }
     }

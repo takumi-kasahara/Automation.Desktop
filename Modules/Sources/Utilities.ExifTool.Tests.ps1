@@ -30,6 +30,7 @@ InModuleScope 'Utilities.ExifTool' {
             ModifyDate       = '2025-01-02T06:07:08+09:00'
           } | ConvertTo-Csv
         }
+
         Get-ExifDate -Path 'C:\Photos\*.jpg' | Should-BeCollection -Count 1
       }
       It 'parses Exif dates from CSV ExifTool output by Path with ValueFromPipeline' {
@@ -41,6 +42,7 @@ InModuleScope 'Utilities.ExifTool' {
             ModifyDate       = '2025-01-02T06:07:08+09:00'
           } | ConvertTo-Csv
         }
+
         'C:\Photos\*.jpg' | Get-ExifDate | Should-BeCollection -Count 1
       }
       It 'parses Exif dates from CSV ExifTool output by Path with ValueFromPipelineByPropertyName' {
@@ -52,6 +54,7 @@ InModuleScope 'Utilities.ExifTool' {
             ModifyDate       = '2025-01-02T06:07:08+09:00'
           } | ConvertTo-Csv
         }
+
         [PSCustomObject]@{ Path = 'C:\Photos\*.jpg' } | Get-ExifDate | Should-BeCollection -Count 1
       }
       It 'parses Exif dates from JSON ExifTool output by LiteralPath' {
@@ -71,6 +74,7 @@ InModuleScope 'Utilities.ExifTool' {
             ModifyDate       = '2025-01-02T06:07:08+09:00'
           }
         }
+
         Get-ExifDate -LiteralPath 'C:\Photos\IMG_0001.jpg' -AsJson | Should-BeCollection -Count 1
       }
       It 'parses Exif dates from JSON ExifTool output by LiteralPath with ValueFromPipelineByPropertyName' {
@@ -90,6 +94,7 @@ InModuleScope 'Utilities.ExifTool' {
             ModifyDate       = '2025-01-02T06:07:08+09:00'
           }
         }
+
         [PSCustomObject]@{ LiteralPath = 'C:\Photos\IMG_0001.jpg' } | Get-ExifDate -AsJson | Should-BeCollection -Count 1
       }
     }
@@ -103,7 +108,9 @@ InModuleScope 'Utilities.ExifTool' {
             ModifyDate       = '2025-01-02T06:07:08+09:00'
           } | ConvertTo-Csv
         }
+
         $result = Get-ExifDate -Path 'C:\Photos\*.jpg'
+
         $result | Should-BeCollection -Count 1
         $result[0].Path | Should-BeString 'C:\Photos\IMG_0001.jpg'
         $result[0].CreationTime | Should-Be ([datetime]'2025-01-02 03:04:05')
