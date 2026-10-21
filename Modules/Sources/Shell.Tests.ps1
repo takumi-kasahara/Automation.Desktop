@@ -150,6 +150,7 @@ InModuleScope 'Shell' {
         Mock -CommandName Test-Path -MockWith { $true }
 
         $result = @(Find-Application -Name 'app.exe')
+
         $result | Should-BeCollection -Count 1
         $result[0] | Should-BeString 'C:\Program Files\Example\app.exe'
 
@@ -412,11 +413,13 @@ InModuleScope 'Shell' {
       }
       It 'moves the item to recycle bin by Path with ValueFromPipeline' {
         'C:\dir\file.txt' | Move-ItemToRecycleBin
+
         $movedItems | Should-BeCollection -Count 1
         $movedItems[0] | Should-BeString 'C:\dir\file.txt'
       }
       It 'moves the item to recycle bin by Path with ValueFromPipelineByPropertyName' {
         [PSCustomObject]@{ Path = 'C:\dir\file.txt' } | Move-ItemToRecycleBin
+
         $movedItems | Should-BeCollection -Count 1
         $movedItems[0] | Should-BeString 'C:\dir\file.txt'
       }
@@ -428,6 +431,7 @@ InModuleScope 'Shell' {
       }
       It 'Moves the item to recycle bin by LiteralPath with ValueFromPipelineByPropertyName' {
         [PSCustomObject]@{ PSPath = 'C:\dir\file.txt' } | Move-ItemToRecycleBin
+
         $movedItems | Should-BeCollection -Count 1
         $movedItems[0] | Should-BeString 'C:\dir\file.txt'
       }
@@ -519,7 +523,9 @@ InModuleScope 'Shell' {
         Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\dir\shortcut.lnk' -and $Force -eq $true } -MockWith {
           [PSCustomObject]@{ FullName = 'C:\dir\shortcut.lnk' }
         }
+
         New-Shortcut -Path 'C:\dir\shortcut' -TargetPath 'C:\Windows\notepad.exe' -Force -Confirm | Out-Null
+
         Should-Invoke -CommandName New-Object -ParameterFilter { $ComObject -eq 'WScript.Shell' } -Times 1 -Exactly
       }
     }
@@ -544,7 +550,9 @@ InModuleScope 'Shell' {
         Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\dir\shortcut.lnk' -and $Force -eq $true } -MockWith {
           [PSCustomObject]@{ FullName = 'C:\dir\shortcut.lnk' }
         }
+
         New-Shortcut -Path 'C:\dir\shortcut' -TargetPath 'C:\Windows\notepad.exe' -HotKey 'F5' -WindowStyle Maximum
+
         $mockShortcut.HotKey | Should-BeString 'Ctrl+Alt+F5'
         $mockShortcut.WindowStyle | Should-Be 3
       }
@@ -552,7 +560,9 @@ InModuleScope 'Shell' {
         Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\dir\shortcut.lnk' -and $Force -eq $true } -MockWith {
           [PSCustomObject]@{ FullName = 'C:\dir\shortcut.lnk' }
         }
+
         New-Shortcut -Path 'C:\dir\shortcut.lnk' -TargetPath 'C:\Windows\notepad.exe' -Force | Out-Null
+
         Should-Invoke -CommandName Remove-Item -Times 1 -Exactly
       }
     }
@@ -576,7 +586,9 @@ InModuleScope 'Shell' {
         Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\dir\shortcut.url' -and $Force -eq $true } -MockWith {
           [PSCustomObject]@{ FullName = 'C:\dir\shortcut.url' }
         }
+
         New-UrlShortcut -Path 'C:\dir\shortcut' -TargetPath 'https://example.com' | Out-Null
+
         Should-Invoke -CommandName New-Object -ParameterFilter { $ComObject -eq 'WScript.Shell' } -Times 1 -Exactly
       }
     }
@@ -590,7 +602,9 @@ InModuleScope 'Shell' {
         Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\dir\shortcut.url' -and $Force -eq $true } -MockWith {
           [PSCustomObject]@{ FullName = 'C:\dir\shortcut.url' }
         }
+
         New-UrlShortcut -Path 'C:\dir\shortcut.url' -TargetPath 'https://example.com' -Force -Confirm | Out-Null
+
         Should-Invoke -CommandName Remove-Item -Times 1 -Exactly
       }
     }
@@ -614,14 +628,18 @@ InModuleScope 'Shell' {
         Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\dir\shortcut.lnk' -and $Force -eq $true } -MockWith {
           [PSCustomObject]@{ FullName = 'C:\dir\shortcut.lnk' }
         }
+
         Get-Shortcut -Path 'C:\dir\shortcut.lnk' | Should-NotBeNull
+
         Should-Invoke -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\dir\shortcut.lnk' -and $Force -eq $true } -Times 1 -Exactly
       }
       It 'returns the shortcut object by LiteralPath' {
         Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\dir\shortcut.lnk' -and $Force -eq $true } -MockWith {
           [PSCustomObject]@{ FullName = 'C:\dir\shortcut.lnk' }
         }
+
         Get-Shortcut -LiteralPath 'C:\dir\shortcut.lnk' | Should-NotBeNull
+
         Should-Invoke -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\dir\shortcut.lnk' -and $Force -eq $true } -Times 1 -Exactly
       }
     }
@@ -631,13 +649,16 @@ InModuleScope 'Shell' {
           [PSCustomObject]@{ FullName = 'C:\dir\shortcut.lnk' }
         }
         $result = Get-Shortcut -Path 'C:\dir\shortcut.lnk'
+
         $result.FullName | Should-BeString 'C:\dir\shortcut.lnk'
       }
       It 'returns the shortcut object with FullName property by LiteralPath' {
         Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\dir\shortcut.lnk' -and $Force -eq $true } -MockWith {
           [PSCustomObject]@{ FullName = 'C:\dir\shortcut.lnk' }
         }
+
         $result = Get-Shortcut -LiteralPath 'C:\dir\shortcut.lnk'
+
         $result.FullName | Should-BeString 'C:\dir\shortcut.lnk'
       }
     }
@@ -658,14 +679,18 @@ InModuleScope 'Shell' {
         Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\dir\shortcut.lnk' } -MockWith {
           [PSCustomObject]@{ FullName = 'C:\dir\shortcut.lnk' }
         }
+
         Test-Shortcut -Path 'C:\dir\shortcut.lnk' | Should-BeTrue
+
         Should-Invoke -CommandName Get-Shortcut -Times 1 -Exactly
       }
       It 'returns True when shortcut target exists by LiteralPath' {
         Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\dir\shortcut.lnk' } -MockWith {
           [PSCustomObject]@{ FullName = 'C:\dir\shortcut.lnk' }
         }
+
         Test-Shortcut -LiteralPath 'C:\dir\shortcut.lnk' | Should-BeTrue
+
         Should-Invoke -CommandName Get-Shortcut -Times 1 -Exactly
       }
     }
@@ -674,14 +699,18 @@ InModuleScope 'Shell' {
         Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\dir\shortcut.lnk' } -MockWith {
           [PSCustomObject]@{ FullName = 'C:\dir\shortcut.lnk' }
         }
+
         $result = Test-Shortcut -Path 'C:\dir\shortcut.lnk'
+
         $result | Should-BeTrue
       }
       It 'returns a boolean result by LiteralPath' {
         Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\dir\shortcut.lnk' } -MockWith {
           [PSCustomObject]@{ FullName = 'C:\dir\shortcut.lnk' }
         }
+
         $result = Test-Shortcut -LiteralPath 'C:\dir\shortcut.lnk'
+
         $result | Should-BeTrue
       }
     }
@@ -691,7 +720,9 @@ InModuleScope 'Shell' {
 
           throw [ItemNotFoundException]::new('Item not found')
         }
+
         $result = Test-Shortcut -Path 'C:\dir\missing.lnk'
+
         $result | Should-BeFalse
       }
     }

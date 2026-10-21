@@ -460,7 +460,9 @@ InModuleScope 'Item' {
             LastWriteTime = [datetime]'2025-01-02'
           }
         }
+
         $result = Measure-Directory -LiteralPath 'C:\dir' -SimilarNames
+
         $result | Should-BeNull
       }
     }
@@ -570,7 +572,9 @@ InModuleScope 'Item' {
           Attributes    = [FileAttributes]::Normal
         }
         Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\dir\file.txt' -and $Force -eq $true } -MockWith { $item }
+
         Set-ItemAttribute -Path 'C:\dir\file.txt' -Attribute ReadOnly
+
         Should-Invoke -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\dir\file.txt' -and $Force -eq $true } -Times 1 -Exactly
       }
       It 'calls Get-Item with LiteralPath when using LiteralPath parameter set' {
@@ -580,7 +584,9 @@ InModuleScope 'Item' {
           Attributes    = [FileAttributes]::Normal
         }
         Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\dir\file.txt' -and $Force -eq $true } -MockWith { $item }
+
         Set-ItemAttribute -LiteralPath 'C:\dir\file.txt' -Attribute ReadOnly
+
         Should-Invoke -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\dir\file.txt' -and $Force -eq $true } -Times 1 -Exactly
       }
     }
@@ -592,7 +598,9 @@ InModuleScope 'Item' {
           Attributes    = [FileAttributes]::ReadOnly
         }
         Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\dir\file.txt' -and $Force -eq $true } -MockWith { $item }
+
         Set-ItemAttribute -Path 'C:\dir\file.txt' -Attribute ReadOnly
+
         $item.Attributes | Should-Be ([FileAttributes]::ReadOnly)
       }
     }
@@ -648,6 +656,7 @@ InModuleScope 'Item' {
         Mock -CommandName Get-Item -ParameterFilter { $LiteralPath -eq 'C:\dir\file.txt' -and $Force -eq $true } -MockWith { $item }
 
         Remove-ItemAttribute -LiteralPath 'C:\dir\file.txt' -Attribute ReadOnly
+
         $item.Attributes | Should-Be ([FileAttributes]::Archive)
       }
       It 'removes the attribute by LiteralPath with ValueFromPipelineByPropertyName' {
@@ -1343,6 +1352,7 @@ InModuleScope 'Item' {
             }
           )
         }
+
         Export-ItemDate -LiteralPath 'C:\dir1', 'C:\dir2'
 
         Should-Invoke -CommandName Set-Content -Times 2 -Exactly
@@ -1353,10 +1363,10 @@ InModuleScope 'Item' {
           $LiteralPath -eq (Join-Path -Path 'C:\' -ChildPath 'dir2.json')
         }
       }
-      It 'throws an error when Destination is omitted for a file' {
+      It 'throws when Destination is omitted for a file' {
         { Export-ItemDate -LiteralPath 'C:\dir\file.txt' } | Should-Throw -Because 'Destination is required for a file input'
       }
-      It 'throws an error when Destination is omitted for two files' {
+      It 'throws when Destination is omitted for two files' {
         Mock -CommandName Get-Item -ParameterFilter { ($LiteralPath -is [array]) -and ($LiteralPath -contains 'C:\dir\a.txt') -and ($LiteralPath -contains 'C:\dir\b.txt') } -MockWith {
           @(
             [PSCustomObject]@{
@@ -1380,7 +1390,7 @@ InModuleScope 'Item' {
 
         { Export-ItemDate -LiteralPath 'C:\dir\a.txt', 'C:\dir\b.txt' } | Should-Throw -Because 'Destination is required when the input is a file'
       }
-      It 'throws an error when Destination is omitted and the first of two paths is a file' {
+      It 'throws when Destination is omitted and the first of two paths is a file' {
         Mock -CommandName Get-Item -ParameterFilter { ($LiteralPath -is [array]) -and ($LiteralPath -contains 'C:\dir\file.txt') -and ($LiteralPath -contains 'C:\dir2') } -MockWith {
           @(
             [PSCustomObject]@{
@@ -1401,7 +1411,7 @@ InModuleScope 'Item' {
 
         { Export-ItemDate -LiteralPath 'C:\dir\file.txt', 'C:\dir2' } | Should-Throw -Because 'Destination is required when the input is a file'
       }
-      It 'throws an error when Destination is omitted and any input is a file' {
+      It 'throws when Destination is omitted and any input is a file' {
         Mock -CommandName Get-Item -ParameterFilter { ($LiteralPath -is [array]) -and ($LiteralPath -contains 'C:\dir') -and ($LiteralPath -contains 'C:\dir\file.txt') } -MockWith {
           @(
             [PSCustomObject]@{
@@ -1611,6 +1621,7 @@ InModuleScope 'Item' {
         Mock -CommandName Test-Path -ParameterFilter { $LiteralPath -eq 'C:\dir\file.txt' -and $PathType -eq 'Leaf' } -MockWith { $false }
 
         $warnings = @()
+
         Import-ItemDate -Path 'C:\dir\timestamps.json' -WarningVariable warnings
 
         Should-Invoke -CommandName Set-ItemProperty -Times 0 -Exactly

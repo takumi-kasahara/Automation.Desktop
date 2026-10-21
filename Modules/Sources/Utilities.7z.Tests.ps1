@@ -73,7 +73,9 @@ InModuleScope 'Utilities.7z' {
             ''
           )
         }
+
         Get-ArchivedItem -LiteralPath 'C:\Archive\sample.7z' -Encoding ([Encoding]::UTF8) | Out-Null
+
         Should-Invoke -CommandName 7z.exe -Times 1 -Exactly -ParameterFilter { $args -contains '-mcp=65001' }
       }
     }
@@ -144,6 +146,7 @@ InModuleScope 'Utilities.7z' {
     Context 'Edge cases' {
       It 'does not update when no archive metadata is returned' {
         Mock -CommandName Get-ArchivedItem
+
         Sync-ArchivedItemDate -Path 'C:\Archive\*.7z'
 
         Should-Invoke -CommandName Set-ItemDate -Times 0 -Exactly

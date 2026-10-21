@@ -42,34 +42,41 @@ InModuleScope 'Utilities.PDFtk' {
     Context 'ParameterSetName' {
       It 'calls pdftk.exe by FilePath' {
         Export-PdfDump -Path 'C:\docs\manual.pdf' -Destination 'C:\dir\dump.txt'
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly
       }
       It 'calls pdftk.exe by Path with ValueFromPipeline' {
         'C:\docs\manual.pdf' | Export-PdfDump -Destination 'C:\dir\dump.txt'
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly
       }
       It 'calls pdftk.exe by Path with ValueFromPipelineByPropertyName' {
         [PSCustomObject]@{ Path = 'C:\docs\manual.pdf' } | Export-PdfDump -Destination 'C:\dir\dump.txt'
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly
       }
     }
     Context 'SupportsShouldProcess' {
       It 'does not call pdftk.exe when WhatIf is specified' {
         Export-PdfDump -Path 'C:\docs\manual.pdf' -Destination 'C:\dir\dump.txt' -Force -WhatIf
+
         Should-Invoke -CommandName pdftk.exe -Times 0 -Exactly
       }
       It 'calls pdftk.exe when Force is specified' {
         Export-PdfDump -Path 'C:\docs\manual.pdf' -Destination 'C:\dir\dump.txt' -Force -Confirm
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly
       }
       It 'fails when NoClobber is specified and destination exists' {
         Mock -CommandName Test-Path -ParameterFilter { $LiteralPath -eq 'C:\dir\dump.txt' } -MockWith { $true }
+
         { Export-PdfDump -Path 'C:\docs\manual.pdf' -Destination 'C:\dir\dump.txt' -NoClobber } | Should-Throw
       }
     }
     Context 'Other parameters' {
       It 'passes dump_data_utf8 and output to pdftk.exe' {
         Export-PdfDump -Path 'C:\docs\manual.pdf' -Destination 'C:\dir\dump.txt'
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
           $args -contains 'dump_data_utf8' -and
           $args -contains 'output' -and
@@ -78,13 +85,16 @@ InModuleScope 'Utilities.PDFtk' {
       }
       It 'writes the log path when the log file contains output' {
         Mock -CommandName Get-Content -MockWith { 'warning' }
+
         Export-PdfDump -Path 'C:\docs\manual.pdf' -Destination 'C:\dir\dump.txt'
+
         Should-Invoke -CommandName Out-Host -Times 1 -Exactly
       }
     }
     Context 'Other parameters' {
       It 'passes owner_pw to pdftk.exe when OwnerPassword is specified' {
         Export-PdfDump -Path 'C:\docs\manual.pdf' -Destination 'C:\dir\dump.txt' -OwnerPassword (Get-Password -Text 'owner')
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
           $args -contains 'owner_pw' -and
           $args -contains 'dump_data_utf8'
@@ -92,6 +102,7 @@ InModuleScope 'Utilities.PDFtk' {
       }
       It 'passes user_pw to pdftk.exe when UserPassword is specified' {
         Export-PdfDump -Path 'C:\docs\manual.pdf' -Destination 'C:\dir\dump.txt' -UserPassword (Get-Password -Text 'user')
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
           $args -contains 'user_pw' -and
           $args -contains 'dump_data_utf8'
@@ -117,30 +128,36 @@ InModuleScope 'Utilities.PDFtk' {
     Context 'ParameterSetName' {
       It 'calls pdftk.exe by FilePath' {
         Import-PdfDump -Path 'C:\docs\manual.pdf' -Source 'C:\dir\dump.txt' -Destination 'C:\dir\manual.updated.pdf'
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly
       }
       It 'calls pdftk.exe by Path with ValueFromPipeline' {
         'C:\docs\manual.pdf' | Import-PdfDump -Source 'C:\dir\dump.txt' -Destination 'C:\dir\manual.updated.pdf'
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly
       }
       It 'calls pdftk.exe by Path with ValueFromPipelineByPropertyName' {
         [PSCustomObject]@{ Path = 'C:\docs\manual.pdf' } | Import-PdfDump -Source 'C:\dir\dump.txt' -Destination 'C:\dir\manual.updated.pdf'
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly
       }
     }
     Context 'SupportsShouldProcess' {
       It 'does not call pdftk.exe when WhatIf is specified' {
         Import-PdfDump -Path 'C:\docs\manual.pdf' -Source 'C:\dir\dump.txt' -Destination 'C:\dir\manual.updated.pdf' -Force -WhatIf
+
         Should-Invoke -CommandName pdftk.exe -Times 0 -Exactly
       }
       It 'calls pdftk.exe when Force is specified' {
         Import-PdfDump -Path 'C:\docs\manual.pdf' -Source 'C:\dir\dump.txt' -Destination 'C:\dir\manual.updated.pdf' -Force -Confirm
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly
       }
     }
     Context 'Other parameters' {
       It 'passes update_info_utf8 and output to pdftk.exe' {
         Import-PdfDump -Path 'C:\docs\manual.pdf' -Source 'C:\dir\dump.txt' -Destination 'C:\dir\manual.updated.pdf'
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
           $args -contains 'update_info_utf8' -and
           $args -contains 'C:\dir\dump.txt' -and
@@ -150,13 +167,16 @@ InModuleScope 'Utilities.PDFtk' {
       }
       It 'removes the log file when it is empty' {
         Mock -CommandName Get-Content -MockWith { @() }
+
         Import-PdfDump -Path 'C:\docs\manual.pdf' -Source 'C:\dir\dump.txt' -Destination 'C:\dir\manual.updated.pdf'
+
         Should-Invoke -CommandName Remove-Item -ParameterFilter { $LiteralPath -like '*PDFtk.*.log' } -Times 1 -Exactly
       }
     }
     Context 'Other parameters' {
       It 'passes owner_pw to pdftk.exe when OwnerPassword is specified' {
         Import-PdfDump -Path 'C:\docs\manual.pdf' -Source 'C:\dir\dump.txt' -Destination 'C:\dir\manual.updated.pdf' -OwnerPassword (Get-Password -Text 'owner') -Force
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
           $args -contains 'owner_pw' -and
           $args -contains 'update_info_utf8'
@@ -164,6 +184,7 @@ InModuleScope 'Utilities.PDFtk' {
       }
       It 'passes user_pw to pdftk.exe when UserPassword is specified' {
         Import-PdfDump -Path 'C:\docs\manual.pdf' -Source 'C:\dir\dump.txt' -Destination 'C:\dir\manual.updated.pdf' -UserPassword (Get-Password -Text 'user') -Force
+
         Should-Invoke -CommandName pdftk.exe -Times 1 -Exactly -ParameterFilter {
           $args -contains 'user_pw' -and
           $args -contains 'update_info_utf8'
@@ -326,6 +347,7 @@ InModuleScope 'Utilities.PDFtk' {
     Context 'Other parameters' {
       It 'throws when destination exists and NoClobber is specified' {
         Mock -CommandName Test-Path -ParameterFilter { $LiteralPath -eq 'C:\dir\merged.pdf' -and $PathType -eq 'Leaf' } -MockWith { $true }
+
         { Join-Pdf -Path 'C:\docs\manual.pdf' -Destination 'C:\dir\merged.pdf' -NoClobber } | Should-Throw
       }
     }
