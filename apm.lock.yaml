@@ -1,21 +1,32 @@
-lockfile_version: "1"
-apm_version: 0.33.0
+lockfile_version: '1'
+apm_version: 0.35.0
 dependencies:
   - repo_url: takumi-kasahara/dotfiles
     materialization_repo_url: takumi-kasahara/Dotfiles
     name: batchfile
     host: github.com
-    resolved_commit: 7e4751a70f216a5b4633fd2bd74548e6c5c4f39e
+    resolved_commit: 3383e38bcf70d0edb4d454abf105b8f18640665b
     version: unknown
     virtual_path: .apm/skills/batchfile
     is_virtual: true
     package_type: claude_skill
-    content_hash: sha256:bc7bb41e0ee67dac084373eef56a6d87734ef91fc40b87ce3f90c0fc8ce4ad27
+    deployed_files:
+      - .agents/skills/batchfile
+      - .agents/skills/batchfile/SKILL.md
+      - .agents/skills/batchfile/references/gotchas-argument-expansion.md
+      - .agents/skills/batchfile/scripts/script.bat
+      - .agents/skills/batchfile/scripts/script.runas.bat
+    deployed_file_hashes:
+      .agents/skills/batchfile/SKILL.md: sha256:637775192d960d62483d6e54d05fec3eefb7dcabc84d3696af66d917b89f7d5e
+      .agents/skills/batchfile/references/gotchas-argument-expansion.md: sha256:0246c76a512c1ae19359c53a2eec3048a3296d80c4b933ec85a4de6212233ac3
+      .agents/skills/batchfile/scripts/script.bat: sha256:c4873f67984fc830d4f2159cb08d4904f5499e324df83f58320f41736a1622ea
+      .agents/skills/batchfile/scripts/script.runas.bat: sha256:f88baff41b503da1b06645a2636e0943354e557228d354e01bb73e139abb32da
+    content_hash: sha256:2c0ff27022816674a9fc842f582ad17393890cd6faaf1f52dfa22ad3a3fefead
   - repo_url: takumi-kasahara/dotfiles
     materialization_repo_url: takumi-kasahara/Dotfiles
     name: csharp-for-powershell-7
     host: github.com
-    resolved_commit: 7e4751a70f216a5b4633fd2bd74548e6c5c4f39e
+    resolved_commit: 3383e38bcf70d0edb4d454abf105b8f18640665b
     version: unknown
     virtual_path: .apm/skills/csharp-for-powershell-7
     is_virtual: true
@@ -30,7 +41,7 @@ dependencies:
     materialization_repo_url: takumi-kasahara/Dotfiles
     name: powershell-7
     host: github.com
-    resolved_commit: 7e4751a70f216a5b4633fd2bd74548e6c5c4f39e
+    resolved_commit: 3383e38bcf70d0edb4d454abf105b8f18640665b
     version: unknown
     virtual_path: .apm/skills/powershell-7
     is_virtual: true
@@ -61,7 +72,7 @@ dependencies:
     materialization_repo_url: takumi-kasahara/Dotfiles
     name: windows-script-host
     host: github.com
-    resolved_commit: 7e4751a70f216a5b4633fd2bd74548e6c5c4f39e
+    resolved_commit: 3383e38bcf70d0edb4d454abf105b8f18640665b
     version: unknown
     virtual_path: .apm/skills/windows-script-host
     is_virtual: true
@@ -73,6 +84,51 @@ dependencies:
       .agents/skills/windows-script-host/SKILL.md: sha256:42b68bca4b42574698f929206c9adfe24bddb8aca44473556834b8cf78b23905
     content_hash: sha256:d406262c95e06a38a15877d6edb6722585272961a6b2cceab2e8281ea48430c0
 deployments:
+  - kind: project-relative
+    target: copilot
+    value: .agents/skills/batchfile
+    runtime: null
+    scope: project
+    owners:
+      - takumi-kasahara/dotfiles/.apm/skills/batchfile
+    active_owner: takumi-kasahara/dotfiles/.apm/skills/batchfile
+    content_hash: null
+  - kind: project-relative
+    target: copilot
+    value: .agents/skills/batchfile/SKILL.md
+    runtime: null
+    scope: project
+    owners:
+      - takumi-kasahara/dotfiles/.apm/skills/batchfile
+    active_owner: takumi-kasahara/dotfiles/.apm/skills/batchfile
+    content_hash: sha256:637775192d960d62483d6e54d05fec3eefb7dcabc84d3696af66d917b89f7d5e
+  - kind: project-relative
+    target: copilot
+    value: .agents/skills/batchfile/references/gotchas-argument-expansion.md
+    runtime: null
+    scope: project
+    owners:
+      - takumi-kasahara/dotfiles/.apm/skills/batchfile
+    active_owner: takumi-kasahara/dotfiles/.apm/skills/batchfile
+    content_hash: sha256:0246c76a512c1ae19359c53a2eec3048a3296d80c4b933ec85a4de6212233ac3
+  - kind: project-relative
+    target: copilot
+    value: .agents/skills/batchfile/scripts/script.bat
+    runtime: null
+    scope: project
+    owners:
+      - takumi-kasahara/dotfiles/.apm/skills/batchfile
+    active_owner: takumi-kasahara/dotfiles/.apm/skills/batchfile
+    content_hash: sha256:c4873f67984fc830d4f2159cb08d4904f5499e324df83f58320f41736a1622ea
+  - kind: project-relative
+    target: copilot
+    value: .agents/skills/batchfile/scripts/script.runas.bat
+    runtime: null
+    scope: project
+    owners:
+      - takumi-kasahara/dotfiles/.apm/skills/batchfile
+    active_owner: takumi-kasahara/dotfiles/.apm/skills/batchfile
+    content_hash: sha256:f88baff41b503da1b06645a2636e0943354e557228d354e01bb73e139abb32da
   - kind: project-relative
     target: copilot
     value: .agents/skills/csharp-for-powershell-7
