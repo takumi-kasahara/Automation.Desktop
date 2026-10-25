@@ -52,46 +52,6 @@ function Compress-EnvironmentVariable {
   }
   return $InputString
 }
-function Expand-EnvironmentVariable {
-  <#
-  .SYNOPSIS
-    Expands environment variable references in a string.
-
-  .DESCRIPTION
-    Replaces percent-wrapped environment variable names like %USERPROFILE% with their current values from the environment.
-    If a referenced variable does not exist, the percent-wrapped token remains unchanged.
-
-  .PARAMETER InputString
-    The string containing environment variable references to expand.
-
-  .EXAMPLE
-    ```powershell
-    Expand-EnvironmentVariable -InputString '%USERPROFILE%\Documents'
-    ```
-
-    Expands USERPROFILE to return the full Documents path.
-
-  .EXAMPLE
-    ```powershell
-    Expand-EnvironmentVariable -InputString 'Path is %PATH%'
-    ```
-
-    Expands the PATH environment variable in the input string.
-
-  .OUTPUTS
-    System.String. The expanded string with environment variables replaced by their values.
-
-  .NOTES
-    This function uses the .NET Environment.ExpandEnvironmentVariables method.
-  #>
-  [CmdletBinding()]
-  [OutputType([string])]
-  param (
-    [string]
-    $InputString
-  )
-  return [Environment]::ExpandEnvironmentVariables($InputString)
-}
 function ConvertTo-LocalPath {
   <#
   .SYNOPSIS
