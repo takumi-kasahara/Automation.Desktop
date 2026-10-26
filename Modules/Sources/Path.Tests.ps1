@@ -63,45 +63,6 @@ InModuleScope 'Path' {
       }
     }
   }
-  Describe 'Expand-EnvironmentVariable' {
-    BeforeAll {
-      $oldTestExpandVar1 = $env:TEST_EXPAND_VAR1
-      $oldTestExpandVar2 = $env:TEST_EXPAND_VAR2
-      $env:TEST_EXPAND_VAR1 = 'C:\Users\User'
-      $env:TEST_EXPAND_VAR2 = 'C:\dir'
-    }
-    AfterAll {
-      if ($null -ne $oldTestExpandVar1) {
-        $env:TEST_EXPAND_VAR1 = $oldTestExpandVar1
-      } else {
-        Remove-Item -LiteralPath 'Env:TEST_EXPAND_VAR1'
-      }
-      if ($null -ne $oldTestExpandVar2) {
-        $env:TEST_EXPAND_VAR2 = $oldTestExpandVar2
-      } else {
-        Remove-Item -LiteralPath 'Env:TEST_EXPAND_VAR2'
-      }
-    }
-    Context 'Output' {
-      It 'expands a single environment variable' {
-        $result = Expand-EnvironmentVariable -InputString '%TEST_EXPAND_VAR1%\file.txt'
-
-        $result | Should-BeString 'C:\Users\User\file.txt'
-      }
-      It 'expands multiple environment variables' {
-        $result = Expand-EnvironmentVariable -InputString '%TEST_EXPAND_VAR1%\%TEST_EXPAND_VAR2%'
-
-        $result | Should-BeString 'C:\Users\User\C:\dir'
-      }
-    }
-    Context 'Edge cases' {
-      It 'leaves unknown environment variables unchanged' {
-        $result = Expand-EnvironmentVariable -InputString '%UNKNOWN_ENV_VAR%'
-
-        $result | Should-BeString '%UNKNOWN_ENV_VAR%'
-      }
-    }
-  }
   Describe 'ConvertTo-localPath' {
     BeforeAll {
       $oldComputerName = $env:COMPUTERNAME

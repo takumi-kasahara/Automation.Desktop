@@ -20,7 +20,6 @@
     #endregion
     #region Path.psm1
     'Compress-EnvironmentVariable'
-    'Expand-EnvironmentVariable',
     'ConvertTo-LocalPath'
     'ConvertTo-NetworkPath'
     'ConvertTo-WSLPath'
