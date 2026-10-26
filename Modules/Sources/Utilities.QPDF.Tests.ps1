@@ -2,7 +2,6 @@ using namespace System.Diagnostics.CodeAnalysis
 
 [CmdletBinding()]
 param ()
-
 Import-Module -Name ($PSScriptRoot | Join-Path -ChildPath '..\Automation.Desktop.psm1') -Force
 Set-StrictMode -Version Latest
 $WhatIfPreference = $false
