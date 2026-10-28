@@ -2,7 +2,6 @@ using namespace System.IO
 
 [CmdletBinding()]
 param ()
-
 Set-StrictMode -Version Latest
 
 Describe 'Add-Type' {
