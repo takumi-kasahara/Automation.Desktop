@@ -1,5 +1,5 @@
 @{
   USERPROFILE = @(
-    '*.gitconfig'
+    '?*.gitconfig'
   )
 }
