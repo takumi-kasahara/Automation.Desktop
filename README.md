@@ -15,7 +15,7 @@ A collection of PowerShell modules and helper scripts for Windows file system, p
 Run from the repository root:
 
 ```powershell
-./Install.bat
+.\Install.bat
 ```
 
 If you want to install Pester v6, run:
