@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Updates WSL distributions and optimizes virtual hard disks.
 

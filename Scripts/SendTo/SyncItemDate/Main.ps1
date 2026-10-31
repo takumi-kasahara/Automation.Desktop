@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Synchronizes item dates between locations.
 
@@ -21,7 +21,6 @@ param (
   [string[]]
   $LiteralPath
 )
-
 Set-StrictMode -Version Latest
 Set-Location -LiteralPath $PSScriptRoot
 

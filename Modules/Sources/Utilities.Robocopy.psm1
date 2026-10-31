@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Mirrors a source directory to a destination using Robocopy.
 

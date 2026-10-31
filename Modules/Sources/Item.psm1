@@ -1,4 +1,4 @@
-using namespace System.Globalization
+﻿using namespace System.Globalization
 using namespace System.IO
 using namespace System.Text
 
@@ -1186,7 +1186,7 @@ function Export-ItemDate {
         }
       )
       $json = $records | ConvertTo-Json
-      $json | Set-Content -LiteralPath $outputPath -Encoding UTF8 -Force:$Force -WhatIf:$WhatIfPreference -Confirm:$false
+      $json | Out-File -LiteralPath $outputPath -Force:$Force -WhatIf:$WhatIfPreference -Confirm:$false
       if ($isReadOnly -and $Force) {
         (Get-Item -LiteralPath $outputPath -Force).IsReadOnly = $true
       }

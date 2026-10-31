@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Backs up OneDrive data to an external drive.
 

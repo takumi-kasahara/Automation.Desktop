@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param ()
 Import-Module -Name ($PSScriptRoot | Join-Path -ChildPath '..\Automation.Desktop.psm1') -Force
 Set-StrictMode -Version Latest
@@ -1168,7 +1168,7 @@ InModuleScope 'Item' {
   }
   Describe 'Export-ItemDate' {
     BeforeAll {
-      Mock -CommandName Set-Content
+      Mock -CommandName Out-File
       Mock -CommandName Test-Path -MockWith { $PathType -ne 'Container' }
       Mock -CommandName Get-FileHash -MockWith { [PSCustomObject]@{ Hash = 'abc123' } }
       Mock -CommandName Get-Item -MockWith {
@@ -1231,24 +1231,24 @@ InModuleScope 'Item' {
       It 'exports timestamps by Path with wildcard' {
         Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\dir\timestamps.json'
 
-        Should-Invoke -CommandName Set-Content -Times 1 -Exactly
+        Should-Invoke -CommandName Out-File -Times 1 -Exactly
       }
       It 'exports timestamps by Path with ValueFromPipeline' {
         'C:\dir\*' | Export-ItemDate -Destination 'C:\dir\timestamps.json'
 
-        Should-Invoke -CommandName Set-Content -Times 1 -Exactly
+        Should-Invoke -CommandName Out-File -Times 1 -Exactly
       }
       It 'exports timestamps by Path with ValueFromPipelineByPropertyName' {
         [PSCustomObject]@{ Path = 'C:\dir\*' } | Export-ItemDate -Destination 'C:\dir\timestamps.json'
 
-        Should-Invoke -CommandName Set-Content -Times 1 -Exactly
+        Should-Invoke -CommandName Out-File -Times 1 -Exactly
       }
       It 'exports timestamps by LiteralPath for a file' {
         Export-ItemDate -LiteralPath 'C:\dir\file.txt' -Destination 'C:\dir\timestamps.json'
 
-        Should-Invoke -CommandName Set-Content -Times 1 -Exactly -ParameterFilter {
-          $null -ne $Value -and
-          ($json = $Value | ConvertFrom-Json) -and
+        Should-Invoke -CommandName Out-File -Times 1 -Exactly -ParameterFilter {
+          $null -ne $InputObject -and
+          ($json = $InputObject | ConvertFrom-Json) -and
           $json.Path -eq 'file.txt' -and
           $json.CreationTime -eq '2025-01-01T00:00:00' -and
           $json.LastWriteTime -eq '2025-01-02T00:00:00' -and
@@ -1259,9 +1259,9 @@ InModuleScope 'Item' {
       It 'exports timestamps by LiteralPath for a directory recursively enumerates all files relative to the parent folder' {
         Export-ItemDate -LiteralPath 'C:\dir' -Destination 'C:\dir\timestamps.json'
 
-        Should-Invoke -CommandName Set-Content -Times 1 -Exactly -ParameterFilter {
-          $null -ne $Value -and
-          ($json = $Value | ConvertFrom-Json) -and
+        Should-Invoke -CommandName Out-File -Times 1 -Exactly -ParameterFilter {
+          $null -ne $InputObject -and
+          ($json = $InputObject | ConvertFrom-Json) -and
           ($json -is [array]) -and
           $json.Count -eq 2 -and
           ($json[0].Path -eq 'dir\file.txt' -or $json[0].Path -eq 'dir\sub\photo.jpg') -and
@@ -1271,19 +1271,19 @@ InModuleScope 'Item' {
       It 'exports timestamps by LiteralPath with ValueFromPipelineByPropertyName' {
         [PSCustomObject]@{ LiteralPath = 'C:\dir\file.txt' } | Export-ItemDate -Destination 'C:\dir\timestamps.json'
 
-        Should-Invoke -CommandName Set-Content -Times 1 -Exactly
+        Should-Invoke -CommandName Out-File -Times 1 -Exactly
       }
     }
     Context 'SupportsShouldProcess' {
       It 'does not write content when WhatIf is specified' {
         Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\dir\timestamps.json' -Force -WhatIf
 
-        Should-Invoke -CommandName Set-Content -Times 0 -Exactly
+        Should-Invoke -CommandName Out-File -Times 0 -Exactly
       }
       It 'writes content when Force is specified with Confirm' {
         Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\dir\timestamps.json' -Force -Confirm
 
-        Should-Invoke -CommandName Set-Content -Times 1 -Exactly
+        Should-Invoke -CommandName Out-File -Times 1 -Exactly
       }
       It 'fails when NoClobber is specified and destination exists' {
         Mock -CommandName Test-Path -ParameterFilter { $LiteralPath -eq 'C:\dir\timestamps.json' } -MockWith { $true }
@@ -1295,9 +1295,9 @@ InModuleScope 'Item' {
       It 'writes JSON containing the item path relative to the input folder and timestamps' {
         Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\dir\timestamps.json'
 
-        Should-Invoke -CommandName Set-Content -Times 1 -Exactly -ParameterFilter {
-          $null -ne $Value -and
-          ($json = $Value | ConvertFrom-Json) -and
+        Should-Invoke -CommandName Out-File -Times 1 -Exactly -ParameterFilter {
+          $null -ne $InputObject -and
+          ($json = $InputObject | ConvertFrom-Json) -and
           $json.Path -eq 'file.txt' -and
           $json.CreationTime -eq '2025-01-01T00:00:00' -and
           $json.LastWriteTime -eq '2025-01-02T00:00:00' -and
@@ -1310,7 +1310,7 @@ InModuleScope 'Item' {
       It 'saves to {folder name}.json in the parent folder of the input when Destination is omitted for a directory' {
         Export-ItemDate -LiteralPath 'C:\dir'
 
-        Should-Invoke -CommandName Set-Content -Times 1 -Exactly -ParameterFilter {
+        Should-Invoke -CommandName Out-File -Times 1 -Exactly -ParameterFilter {
           $LiteralPath -eq (Join-Path -Path 'C:\' -ChildPath 'dir.json')
         }
       }
@@ -1354,11 +1354,11 @@ InModuleScope 'Item' {
 
         Export-ItemDate -LiteralPath 'C:\dir1', 'C:\dir2'
 
-        Should-Invoke -CommandName Set-Content -Times 2 -Exactly
-        Should-Invoke -CommandName Set-Content -Times 1 -Exactly -ParameterFilter {
+        Should-Invoke -CommandName Out-File -Times 2 -Exactly
+        Should-Invoke -CommandName Out-File -Times 1 -Exactly -ParameterFilter {
           $LiteralPath -eq (Join-Path -Path 'C:\' -ChildPath 'dir1.json')
         }
-        Should-Invoke -CommandName Set-Content -Times 1 -Exactly -ParameterFilter {
+        Should-Invoke -CommandName Out-File -Times 1 -Exactly -ParameterFilter {
           $LiteralPath -eq (Join-Path -Path 'C:\' -ChildPath 'dir2.json')
         }
       }
@@ -1442,7 +1442,7 @@ InModuleScope 'Item' {
       It 'writes content to exactly one destination file' {
         Export-ItemDate -Path 'C:\dir\*' -Destination 'C:\dir\timestamps.json'
 
-        Should-Invoke -CommandName Set-Content -Times 1 -Exactly
+        Should-Invoke -CommandName Out-File -Times 1 -Exactly
       }
       It 'does not accept an array of destinations because only one output file is produced' {
         { Export-ItemDate -Path 'C:\dir\*' -Destination @('C:\dir\a.json', 'C:\dir\b.json') } | Should-Throw

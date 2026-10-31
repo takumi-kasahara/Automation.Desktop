@@ -1,8 +1,8 @@
-@{
-  ProgramData        = @(
+﻿@{
+  ProgramData  = @(
     'VMware'
   )
-  USERPROFILE        = @(
+  USERPROFILE  = @(
     '.apm'
     '.config'
     '.docker'
@@ -13,7 +13,7 @@
     '.vscode'
     '.vscode-insiders'
   )
-  APPDATA            = @(
+  APPDATA      = @(
     'AstroGrep'
     'BleachBit'
     'Code'            # Visual Studio Code
@@ -39,7 +39,7 @@
     'VMware'
     'Vortex'
   )
-  LOCALAPPDATA       = @(
+  LOCALAPPDATA = @(
     '..\LocalLow'
     'LINQPad'
     'Microsoft\Edge'

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Creates and manages Windows Dev Drives for enhanced storage performance.
 

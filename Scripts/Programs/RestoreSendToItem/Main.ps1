@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Restores default SendTo menu items.
 

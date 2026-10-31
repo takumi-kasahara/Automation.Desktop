@@ -1,4 +1,4 @@
-@{
+﻿@{
   RootModule           = 'Automation.Desktop.psm1'
   ModuleVersion        = '1.0.0'
   CompatiblePSEditions = @('Core')

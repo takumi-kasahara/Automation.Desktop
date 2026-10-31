@@ -1,4 +1,4 @@
-using namespace System.Text
+﻿using namespace System.Text
 
 [CmdletBinding()]
 param ()
@@ -8,7 +8,7 @@ Set-StrictMode -Version Latest
 InModuleScope 'Utilities.7z' {
   Describe 'Get-ArchivedItem' {
     BeforeAll {
-      Mock -CommandName Get-Content
+      Mock -CommandName Get-Content -MockWith { [string]::Empty }
       Mock -CommandName Remove-Item
       Mock -CommandName Test-Path -MockWith { $true }
       Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\Archive\*.7z' } -MockWith {

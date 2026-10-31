@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param ()
 Import-Module -Name ($PSScriptRoot | Join-Path -ChildPath '..\Automation.Desktop.psm1') -Force
 Set-StrictMode -Version Latest
@@ -6,7 +6,7 @@ Set-StrictMode -Version Latest
 InModuleScope 'Utilities.ExifTool' {
   Describe 'Get-ExifDate' {
     BeforeAll {
-      Mock -CommandName Get-Content
+      Mock -CommandName Get-Content -MockWith { [string]::Empty }
       Mock -CommandName Remove-Item
       Mock -CommandName Test-Path -MockWith { $true }
       Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\Photos\*.jpg' } -MockWith {
@@ -171,7 +171,7 @@ InModuleScope 'Utilities.ExifTool' {
     BeforeAll {
       Mock -CommandName ExifTool.exe
       Mock -CommandName Sync-ItemDate
-      Mock -CommandName Get-Content
+      Mock -CommandName Get-Content -MockWith { [string]::Empty }
       Mock -CommandName Out-File
       Mock -CommandName Remove-Item
       Mock -CommandName Test-Path -MockWith { $true }
@@ -235,7 +235,7 @@ InModuleScope 'Utilities.ExifTool' {
   Describe 'Remove-ExifDate' {
     BeforeAll {
       Mock -CommandName ExifTool.exe
-      Mock -CommandName Get-Content
+      Mock -CommandName Get-Content -MockWith { [string]::Empty }
       Mock -CommandName Out-File
       Mock -CommandName Remove-Item
       Mock -CommandName Test-Path -MockWith { $true }

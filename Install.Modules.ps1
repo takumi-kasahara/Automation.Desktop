@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param ()
 if ($PSEdition -ne 'Core') {
   return
