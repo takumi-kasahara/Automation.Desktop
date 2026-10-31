@@ -18,11 +18,29 @@ This repository is a collection of PowerShell modules and helper scripts for Win
 2. When editing `Modules/Sources/Module.psm1`, also update or create the corresponding test file `Modules/Sources/Module.Tests.ps1` and ensure tests cover your changes.
 3. When adding or removing cmdlets, also update the module manifest files (`Modules/*.psd1`) to reflect the changes.
 
+#### PSScriptAnalyzer Invocation
+
+Run PSScriptAnalyzer with `Analyze.bat`:
+
+```bat
+".agents\skills\powershell-7\scripts\Analyze.bat" -Path "Modules" -Recurse
+```
+
+```powershell
+& '.agents\skills\powershell-7\scripts\Analyze.bat' -Path '.\Modules' -Recurse
+```
+
 #### Pester Invocation
 
-Run tests with `Pester.ps1`:
+Run Pester with `Pester.bat`:
 
-- `pwsh.exe -NoLogo -NoProfile -ExecutionPolicy RemoteSigned -File ".agents\skills\powershell-7\scripts\Pester.ps1" -Path ".\Module.Tests.ps1"`
+```bat
+".agents\skills\powershell-7\scripts\Pester.bat" -Path "Modules\Sources"
+```
+
+```powershell
+& '.agents\skills\powershell-7\scripts\Pester.bat' -Path '.\Modules\Sources'
+```
 
 ### PowerShell script development cycle
 

@@ -23,9 +23,3 @@ If you want to install Pester v6, run:
 ```powershell
 Install-Module -Name Pester -Scope CurrentUser
 ```
-
-If you want to run tests:
-
-```powershell
-. .\.agents\skills\powershell-7\scripts\Pester.ps1 -Path 'Modules\Sources'
-```

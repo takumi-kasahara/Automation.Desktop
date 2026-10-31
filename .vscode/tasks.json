@@ -18,14 +18,12 @@
       }
     },
     {
-      "label": "pester current file",
+      "label": "pester",
       "type": "shell",
-      "command": "pwsh.exe",
+      "command": "cmd.exe",
       "args": [
-        "-NoLogo",
-        "-NoProfile",
-        "-File",
-        ".agents\\skills\\powershell-7\\scripts\\Pester.ps1",
+        "/c",
+        ".agents\\skills\\powershell-7\\scripts\\Pester.bat",
         "-Path",
         "${file}"
       ],
@@ -37,13 +35,6 @@
     },
     {
       "label": "cscript",
-      "type": "shell",
-      "command": "cscript.exe",
-      "args": ["//NoLogo", "${file}"],
-      "problemMatcher": []
-    },
-    {
-      "label": "cscript (debug)",
       "type": "shell",
       "command": "cscript.exe",
       "args": ["//NoLogo", "//X", "${file}"],

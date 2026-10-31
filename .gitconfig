@@ -2,3 +2,21 @@
 [hook "lint"]
   event = pre-commit
   command = npm run lint && git update-index --again
+[hook "test"]
+  event = pre-commit
+  command = uv run pytest --quiet
+[hook "parse-modules"]
+  event = pre-commit
+  command = .agents/skills/powershell-7/scripts/Parse.bat -Path ./Modules -Recurse
+[hook "parse-scripts"]
+  event = pre-commit
+  command = .agents/skills/powershell-7/scripts/Parse.bat -Path ./Scripts -Recurse
+[hook "analyze-modules"]
+  event = pre-commit
+  command = .agents/skills/powershell-7/scripts/Analyze.bat -Path ./Modules -Recurse
+[hook "analyze-scripts"]
+  event = pre-commit
+  command = .agents/skills/powershell-7/scripts/Analyze.bat -Path ./Scripts -Recurse
+[hook "pester"]
+  event = pre-commit
+  command = .agents/skills/powershell-7/scripts/Pester.bat -Path ./Modules/Sources

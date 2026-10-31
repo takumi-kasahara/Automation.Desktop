@@ -1,3 +1,5 @@
+'use strict';
+
 var FileSystemObject = WScript.CreateObject('Scripting.FileSystemObject');
 var WshShell = WScript.CreateObject('WScript.Shell');
 var args = [];
