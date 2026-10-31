@@ -65,12 +65,6 @@ function Remove-OllamaModel {
   .PARAMETER Name
     The name of the model to remove. This parameter supports tab completion from the list of models.
 
-  .PARAMETER WhatIf
-    Shows what would happen if the cmdlet runs. The cmdlet is not run.
-
-  .PARAMETER Confirm
-    Prompts you for confirmation before running the cmdlet.
-
   .EXAMPLE
     ```powershell
     Remove-OllamaModel -Name "llama2"
