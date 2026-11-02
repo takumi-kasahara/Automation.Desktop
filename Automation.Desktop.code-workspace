@@ -4,4 +4,7 @@
       "path": ".",
     },
   ],
+  "settings": {
+    "powershell.powerShellDefaultVersion": "PowerShell Preview (Store)",
+  },
 }
