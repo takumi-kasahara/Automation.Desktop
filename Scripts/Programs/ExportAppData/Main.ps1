@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Exports application data to a backup location.
 

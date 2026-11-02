@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Installs Japanese and English language packs and configures Windows language settings.
 

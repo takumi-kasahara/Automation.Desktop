@@ -1,4 +1,4 @@
-using namespace System.Diagnostics.CodeAnalysis
+﻿using namespace System.Diagnostics.CodeAnalysis
 
 [CmdletBinding()]
 param ()
@@ -22,7 +22,7 @@ InModuleScope 'Utilities.QPDF' {
   Describe 'ConvertTo-Qdf' {
     BeforeAll {
       Mock -CommandName qpdf.exe
-      Mock -CommandName Get-Content
+      Mock -CommandName Get-Content -MockWith { [string]::Empty }
       Mock -CommandName Out-File
       Mock -CommandName Out-Host
       Mock -CommandName Remove-Item
@@ -89,7 +89,7 @@ InModuleScope 'Utilities.QPDF' {
         { ConvertTo-Qdf -Path 'C:\docs\manual.pdf' -Destination 'C:\dir\manual.qdf' -NoClobber } | Should-Throw
       }
       It 'removes the log file when it is empty' {
-        Mock -CommandName Get-Content -MockWith { @() }
+        Mock -CommandName Get-Content -MockWith { [string]::Empty }
 
         ConvertTo-Qdf -Path 'C:\docs\manual.pdf' -Destination 'C:\dir\manual.qdf'
 
@@ -100,7 +100,7 @@ InModuleScope 'Utilities.QPDF' {
 
         ConvertTo-Qdf -Path 'C:\docs\manual.pdf' -Destination 'C:\dir\manual.qdf'
 
-        Should-Invoke -CommandName Out-Host -Times 1 -Exactly
+        Should-Invoke -CommandName Out-Host -Times 2 -Exactly
         Should-Invoke -CommandName Remove-Item -ParameterFilter { $LiteralPath -like '*QPDF.*.log' } -Times 0 -Exactly
       }
     }
@@ -108,7 +108,7 @@ InModuleScope 'Utilities.QPDF' {
   Describe 'ConvertFrom-Qdf' {
     BeforeAll {
       Mock -CommandName fix-qdf.exe
-      Mock -CommandName Get-Content
+      Mock -CommandName Get-Content -MockWith { [string]::Empty }
       Mock -CommandName Out-Host
       Mock -CommandName Out-File
       Mock -CommandName Remove-Item
@@ -175,7 +175,7 @@ InModuleScope 'Utilities.QPDF' {
         { ConvertFrom-Qdf -Path 'C:\dir\manual.qdf' -Destination 'C:\docs\manual.pdf' -NoClobber } | Should-Throw
       }
       It 'removes the log file when it is empty' {
-        Mock -CommandName Get-Content -MockWith { @() }
+        Mock -CommandName Get-Content -MockWith { [string]::Empty }
 
         ConvertFrom-Qdf -Path 'C:\dir\manual.qdf' -Destination 'C:\docs\manual.pdf'
 
@@ -186,14 +186,14 @@ InModuleScope 'Utilities.QPDF' {
 
         ConvertFrom-Qdf -Path 'C:\dir\manual.qdf' -Destination 'C:\docs\manual.pdf'
 
-        Should-Invoke -CommandName Out-Host -Times 1 -Exactly
+        Should-Invoke -CommandName Out-Host -Times 2 -Exactly
         Should-Invoke -CommandName Remove-Item -ParameterFilter { $LiteralPath -like '*QPDF.*.log' } -Times 0 -Exactly
       }
     }
   }
   Describe 'Get-PdfPage' {
     BeforeAll {
-      Mock -CommandName Get-Content
+      Mock -CommandName Get-Content -MockWith { [string]::Empty }
       Mock -CommandName Remove-Item
       Mock -CommandName Test-Path -MockWith { $PathType -ne 'Container' }
       Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\docs\*.pdf' } -MockWith {
@@ -326,7 +326,7 @@ InModuleScope 'Utilities.QPDF' {
   }
   Describe 'Unblock-Pdf' {
     BeforeAll {
-      Mock -CommandName Get-Content
+      Mock -CommandName Get-Content -MockWith { [string]::Empty }
       Mock -CommandName Remove-Item
       Mock -CommandName Test-Path -MockWith { $true }
       Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\docs\*.pdf' } -MockWith {

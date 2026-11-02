@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Restores backed-up AppData directories from an external USB drive.
 

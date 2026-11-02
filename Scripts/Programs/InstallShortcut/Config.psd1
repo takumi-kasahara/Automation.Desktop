@@ -1,4 +1,4 @@
-@{
+﻿@{
   # https://learn.microsoft.com/en-us/windows/apps/develop/launch/launch-settings
   Settings  = @(
     #region Apps

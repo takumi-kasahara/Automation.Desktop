@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param ()
 Import-Module -Name ($PSScriptRoot | Join-Path -ChildPath '..\Automation.Desktop.psm1') -Force
 Set-StrictMode -Version Latest
@@ -283,13 +283,13 @@ InModuleScope 'Compare' {
           '"Name","Comment"'
           '"Alice","hello,world"'
           '"Bob","x,y,z"'
-        ) | Set-Content -LiteralPath $referencePath
+        ) | Out-File -LiteralPath $referencePath
 
         @(
           '"Name","Comment"'
           '"Alice","hello,world"'
           '"Bob","x,y,z"'
-        ) | Set-Content -LiteralPath $differencePath
+        ) | Out-File -LiteralPath $differencePath
 
         $result = Compare-Csv -ReferencePath $referencePath -DifferencePath $differencePath -Delimiter ','
 
@@ -303,12 +303,12 @@ InModuleScope 'Compare' {
           'A,B,C'
           '1,2,3'
           '4,5'
-        ) | Set-Content -LiteralPath $referencePath
+        ) | Out-File -LiteralPath $referencePath
         @(
           'A,B,C'
           '1,2,3'
           '4,5,6'
-        ) | Set-Content -LiteralPath $differencePath
+        ) | Out-File -LiteralPath $differencePath
 
         $result = Compare-Csv -ReferencePath $referencePath -DifferencePath $differencePath -Delimiter ','
 

@@ -1,4 +1,4 @@
-using namespace System.Text
+﻿using namespace System.Text
 
 Set-StrictMode -Version Latest
 

@@ -1,4 +1,4 @@
-using namespace System.Collections.ObjectModel
+﻿using namespace System.Collections.ObjectModel
 using namespace System.Management.Automation
 
 function Get-OllamaModel {
@@ -26,13 +26,19 @@ function Get-OllamaModel {
   try {
     $global:LASTEXITCODE = 0
     $output = ollama list 2>&1
-    if ($LASTEXITCODE -ne 0 -and $output -notmatch 'NAME\s+ID') { throw $output }
+    if ($LASTEXITCODE -ne 0 -and $output -notmatch 'NAME\s+ID') {
+      throw $output
+    }
     $lines = $output -split "`n"
-    if ($lines.Count -lt 2) { return @() }
+    if ($lines.Count -lt 2) {
+      return
+    }
     $models = @()
     for ($i = 1; $i -lt $lines.Count; $i++) {
       $line = $lines[$i].Trim()
-      if (-not $line) { continue }
+      if (-not $line) {
+        continue
+      }
 
       $parts = $line -split '\s+'
       if ($parts.Count -ge 2) {
@@ -58,12 +64,6 @@ function Remove-OllamaModel {
 
   .PARAMETER Name
     The name of the model to remove. This parameter supports tab completion from the list of models.
-
-  .PARAMETER WhatIf
-    Shows what would happen if the cmdlet runs. The cmdlet is not run.
-
-  .PARAMETER Confirm
-    Prompts you for confirmation before running the cmdlet.
 
   .EXAMPLE
     ```powershell
@@ -97,15 +97,31 @@ function Remove-OllamaModel {
     $Name = $PSBoundParameters['Name']
 
     try {
-      if (-not $PSCmdlet.ShouldProcess($Name, 'Remove model')) { return }
+      if (-not $PSCmdlet.ShouldProcess($Name, 'Remove model')) {
+        return
+      }
       $global:LASTEXITCODE = 0
       $output = ollama rm $Name 2>&1
-      if ($LASTEXITCODE -ne 0 -and $output -notmatch 'Removed') { throw $output }
+      if ($LASTEXITCODE -ne 0 -and $output -notmatch 'Removed') {
+        throw $output
+      }
       "Removed model '$Name'." | Out-Host
     } catch {
-      $msg = if ($_.Exception -and $_.Exception.Message) { $_.Exception.Message } elseif ($_.ToString()) { $_.ToString() } else { [string]::Empty }
-      $msgText = if ($msg) { $msg } else { $_ }
-      if ($msgText -match 'What if' -or $msgText -match 'Performing the operation') { return }
+      $msg = if ($_.Exception -and $_.Exception.Message) {
+        $_.Exception.Message
+      } elseif ($_.ToString()) {
+        $_.ToString()
+      } else {
+        [string]::Empty
+      }
+      $msgText = if ($msg) {
+        $msg
+      } else {
+        $_
+      }
+      if ($msgText -match 'What if' -or $msgText -match 'Performing the operation') {
+        return
+      }
       throw "Failed to remove model '$Name': $msgText"
     }
   }
@@ -183,20 +199,38 @@ function Update-OllamaModel {
           }
           $global:LASTEXITCODE = 0
           $output = ollama pull $model.Name 2>&1
-          if ($LASTEXITCODE -ne 0 -and $output -notmatch 'success') { throw $output }
+          if ($LASTEXITCODE -ne 0 -and $output -notmatch 'success') {
+            throw $output
+          }
           "Updated model '$($model.Name)'." | Out-Host
         }
       } else {
-        if (-not $PSCmdlet.ShouldProcess($Name, 'Update model')) { return }
+        if (-not $PSCmdlet.ShouldProcess($Name, 'Update model')) {
+          return
+        }
         $global:LASTEXITCODE = 0
         $output = ollama pull $Name 2>&1
-        if ($LASTEXITCODE -ne 0 -and $output -notmatch 'success') { throw $output }
+        if ($LASTEXITCODE -ne 0 -and $output -notmatch 'success') {
+          throw $output
+        }
         "Updated model '$Name'." | Out-Host
       }
     } catch {
-      $msg = if ($_.Exception -and $_.Exception.Message) { $_.Exception.Message } elseif ($_.ToString()) { $_.ToString() } else { [string]::Empty }
-      $msgText = if ($msg) { $msg } else { $_ }
-      if ($msgText -match 'What if' -or $msgText -match 'Performing the operation') { return }
+      $msg = if ($_.Exception -and $_.Exception.Message) {
+        $_.Exception.Message
+      } elseif ($_.ToString()) {
+        $_.ToString()
+      } else {
+        [string]::Empty
+      }
+      $msgText = if ($msg) {
+        $msg
+      } else {
+        $_
+      }
+      if ($msgText -match 'What if' -or $msgText -match 'Performing the operation') {
+        return
+      }
       throw "Failed to update models: $msgText"
     }
   }
@@ -257,7 +291,9 @@ function Invoke-OllamaModel {
     $Prompt = $PSBoundParameters['Prompt']
 
     try {
-      if (-not $PSCmdlet.ShouldProcess($Name, 'Invoke model')) { return }
+      if (-not $PSCmdlet.ShouldProcess($Name, 'Invoke model')) {
+        return
+      }
 
       $global:LASTEXITCODE = 0
       $arguments = @($Name)
@@ -265,12 +301,26 @@ function Invoke-OllamaModel {
         $arguments += $Prompt
       }
       $output = ollama run @arguments 2>&1
-      if ($LASTEXITCODE -ne 0) { throw $output }
+      if ($LASTEXITCODE -ne 0) {
+        throw $output
+      }
       return $output
     } catch {
-      $msg = if ($_.Exception -and $_.Exception.Message) { $_.Exception.Message } elseif ($_.ToString()) { $_.ToString() } else { [string]::Empty }
-      $msgText = if ($msg) { $msg } else { $_ }
-      if ($msgText -match 'What if' -or $msgText -match 'Performing the operation') { return }
+      $msg = if ($_.Exception -and $_.Exception.Message) {
+        $_.Exception.Message
+      } elseif ($_.ToString()) {
+        $_.ToString()
+      } else {
+        [string]::Empty
+      }
+      $msgText = if ($msg) {
+        $msg
+      } else {
+        $_
+      }
+      if ($msgText -match 'What if' -or $msgText -match 'Performing the operation') {
+        return
+      }
       throw "Failed to invoke model '$Name': $msgText"
     }
   }
@@ -348,7 +398,9 @@ function Stop-OllamaModel {
           if ($lines.Count -ge 2) {
             for ($i = 1; $i -lt $lines.Count; $i++) {
               $line = $lines[$i].Trim()
-              if (-not $line) { continue }
+              if (-not $line) {
+                continue
+              }
               $parts = $line -split '\s+'
               if ($parts.Count -ge 1) {
                 $models += [PSCustomObject]@{ Name = $parts[0] }
@@ -357,23 +409,43 @@ function Stop-OllamaModel {
           }
         }
         foreach ($model in $models) {
-          if (-not $PSCmdlet.ShouldProcess($model.Name, 'Stop model')) { continue }
+          if (-not $PSCmdlet.ShouldProcess($model.Name, 'Stop model')) {
+            continue
+          }
           $global:LASTEXITCODE = 0
           $output = ollama stop $model.Name 2>&1
-          if ($LASTEXITCODE -ne 0 -and $output -notmatch 'stopped') { throw $output }
+          if ($LASTEXITCODE -ne 0 -and $output -notmatch 'stopped') {
+            throw $output
+          }
           "Stopped model '$($model.Name)'." | Out-Host
         }
       } else {
-        if (-not $PSCmdlet.ShouldProcess($Name, 'Stop model')) { return }
+        if (-not $PSCmdlet.ShouldProcess($Name, 'Stop model')) {
+          return
+        }
         $global:LASTEXITCODE = 0
         $output = ollama stop $Name 2>&1
-        if ($LASTEXITCODE -ne 0 -and $output -notmatch 'stopped') { throw $output }
+        if ($LASTEXITCODE -ne 0 -and $output -notmatch 'stopped') {
+          throw $output
+        }
         "Stopped model '$Name'." | Out-Host
       }
     } catch {
-      $msg = if ($_.Exception -and $_.Exception.Message) { $_.Exception.Message } elseif ($_.ToString()) { $_.ToString() } else { [string]::Empty }
-      $msgText = if ($msg) { $msg } else { $_ }
-      if ($msgText -match 'What if' -or $msgText -match 'Performing the operation') { return }
+      $msg = if ($_.Exception -and $_.Exception.Message) {
+        $_.Exception.Message
+      } elseif ($_.ToString()) {
+        $_.ToString()
+      } else {
+        [string]::Empty
+      }
+      $msgText = if ($msg) {
+        $msg
+      } else {
+        $_
+      }
+      if ($msgText -match 'What if' -or $msgText -match 'Performing the operation') {
+        return
+      }
       throw "Failed to stop models: $msgText"
     }
   }

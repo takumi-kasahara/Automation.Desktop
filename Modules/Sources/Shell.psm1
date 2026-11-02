@@ -1,4 +1,4 @@
-using namespace System.Collections.ObjectModel
+﻿using namespace System.Collections.ObjectModel
 using namespace System.IO
 using namespace System.Management.Automation
 
@@ -522,44 +522,46 @@ function New-Shortcut {
     [switch]
     $Force
   )
-  $ext = [WildcardPattern]::Escape($Path) | Split-Path -Extension
-  if ($ext -ne '.lnk') {
-    $Path += '.lnk'
-  }
-  $target = "Destination: $($ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path))"
-  if (-not (($Force -and -not $WhatIfPreference) -or $PSCmdlet.ShouldProcess($target, 'Create Shortcut'))) {
-    return
-  }
-  try {
-    if ($Force) {
-      Remove-Item -LiteralPath $Path -Force -ErrorAction Ignore
+  process {
+    $ext = [WildcardPattern]::Escape($Path) | Split-Path -Extension
+    if ($ext -ne '.lnk') {
+      $Path += '.lnk'
     }
-    $wshShell = New-Object -ComObject 'WScript.Shell'
-    $wshShortcut = $wshShell.CreateShortcut($Path)
-    $wshShortcut.TargetPath = $TargetPath
-    $wshShortcut.WorkingDirectory = $WorkingDirectory
-    $wshShortcut.Arguments = $Arguments
-    $wshShortcut.Description = $Description
-    $wshShortcut.IconLocation = $IconLocation
-    if ($HotKey) {
-      $wshShortcut.HotKey = "Ctrl+Alt+$HotKey"
+    $target = "Destination: $($ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path))"
+    if (-not (($Force -and -not $WhatIfPreference) -or $PSCmdlet.ShouldProcess($target, 'Create Shortcut'))) {
+      return
     }
-    if ($WindowStyle) {
-      $styles = @{
-        'Normal'  = 1
-        'Maximum' = 3
-        'Minimum' = 7
+    try {
+      if ($Force) {
+        Remove-Item -LiteralPath $Path -Force -ErrorAction Ignore
       }
-      $wshShortcut.WindowStyle = $styles[$WindowStyle]
+      $wshShell = New-Object -ComObject 'WScript.Shell'
+      $wshShortcut = $wshShell.CreateShortcut($Path)
+      $wshShortcut.TargetPath = $TargetPath
+      $wshShortcut.WorkingDirectory = $WorkingDirectory
+      $wshShortcut.Arguments = $Arguments
+      $wshShortcut.Description = $Description
+      $wshShortcut.IconLocation = $IconLocation
+      if ($HotKey) {
+        $wshShortcut.HotKey = "Ctrl+Alt+$HotKey"
+      }
+      if ($WindowStyle) {
+        $styles = @{
+          'Normal'  = 1
+          'Maximum' = 3
+          'Minimum' = 7
+        }
+        $wshShortcut.WindowStyle = $styles[$WindowStyle]
+      }
+      $wshShortcut.Save()
+      Get-Item -LiteralPath $Path -Force
+    } finally {
+      Get-Variable |
+      Where-Object -Property Value -Is [__ComObject] |
+      Clear-Variable -Force -WhatIf:$false
+      [GC]::Collect()
+      [GC]::WaitForPendingFinalizers()
     }
-    $wshShortcut.Save()
-    Get-Item -LiteralPath $Path -Force
-  } finally {
-    Get-Variable |
-    Where-Object -Property Value -Is [__ComObject] |
-    Clear-Variable -Force -WhatIf:$false
-    [GC]::Collect()
-    [GC]::WaitForPendingFinalizers()
   }
 }
 function New-UrlShortcut {
@@ -617,29 +619,31 @@ function New-UrlShortcut {
     [switch]
     $Force
   )
-  $ext = [WildcardPattern]::Escape($Path) | Split-Path -Extension
-  if ($ext -ne '.url') {
-    $Path += '.url'
-  }
-  $target = "Destination: $Path"
-  if (-not (($Force -and -not $WhatIfPreference) -or $PSCmdlet.ShouldProcess($target, 'Create Shortcut'))) {
-    return
-  }
-  try {
-    if ($Force) {
-      Remove-Item -LiteralPath $Path -Force -WhatIf:$WhatIfPreference -Confirm:$false
+  process {
+    $ext = [WildcardPattern]::Escape($Path) | Split-Path -Extension
+    if ($ext -ne '.url') {
+      $Path += '.url'
     }
-    $wshShell = New-Object -ComObject 'WScript.Shell'
-    $wshShortcut = $wshShell.CreateShortcut($Path)
-    $wshShortcut.TargetPath = $TargetPath
-    $wshShortcut.Save()
-    Get-Item -LiteralPath $Path -Force
-  } finally {
-    Get-Variable |
-    Where-Object -Property Value -Is [__ComObject] |
-    Clear-Variable -Force -WhatIf:$false
-    [GC]::Collect()
-    [GC]::WaitForPendingFinalizers()
+    $target = "Destination: $Path"
+    if (-not (($Force -and -not $WhatIfPreference) -or $PSCmdlet.ShouldProcess($target, 'Create Shortcut'))) {
+      return
+    }
+    try {
+      if ($Force) {
+        Remove-Item -LiteralPath $Path -Force -WhatIf:$WhatIfPreference -Confirm:$false
+      }
+      $wshShell = New-Object -ComObject 'WScript.Shell'
+      $wshShortcut = $wshShell.CreateShortcut($Path)
+      $wshShortcut.TargetPath = $TargetPath
+      $wshShortcut.Save()
+      Get-Item -LiteralPath $Path -Force
+    } finally {
+      Get-Variable |
+      Where-Object -Property Value -Is [__ComObject] |
+      Clear-Variable -Force -WhatIf:$false
+      [GC]::Collect()
+      [GC]::WaitForPendingFinalizers()
+    }
   }
 }
 function Get-Shortcut {
@@ -908,7 +912,7 @@ function New-NetworkShortcut {
 [.ShellClassInfo]
 CLSID2={0AFACED1-E828-11D1-9187-B532F1E9575D}
 Flags=2
-'@ | Out-File -LiteralPath $ini -WhatIf:$WhatIfPreference -Confirm:$false
+'@ | Out-File -LiteralPath $ini -Force:$Force -WhatIf:$WhatIfPreference -Confirm:$false
   Set-ItemProperty -LiteralPath $ini -Name Attributes -Value ([FileAttributes]::Hidden -bor [FileAttributes]::System -bor [FileAttributes]::Archive) -WhatIf:$WhatIfPreference -Confirm:$false
   New-Shortcut -Path ($destination | Join-Path -ChildPath 'target.lnk') -TargetPath $Path -WhatIf:$WhatIfPreference -Confirm:$false
   Set-ItemProperty -LiteralPath $destination -Name Attributes -Value ([FileAttributes]::ReadOnly) -WhatIf:$WhatIfPreference -Confirm:$false

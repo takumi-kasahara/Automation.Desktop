@@ -1,4 +1,4 @@
-@{
+﻿@{
   '7-Zip'             = 'HKCU\Software\7-Zip'
   'AutoHotkey'        = 'HKCU\Software\AutoHotkey'
   'Console'           = 'HKCU\Console'

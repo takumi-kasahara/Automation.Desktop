@@ -1,4 +1,4 @@
-
+﻿
 <#
 .SYNOPSIS
   Optimizes the Saved Pictures folder by removing duplicates, normalizing paths, and cleaning up empty directories.

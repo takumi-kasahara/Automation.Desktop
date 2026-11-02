@@ -1,4 +1,4 @@
-using namespace System.Collections.Generic
+﻿using namespace System.Collections.Generic
 
 [CmdletBinding()]
 param ()
@@ -511,6 +511,23 @@ InModuleScope 'Shell' {
 
         $result.FullName | Should-BeString 'C:\dir\shortcut.lnk'
       }
+      It 'creates a shortcut for each pipeline path' {
+        Mock -CommandName Get-Item -ParameterFilter { $Force -and $LiteralPath -like 'C:\dir\*.lnk' } -MockWith {
+          [PSCustomObject]@{ FullName = $LiteralPath }
+        }
+
+        $result = @('C:\dir\first', 'C:\dir\second') | New-Shortcut -TargetPath 'C:\Windows\notepad.exe'
+
+        $result | Should-BeCollection -Count 2
+        $result.FullName | Should-BeCollection @('C:\dir\first.lnk', 'C:\dir\second.lnk')
+        Should-Invoke -CommandName New-Object -ParameterFilter { $ComObject -eq 'WScript.Shell' } -Times 2 -Exactly
+      }
+      It 'does not create shortcuts for pipeline paths when WhatIf is specified' {
+        $result = @('C:\dir\first', 'C:\dir\second') | New-Shortcut -TargetPath 'C:\Windows\notepad.exe' -Force -WhatIf
+
+        @($result).Count | Should -Be 0
+        Should-Invoke -CommandName New-Object -ParameterFilter { $ComObject -eq 'WScript.Shell' } -Times 0 -Exactly
+      }
     }
     Context 'SupportsShouldProcess' {
       It 'does not create a shortcut when WhatIf is specified' {
@@ -589,6 +606,23 @@ InModuleScope 'Shell' {
         New-UrlShortcut -Path 'C:\dir\shortcut' -TargetPath 'https://example.com' | Out-Null
 
         Should-Invoke -CommandName New-Object -ParameterFilter { $ComObject -eq 'WScript.Shell' } -Times 1 -Exactly
+      }
+      It 'creates a URL shortcut for each pipeline path' {
+        Mock -CommandName Get-Item -ParameterFilter { $Force -and $LiteralPath -like 'C:\dir\*.url' } -MockWith {
+          [PSCustomObject]@{ FullName = $LiteralPath }
+        }
+
+        $result = @('C:\dir\first', 'C:\dir\second') | New-UrlShortcut -TargetPath 'https://example.com'
+
+        $result | Should-BeCollection -Count 2
+        $result.FullName | Should-BeCollection @('C:\dir\first.url', 'C:\dir\second.url')
+        Should-Invoke -CommandName New-Object -ParameterFilter { $ComObject -eq 'WScript.Shell' } -Times 2 -Exactly
+      }
+      It 'does not create URL shortcuts for pipeline paths when WhatIf is specified' {
+        $result = @('C:\dir\first', 'C:\dir\second') | New-UrlShortcut -TargetPath 'https://example.com' -Force -WhatIf
+
+        @($result).Count | Should -Be 0
+        Should-Invoke -CommandName New-Object -ParameterFilter { $ComObject -eq 'WScript.Shell' } -Times 0 -Exactly
       }
     }
     Context 'SupportsShouldProcess' {
@@ -759,25 +793,17 @@ InModuleScope 'Shell' {
   }
   Describe 'New-NetworkShortcut' {
     BeforeAll {
-      $networkShortcutExists = $false
       Mock -CommandName New-Shortcut -MockWith { [PSCustomObject]@{ FullName = 'C:\network\target.lnk' } }
       Mock -CommandName Out-File
       Mock -CommandName Set-ItemProperty
       Mock -CommandName Test-Path -ParameterFilter { $IsValid -eq $true } -MockWith { $true }
-      Mock -CommandName Test-Path -MockWith {
-        if ($networkShortcutExists) {
-          $networkShortcutExists = $false
-          return $true
-        }
-        return $false
-      }
-      Mock -CommandName Remove-Item -MockWith { $networkShortcutExists = $false }
+      Mock -CommandName Test-Path -MockWith { $false }
+      Mock -CommandName Remove-Item
       Mock -CommandName New-Item -MockWith {
         param (
           [string]
           $Path
         )
-        $networkShortcutExists = $true
         [PSCustomObject]@{ FullName = $Path }
       }
       Mock -CommandName Get-Item -MockWith {
@@ -790,8 +816,6 @@ InModuleScope 'Shell' {
     }
     Context 'ParameterSetName' {
       It 'creates a network shortcut folder and target shortcut' {
-        $networkShortcutExists = $false
-
         New-NetworkShortcut -Path '\\server\share' | Out-Null
 
         Should-Invoke -CommandName New-Item -Times 1 -Exactly
@@ -801,15 +825,13 @@ InModuleScope 'Shell' {
     }
     Context 'SupportsShouldProcess' {
       It 'supports WhatIf without throwing errors' {
-        $networkShortcutExists = $false
-
         New-NetworkShortcut -Path '\\server\share' -Force -WhatIf | Out-Null
 
         Should-Invoke -CommandName New-Item -Times 0 -Exactly
         Should-Invoke -CommandName New-Shortcut -Times 0 -Exactly
       }
       It 'suppresses ShouldProcess when Force is supplied with Confirm' {
-        $networkShortcutExists = $true
+        Mock -CommandName Test-Path -MockWith { $true }
 
         New-NetworkShortcut -Path '\\server\share' -Force -Confirm | Out-Null
 

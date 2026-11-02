@@ -1,4 +1,4 @@
-using namespace Microsoft.VisualBasic
+﻿using namespace Microsoft.VisualBasic
 using namespace System.Globalization
 using namespace System.IO
 using namespace System.Management.Automation

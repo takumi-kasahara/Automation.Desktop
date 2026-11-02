@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Provides utility functions for working with PDF files using QPDF.
 .LINK

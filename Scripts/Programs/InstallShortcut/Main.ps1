@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Installs shortcuts and URL links to the user's Start Menu.
 

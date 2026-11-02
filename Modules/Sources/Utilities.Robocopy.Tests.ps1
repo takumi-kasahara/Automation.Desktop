@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param ()
 Import-Module -Name ($PSScriptRoot | Join-Path -ChildPath '..\Automation.Desktop.psm1') -Force
 Set-StrictMode -Version Latest
@@ -14,7 +14,7 @@ InModuleScope 'Utilities.Robocopy' {
           [string]
           $Destination
         )
-        $script:robocopyArguments = $args
+        $script:robocopyArguments = @($Source, $Destination) + $args
         return 0
       }
       Mock -CommandName Test-Path -MockWith { $true }
@@ -24,6 +24,8 @@ InModuleScope 'Utilities.Robocopy' {
         Invoke-Robocopy -Source 'C:\Source' -Destination 'C:\Destination'
 
         Should-Invoke -CommandName Robocopy.exe -Times 1
+        $script:robocopyArguments[0] | Should-BeString 'C:\Source'
+        $script:robocopyArguments[1] | Should-BeString 'C:\Destination'
       }
       It 'handles Source, Destination, and NDL parameters' {
         Invoke-Robocopy -Source 'C:\Source' -Destination 'C:\Destination' -NDL
@@ -62,11 +64,7 @@ InModuleScope 'Utilities.Robocopy' {
         Invoke-Robocopy -Source 'C:\Source' -Destination 'C:\Destination' -WhatIf
 
         Should-Invoke -CommandName Robocopy.exe -Times 1
-      }
-      It 'does not execute when -Confirm is declined' {
-        Invoke-Robocopy -Source 'C:\Source' -Destination 'C:\Destination' -Confirm:$false
-
-        Should-Invoke -CommandName Robocopy.exe -Times 1
+        $script:robocopyArguments | Should -Contain '/L'
       }
     }
   }

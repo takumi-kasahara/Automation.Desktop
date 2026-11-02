@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Imports item dates from a specified location.
 
@@ -21,7 +21,6 @@ param (
   [string[]]
   $LiteralPath
 )
-
 Set-StrictMode -Version Latest
 Set-Location -LiteralPath $PSScriptRoot
 

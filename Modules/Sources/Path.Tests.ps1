@@ -64,8 +64,8 @@ InModuleScope 'Path' {
   }
   Describe 'ConvertTo-localPath' {
     BeforeAll {
-      $oldComputerName = $env:COMPUTERNAME
-      $env:COMPUTERNAME = 'Server'
+      $script:oldComputerName = [Environment]::GetEnvironmentVariable('COMPUTERNAME', 'Process')
+      [Environment]::SetEnvironmentVariable('COMPUTERNAME', 'Server', 'Process')
       Mock -CommandName Compress-EnvironmentVariable -MockWith { $InputString }
       Mock -CommandName Test-Path -MockWith { $true }
       Mock -CommandName Get-CimInstance -ParameterFilter { $ClassName -eq 'Win32_Share' } -MockWith {
@@ -87,11 +87,7 @@ InModuleScope 'Path' {
       }
     }
     AfterAll {
-      if ($null -ne $oldComputerName) {
-        $env:COMPUTERNAME = $oldComputerName
-      } else {
-        Remove-Item -LiteralPath 'Env:COMPUTERNAME'
-      }
+      [Environment]::SetEnvironmentVariable('COMPUTERNAME', $script:oldComputerName, 'Process')
     }
     Context 'ParameterSetName' {
       It 'converts UNC share paths by Path with wildcards' {
@@ -121,8 +117,8 @@ InModuleScope 'Path' {
   }
   Describe 'ConvertTo-NetworkPath' {
     BeforeAll {
-      $oldComputerName = $env:COMPUTERNAME
-      $env:COMPUTERNAME = 'Server'
+      $script:oldComputerName = [Environment]::GetEnvironmentVariable('COMPUTERNAME', 'Process')
+      [Environment]::SetEnvironmentVariable('COMPUTERNAME', 'Server', 'Process')
       Mock -CommandName Test-Path -MockWith { $true }
       Mock -CommandName Get-CimInstance -ParameterFilter { $ClassName -eq 'Win32_Share' } -MockWith {
         @(
@@ -146,11 +142,7 @@ InModuleScope 'Path' {
       }
     }
     AfterAll {
-      if ($null -ne $oldComputerName) {
-        $env:COMPUTERNAME = $oldComputerName
-      } else {
-        Remove-Item -LiteralPath 'Env:COMPUTERNAME'
-      }
+      [Environment]::SetEnvironmentVariable('COMPUTERNAME', $script:oldComputerName, 'Process')
     }
     Context 'ParameterSetName' {
       It 'converts local paths to UNC paths by Path with wildcards' {

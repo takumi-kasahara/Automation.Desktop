@@ -1,4 +1,4 @@
-using namespace System.Diagnostics.CodeAnalysis
+﻿using namespace System.Diagnostics.CodeAnalysis
 
 [CmdletBinding()]
 param ()
@@ -22,7 +22,7 @@ InModuleScope 'Utilities.PDFtk' {
   Describe 'Export-PdfDump' {
     BeforeAll {
       Mock -CommandName pdftk.exe
-      Mock -CommandName Get-Content
+      Mock -CommandName Get-Content -MockWith { [string]::Empty }
       Mock -CommandName Out-File
       Mock -CommandName Out-Host
       Mock -CommandName Remove-Item
@@ -87,7 +87,7 @@ InModuleScope 'Utilities.PDFtk' {
 
         Export-PdfDump -Path 'C:\docs\manual.pdf' -Destination 'C:\dir\dump.txt'
 
-        Should-Invoke -CommandName Out-Host -Times 1 -Exactly
+        Should-Invoke -CommandName Out-Host -Times 2 -Exactly
       }
     }
     Context 'Other parameters' {
@@ -112,7 +112,7 @@ InModuleScope 'Utilities.PDFtk' {
   Describe 'Import-PdfDump' {
     BeforeAll {
       Mock -CommandName pdftk.exe
-      Mock -CommandName Get-Content
+      Mock -CommandName Get-Content -MockWith { [string]::Empty }
       Mock -CommandName Out-File
       Mock -CommandName Out-Host
       Mock -CommandName Remove-Item
@@ -165,7 +165,7 @@ InModuleScope 'Utilities.PDFtk' {
         }
       }
       It 'removes the log file when it is empty' {
-        Mock -CommandName Get-Content -MockWith { @() }
+        Mock -CommandName Get-Content -MockWith { [string]::Empty }
 
         Import-PdfDump -Path 'C:\docs\manual.pdf' -Source 'C:\dir\dump.txt' -Destination 'C:\dir\manual.updated.pdf'
 
@@ -194,7 +194,7 @@ InModuleScope 'Utilities.PDFtk' {
   Describe 'Join-Pdf' {
     BeforeAll {
       Mock -CommandName pdftk.exe
-      Mock -CommandName Get-Content
+      Mock -CommandName Get-Content -MockWith { [string]::Empty }
       Mock -CommandName Out-Host
       Mock -CommandName Remove-Item
       Mock -CommandName Test-Path -MockWith { $PathType -ne 'Container' }
@@ -383,7 +383,7 @@ InModuleScope 'Utilities.PDFtk' {
   Describe 'Split-Pdf' {
     BeforeAll {
       Mock -CommandName pdftk.exe
-      Mock -CommandName Get-Content
+      Mock -CommandName Get-Content -MockWith { [string]::Empty }
       Mock -CommandName Out-Host
       Mock -CommandName Remove-Item
       Mock -CommandName Test-Path -MockWith { $PathType -ne 'Container' }

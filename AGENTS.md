@@ -35,11 +35,11 @@ Run PSScriptAnalyzer with `Analyze.bat`:
 Run Pester with `Pester.bat`:
 
 ```bat
-".agents\skills\powershell-7\scripts\Pester.bat" -Path "Modules\Sources"
+".agents\skills\powershell-7\scripts\Pester.bat" -Path "Modules\Sources" -Parallel
 ```
 
 ```powershell
-& '.agents\skills\powershell-7\scripts\Pester.bat' -Path '.\Modules\Sources'
+& '.agents\skills\powershell-7\scripts\Pester.bat' -Path '.\Modules\Sources' -Parallel
 ```
 
 ### PowerShell script development cycle

@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param ()
 Import-Module -Name ($PSScriptRoot | Join-Path -ChildPath '..\Automation.Desktop.psm1') -Force
 Set-StrictMode -Version Latest
@@ -34,6 +34,20 @@ mistral   2c1a2b3d 4.1GB 1 week ago
         $result[0].PSObject.Properties.Name | Should -Be @('Id', 'Name')
         $result[0].Name | Should -Be 'llama2'
         $result[0].Id | Should -Be '78e8c1b9'
+      }
+      It 'returns no models when the command response is empty' {
+        Mock -CommandName ollama -MockWith {
+          param (
+            [string]
+            $Command
+          )
+          [void]$Command
+          [string]::Empty
+        }
+
+        $result = @(Get-OllamaModel)
+
+        $result.Count | Should -Be 0
       }
     }
   }

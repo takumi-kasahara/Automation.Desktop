@@ -1,4 +1,4 @@
-using namespace System.Globalization
+﻿using namespace System.Globalization
 using namespace System.IO
 
 Set-StrictMode -Version Latest
