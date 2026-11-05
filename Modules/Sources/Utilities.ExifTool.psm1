@@ -140,7 +140,7 @@ function Get-ExifDate {
   clean {
     if (Test-Path -LiteralPath $log) {
       $content = Get-Content -LiteralPath $log
-      if ($content.Length -gt 0) {
+      if ($null -ne $content -and $content.Length -gt 0) {
         "LOG:`t$log" | Out-Host
         $content | Out-Host
       } else {
@@ -248,7 +248,7 @@ function Set-ExifDate {
   clean {
     if (Test-Path -LiteralPath $log) {
       $content = Get-Content -LiteralPath $log
-      if ($content.Length -gt 0) {
+      if ($null -ne $content -and $content.Length -gt 0) {
         "LOG:`t$log" | Out-Host
         $content | Out-Host
       } else {
@@ -349,7 +349,7 @@ function Remove-ExifDate {
   clean {
     if (Test-Path -LiteralPath $log) {
       $content = Get-Content -LiteralPath $log
-      if ($content.Length -gt 0) {
+      if ($null -ne $content -and $content.Length -gt 0) {
         "LOG:`t$log" | Out-Host
         $content | Out-Host
       } else {

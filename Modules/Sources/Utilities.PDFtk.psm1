@@ -113,7 +113,7 @@ function Export-PdfDump {
   clean {
     if (Test-Path -LiteralPath $log) {
       $content = Get-Content -LiteralPath $log
-      if ($content.Length -gt 0) {
+      if ($null -ne $content -and $content.Length -gt 0) {
         "LOG:`t$log" | Out-Host
         $content | Out-Host
       } else {
@@ -222,7 +222,7 @@ function Import-PdfDump {
   clean {
     if (Test-Path -LiteralPath $log) {
       $content = Get-Content -LiteralPath $log
-      if ($content.Length -gt 0) {
+      if ($null -ne $content -and $content.Length -gt 0) {
         "LOG:`t$log" | Out-Host
         $content | Out-Host
       } else {
@@ -453,7 +453,7 @@ function Join-Pdf {
   clean {
     if (Test-Path -LiteralPath $log) {
       $content = Get-Content -LiteralPath $log
-      if ($content.Length -gt 0) {
+      if ($null -ne $content -and $content.Length -gt 0) {
         "LOG:`t$log" | Out-Host
         $content | Out-Host
       } else {
@@ -594,7 +594,7 @@ function Split-Pdf {
   clean {
     if (Test-Path -LiteralPath $log) {
       $content = Get-Content -LiteralPath $log
-      if ($content.Length -gt 0) {
+      if ($null -ne $content -and $content.Length -gt 0) {
         "LOG:`t$log" | Out-Host
         $content | Out-Host
       } else {
