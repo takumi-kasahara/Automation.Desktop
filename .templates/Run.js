@@ -43,7 +43,7 @@ for (var j = 0; j < files.length; j++) {
       break;
     case 'Main.RunAs.cmd':
       WshShell.Run(
-        'sudo.exe --inline cmd.exe /c "' +
+        'sudo.exe cmd.exe /c "' +
           file +
           '"' +
           (args.length ? ' "' + args.join('" "') + '"' : ''),
@@ -53,7 +53,7 @@ for (var j = 0; j < files.length; j++) {
       break;
     case 'Main.RunAs.ps1':
       WshShell.Run(
-        'sudo.exe --inline pwsh.exe -NoLogo -NoProfile -ExecutionPolicy RemoteSigned -File "' +
+        'sudo.exe pwsh.exe -NoLogo -NoProfile -ExecutionPolicy RemoteSigned -File "' +
           file +
           '"' +
           (args.length ? ' "' + args.join('" "') + '"' : ''),

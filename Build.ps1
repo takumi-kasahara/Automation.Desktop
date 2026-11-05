@@ -19,14 +19,14 @@ ForEach-Object {
   $arguments = switch -Exact -CaseSensitive ($_.Name) {
     { $_ -cin 'Main.cmd', 'Main.RunAs.cmd', 'Main.ps1', 'Main.RunAs.ps1' } {
       @{
-        LiteralPath = '.\.templates\cmd.cmd'
+        LiteralPath = '.\.templates\Run.cmd'
         Destination = $directory | Join-Path -ChildPath 'Run.cmd'
       }
     }
     { $_ -cin 'Main.js' } {
-      Copy-Item -LiteralPath '.templates\Run.js' -Destination $directory -Force -PassThru | Set-ItemProperty -Name IsReadOnly -Value $true
+      Copy-Item -LiteralPath '.\.templates\Run.js' -Destination $directory -Force -PassThru | Set-ItemProperty -Name IsReadOnly -Value $true
       @{
-        LiteralPath = '.\.templates\wsh.wsf'
+        LiteralPath = '.\.templates\Run.wsf'
         Destination = $directory | Join-Path -ChildPath 'Run.wsf'
       }
     }
