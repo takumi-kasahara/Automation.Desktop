@@ -1,22 +1,22 @@
 # git config --local include.path ../.gitconfig
 [hook "lint"]
   event = pre-commit
-  command = npm run lint && git update-index --again
+  command = npm run lint && uvx ruff check --fix . && git update-index --again
 [hook "test"]
   event = pre-commit
-  command = uv run pytest --quiet
+  command = uv run pytest --verbose
 [hook "parse-modules"]
   event = pre-commit
-  command = .agents/skills/powershell-7/scripts/Parse.bat -Path ./Modules -Recurse
+  command = .agents/skills/powershell-7/scripts/parse.cmd -Path ./Modules/ -Recurse
 [hook "parse-scripts"]
   event = pre-commit
-  command = .agents/skills/powershell-7/scripts/Parse.bat -Path ./Scripts -Recurse
+  command = .agents/skills/powershell-7/scripts/parse.cmd -Path ./Scripts/ -Recurse
 [hook "analyze-modules"]
   event = pre-commit
-  command = .agents/skills/powershell-7/scripts/Analyze.bat -Path ./Modules -Recurse && git update-index --again
+  command = .agents/skills/powershell-7/scripts/analyze.cmd -Path ./Modules/ -Recurse && git update-index --again
 [hook "analyze-scripts"]
   event = pre-commit
-  command = .agents/skills/powershell-7/scripts/Analyze.bat -Path ./Scripts -Recurse && git update-index --again
+  command = .agents/skills/powershell-7/scripts/analyze.cmd -Path ./Scripts/ -Recurse && git update-index --again
 [hook "pester"]
   event = pre-commit
-  command = .agents/skills/powershell-7/scripts/Pester.bat -Path ./Modules/Sources -Parallel
+  command = .agents/skills/powershell-7/scripts/pester.cmd -Path ./Modules/Sources/ -Parallel

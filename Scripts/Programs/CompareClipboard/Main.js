@@ -1,3 +1,5 @@
 'use strict';
 
-new ActiveXObject('WScript.Shell').Run('WinMerge.exe /e /u /clipboard-compare');
+WScript.CreateObject('WScript.Shell').Run(
+  'WinMerge.exe /e /u /clipboard-compare'
+);

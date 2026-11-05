@@ -9,7 +9,7 @@ if (-not $winEvent.IsEnabled) {
   $winEvent.SaveChanges()
 }
 Get-ChildItem -LiteralPath '.\Scripts' -File -Recurse -Include @(
-  'Run.bat'
+  'Run.cmd'
 ) |
 ForEach-Object {
   $name = $($_.Directory.Name)
