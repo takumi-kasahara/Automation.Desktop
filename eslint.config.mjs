@@ -3,20 +3,34 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 import globals from 'globals';
 
 export default defineConfig([
-  js.configs.recommended,
   globalIgnores(['.venv', 'apm_modules', 'node_modules']),
-  globalIgnores(['Firefox/*', 'Thunderbird/*']),
   {
-    files: ['**/*.js', '**/*.mjs'],
+    files: ['**/*.mjs'],
+    plugins: {
+      js,
+    },
+    extends: [js.configs.recommended],
+    rules: {
+      'consistent-return': 'error',
+      eqeqeq: 'error',
+      'no-else-return': 'error',
+      'prefer-const': 'error',
+      'prefer-template': 'error',
+      semi: 'error',
+    },
+  },
+  {
+    files: ['**/*.js'],
+    plugins: {
+      js,
+    },
+    extends: [js.configs.recommended],
     rules: {
       'consistent-return': 'error',
       eqeqeq: 'error',
       'no-else-return': 'error',
       semi: 'error',
     },
-  },
-  {
-    files: ['**/*.js'],
     languageOptions: {
       globals: globals.wsh,
     },
