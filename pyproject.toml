@@ -15,3 +15,9 @@ dev = [
     "pytest-cov>=7.1.0",
     "pytest-mock>=3.15.1",
 ]
+
+[tool.coverage.run]
+branch = true
+
+[tool.pytest.ini_options]
+addopts = "--cov=Tools/src"

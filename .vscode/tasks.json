@@ -23,7 +23,7 @@
       "command": "cmd.exe",
       "args": [
         "/c",
-        ".agents\\skills\\powershell-7\\scripts\\Pester.bat",
+        ".agents\\skills\\powershell-7\\scripts\\Pester.cmd",
         "-Path",
         "${file}"
       ],

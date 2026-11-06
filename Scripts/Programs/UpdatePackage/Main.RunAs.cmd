@@ -7,16 +7,17 @@ setlocal
 where /q choco >nul 2>&1 && choco upgrade all --accept-license --pre --yes
 where /q winget >nul 2>&1 && winget upgrade --all --include-unknown --silent --accept-package-agreements --accept-source-agreements
 where /q store >nul 2>&1 && store updates --apply
-where /q pwsh >nul 2>&1 &&^
-pwsh -NoLogo -NoProfile -Command "Get-PackageSource | Set-PackageSource -Trusted" &&^
-pwsh -NoLogo -NoProfile -Command "Get-PSRepository | ForEach-Object { Set-PSRepository -Name $_.Name -InstallationPolicy Trusted }" &&^
-pwsh -NoLogo -NoProfile -Command "Update-Module -ErrorAction SilentlyContinue" &&^
-pwsh -NoLogo -NoProfile -Command "Update-Help -ErrorAction SilentlyContinue"
+set "PSModulePath="
 where /q powershell >nul 2>&1 &&^
 powershell -NoLogo -NoProfile -Command "Get-PackageSource | Set-PackageSource -Trusted" &&^
 powershell -NoLogo -NoProfile -Command "Get-PSRepository | ForEach-Object { Set-PSRepository -Name $_.Name -InstallationPolicy Trusted }" &&^
 powershell -NoLogo -NoProfile -Command "Update-Module -ErrorAction SilentlyContinue" &&^
 powershell -NoLogo -NoProfile -Command "Update-Help -ErrorAction SilentlyContinue"
+where /q pwsh >nul 2>&1 &&^
+pwsh -NoLogo -NoProfile -Command "Get-PackageSource | Set-PackageSource -Trusted" &&^
+pwsh -NoLogo -NoProfile -Command "Get-PSRepository | ForEach-Object { Set-PSRepository -Name $_.Name -InstallationPolicy Trusted }" &&^
+pwsh -NoLogo -NoProfile -Command "Update-Module -ErrorAction SilentlyContinue" &&^
+pwsh -NoLogo -NoProfile -Command "Update-Help -ErrorAction SilentlyContinue"
 where /q apm >nul 2>&1 && apm update --global --yes
 where /q dotnet >nul 2>&1 && dotnet tool update --global --all
 where /q gh >nul 2>&1 && gh extension upgrade --all

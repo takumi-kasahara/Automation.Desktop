@@ -3,16 +3,16 @@
 var FileSystemObject = WScript.CreateObject('Scripting.FileSystemObject');
 var WshShell = WScript.CreateObject('WScript.Shell');
 var args = [];
-for (var i = 0; i < WScript.Arguments.Length; i++) {
+for (var i = 0; i < WScript.Arguments.Length; i++)
   args.push(WScript.Arguments.Item(i));
-}
+
 WshShell.CurrentDirectory = FileSystemObject.GetParentFolderName(
   WScript.ScriptFullName
 );
 var files = [
-  'Main.bat',
+  'Main.cmd',
   'Main.ps1',
-  'Main.RunAs.bat',
+  'Main.RunAs.cmd',
   'Main.RunAs.ps1',
   'Main.js'
 ];
@@ -21,7 +21,7 @@ for (var j = 0; j < files.length; j++) {
   var path = FileSystemObject.BuildPath(WshShell.CurrentDirectory, file);
   if (!FileSystemObject.FileExists(path)) continue;
   switch (FileSystemObject.GetFileName(path)) {
-    case 'Main.bat':
+    case 'Main.cmd':
       WshShell.Run(
         'cmd.exe /c "' +
           file +
@@ -41,7 +41,7 @@ for (var j = 0; j < files.length; j++) {
         true
       );
       break;
-    case 'Main.RunAs.bat':
+    case 'Main.RunAs.cmd':
       WshShell.Run(
         'sudo.exe --inline cmd.exe /c "' +
           file +

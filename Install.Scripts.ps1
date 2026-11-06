@@ -30,7 +30,7 @@ function Install-Shortcut {
   foreach ($shortcutDefinition in $shortcutDefinitions) {
     $path = $Destination | Join-Path -ChildPath "$($shortcutDefinition.Name)$($FileInfo.Extension).lnk"
     $arguments = switch -Exact -CaseSensitive ($FileInfo.Name) {
-      'Run.bat' {
+      'Run.cmd' {
         @{
           Path         = $path
           TargetPath   = 'wt.exe'

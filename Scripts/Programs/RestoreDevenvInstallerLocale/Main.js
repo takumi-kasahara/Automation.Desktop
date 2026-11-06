@@ -1,6 +1,6 @@
 'use strict';
 
-var WshShell = new ActiveXObject('WScript.Shell');
+var WshShell = WScript.CreateObject('WScript.Shell');
 var vs_installer = WshShell.ExpandEnvironmentStrings(
   '%ProgramFiles(x86)%\\Microsoft Visual Studio\\Installer\\vs_installer.exe'
 );

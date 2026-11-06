@@ -1,13 +1,13 @@
 'use strict';
 
-var WshShell = new ActiveXObject('WScript.Shell');
-var FileSystemObject = new ActiveXObject('Scripting.FileSystemObject');
+var WshShell = WScript.CreateObject('WScript.Shell');
+var FileSystemObject = WScript.CreateObject('Scripting.FileSystemObject');
 var m = WScript.Arguments.Named.Exists('m')
   ? WScript.Arguments.Named.Item('m')
   : 'Full';
 var files = [];
 var folders = [];
-for (var i = 0; i < WScript.Arguments.Unnamed.length; i++) {
+for (var i = 0; i < WScript.Arguments.Unnamed.Length; i++) {
   var path = WScript.Arguments.Unnamed.Item(i);
   if (FileSystemObject.FileExists(path)) files.push(path);
   else if (FileSystemObject.FolderExists(path)) folders.push(path);

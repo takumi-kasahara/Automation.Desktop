@@ -4,52 +4,52 @@ This repository is a collection of PowerShell modules and helper scripts for Win
 
 ## Overview
 
-- `Modules/` contains PowerShell module manifests and implementation.
-- `Modules/*.psd1` exports commands from `Modules/Sources/*.psm1`.
-- `Modules/Sources/` contains modules and tests.
-- `Scripts/Programs/` contains standalone program helper scripts.
-- `Scripts/SendTo/` contains SendTo menu helper wrappers.
+- `Modules\` contains PowerShell module manifests and implementation.
+- `Modules\*.psd1` exports commands from `Modules\Sources\*.psm1`.
+- `Modules\Sources\` contains modules and tests.
+- `Scripts\Programs\` contains standalone program helper scripts.
+- `Scripts\SendTo\` contains SendTo menu helper wrappers.
 
 ## Workflow
 
 ### PowerShell module development cycle
 
-1. Edit files under `Modules/Sources/`.
-2. When editing `Modules/Sources/Module.psm1`, also update or create the corresponding test file `Modules/Sources/Module.Tests.ps1` and ensure tests cover your changes.
-3. When adding or removing cmdlets, also update the module manifest files (`Modules/*.psd1`) to reflect the changes.
+1. Edit files under `Modules\Sources\`.
+2. When editing `Modules\Sources\Module.psm1`, also update or create the corresponding test file `Modules\Sources\Module.Tests.ps1` and ensure tests cover your changes.
+3. When adding or removing cmdlets, also update the module manifest files (`Modules\*.psd1`) to reflect the changes.
 
 #### PSScriptAnalyzer Invocation
 
-Run PSScriptAnalyzer with `Analyze.bat`:
+Run PSScriptAnalyzer with `analyze.cmd`:
 
 ```bat
-".agents\skills\powershell-7\scripts\Analyze.bat" -Path "Modules" -Recurse
+".agents\skills\powershell-7\scripts\analyze.cmd" -Path "Modules" -Recurse
 ```
 
 ```powershell
-& '.agents\skills\powershell-7\scripts\Analyze.bat' -Path '.\Modules' -Recurse
+& '.\.agents\skills\powershell-7\scripts\analyze.cmd' -Path '.\Modules\' -Recurse
 ```
 
 #### Pester Invocation
 
-Run Pester with `Pester.bat`:
+Run Pester with `Pester.cmd`:
 
 ```bat
-".agents\skills\powershell-7\scripts\Pester.bat" -Path "Modules\Sources" -Parallel
+".agents\skills\powershell-7\scripts\pester.cmd" -Path "Modules\Sources" -Parallel
 ```
 
 ```powershell
-& '.agents\skills\powershell-7\scripts\Pester.bat' -Path '.\Modules\Sources' -Parallel
+& '.\.agents\skills\powershell-7\scripts\pester.cmd' -Path '.\Modules\Sources\' -Parallel
 ```
 
 ### PowerShell script development cycle
 
-1. Edit files under `Scripts/`.
+1. Edit files under `Scripts\`.
 2. Run `Build.ps1`.
 
 ### Windows Script Host development cycle
 
-1. Edit Windows Script Host JScript under `Scripts/`. These `.js` files run in WSH, not in a browser or Node.js.
+1. Edit Windows Script Host JScript under `Scripts\`. These `.js` files run in WSH, not in a browser or Node.js.
 2. Run `Build.ps1`.
 3. If a `Config.psd1` is present next to `Run.wsf`, define one or more shortcuts in its `Shortcuts` key. `Install.Scripts.ps1` reads this file to create multiple shortcuts for the same script.
 

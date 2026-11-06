@@ -18,10 +18,7 @@ export default defineConfig([
   {
     files: ['**/*.js'],
     languageOptions: {
-      globals: {
-        ...globals.wsh,
-      },
-      sourceType: 'script',
+      globals: globals.wsh,
     },
   },
 ]);
