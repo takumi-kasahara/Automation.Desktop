@@ -1,9 +1,9 @@
-﻿[CmdletBinding()]
+﻿using module .\..\Automation.Desktop.psd1
+[CmdletBinding()]
 param ()
-Import-Module -Name ($PSScriptRoot | Join-Path -ChildPath '..\Automation.Desktop.psm1') -Force
 Set-StrictMode -Version Latest
 
-InModuleScope 'Utilities.Robocopy' {
+InModuleScope 'Automation.Desktop' {
   Describe 'Invoke-Robocopy' {
     BeforeAll {
       $script:robocopyArguments = $null
@@ -15,7 +15,6 @@ InModuleScope 'Utilities.Robocopy' {
           $Destination
         )
         $script:robocopyArguments = @($Source, $Destination) + $args
-        return 0
       }
       Mock -CommandName Test-Path -MockWith { $true }
     }
@@ -53,7 +52,7 @@ InModuleScope 'Utilities.Robocopy' {
       It 'returns PSCustomObject with Source, Destination, and Log properties' {
         $result = Invoke-Robocopy -Source 'C:\Source' -Destination 'C:\Destination'
 
-        $result | Should-HaveType ([Object[]])
+        $result | Should-HaveType ([PSCustomObject])
         $result.Source | Should-BeString 'C:\Source'
         $result.Destination | Should-BeString 'C:\Destination'
         $result.Log | Should-NotBeNull

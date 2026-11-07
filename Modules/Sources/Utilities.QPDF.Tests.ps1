@@ -1,12 +1,12 @@
-﻿using namespace System.Diagnostics.CodeAnalysis
+﻿using module .\..\Automation.Desktop.psd1
+using namespace System.Diagnostics.CodeAnalysis
 
 [CmdletBinding()]
 param ()
-Import-Module -Name ($PSScriptRoot | Join-Path -ChildPath '..\Automation.Desktop.psm1') -Force
 Set-StrictMode -Version Latest
 $WhatIfPreference = $false
 
-InModuleScope 'Utilities.QPDF' {
+InModuleScope 'Automation.Desktop' {
   BeforeAll {
     function Get-Password {
       [CmdletBinding()]

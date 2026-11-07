@@ -1,9 +1,10 @@
-﻿[CmdletBinding()]
+﻿using module .\..\Automation.Desktop.psd1
+
+[CmdletBinding()]
 param ()
-Import-Module -Name ($PSScriptRoot | Join-Path -ChildPath '..\Automation.Desktop.psm1') -Force
 Set-StrictMode -Version Latest
 
-InModuleScope 'Utilities.ExifTool' {
+InModuleScope 'Automation.Desktop' {
   Describe 'Get-ExifDate' {
     BeforeAll {
       Mock -CommandName Get-Content -MockWith { [string]::Empty }

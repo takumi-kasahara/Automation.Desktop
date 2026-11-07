@@ -783,7 +783,7 @@ function Test-Shortcut {
           }
         }
       )
-    } catch [ItemNotFoundException] {
+    } catch [System.Management.Automation.ItemNotFoundException] {
       return $false
     }
     return @(

@@ -1,11 +1,11 @@
+﻿using module .\..\Automation.Desktop.psd1
 using namespace System.Management.Automation
 
 [CmdletBinding()]
 param ()
-Import-Module -Name ($PSScriptRoot | Join-Path -ChildPath '..\Automation.Desktop.psm1') -Force
 Set-StrictMode -Version Latest
 
-InModuleScope 'Path' {
+InModuleScope 'Automation.Desktop' {
   Describe 'Compress-EnvironmentVariable' {
     BeforeAll {
       Mock -CommandName Get-ChildItem -ParameterFilter { $LiteralPath -eq 'Env:' } -MockWith {

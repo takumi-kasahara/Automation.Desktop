@@ -1,9 +1,10 @@
-﻿[CmdletBinding()]
+﻿using module .\..\Automation.Desktop.psd1
+
+[CmdletBinding()]
 param ()
-Import-Module -Name ($PSScriptRoot | Join-Path -ChildPath '..\Automation.Desktop.psm1') -Force
 Set-StrictMode -Version Latest
 
-InModuleScope 'Compare' {
+InModuleScope 'Automation.Desktop' {
   Describe 'Compare-Csv' {
     BeforeAll {
       Mock -CommandName Test-Path -MockWith { $true }

@@ -1,9 +1,10 @@
-﻿[CmdletBinding()]
+﻿using module .\..\Automation.Desktop.psd1
+
+[CmdletBinding()]
 param ()
-Import-Module -Name ($PSScriptRoot | Join-Path -ChildPath '..\Automation.Desktop.psm1') -Force
 Set-StrictMode -Version Latest
 
-InModuleScope 'Item' {
+InModuleScope 'Automation.Desktop' {
   Describe 'Get-DuplicateFile' {
     BeforeAll {
       Mock -CommandName Test-Path -MockWith { $true }

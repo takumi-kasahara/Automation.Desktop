@@ -78,11 +78,6 @@ function Invoke-Robocopy {
   try {
     $log = $env:TEMP | Join-Path -ChildPath "Robocopy.$(Get-Date -Format 'yyyyMMddHHmmss').log"
     Write-Progress -Activity 'Backup' -Status $Source
-    [PSCustomObject]@{
-      Source      = $Source
-      Destination = $Destination
-      Log         = $log
-    }
     $arguments = @(
       '/TEE'
       '/COPY:DAT'
@@ -106,10 +101,16 @@ function Invoke-Robocopy {
     if (-not $PSCmdlet.ShouldProcess("$Source -> $Destination", 'Robocopy')) {
       $arguments += '/L'
     }
+    $global:LASTEXITCODE = 0
     Robocopy.exe $Source $Destination @arguments
     # https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/robocopy#exit-return-codes
     if ($LASTEXITCODE -ge 0x8) {
       Write-Warning -Message "Robocopy failed with exit code $LASTEXITCODE."
+    }
+    return     [PSCustomObject]@{
+      Source      = $Source
+      Destination = $Destination
+      Log         = $log
     }
   } finally {
     Write-Progress -Completed

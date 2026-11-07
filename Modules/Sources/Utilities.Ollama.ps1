@@ -1,4 +1,4 @@
-﻿using namespace System.Collections.ObjectModel
+using namespace System.Collections.ObjectModel
 using namespace System.Management.Automation
 
 function Get-OllamaModel {
@@ -174,7 +174,7 @@ function Update-OllamaModel {
     }
     $attributeCollection = [Collection[Attribute]]::new()
     $parameter = [ParameterAttribute]::new()
-    if (-not $All) {
+    if (-not ($PSBoundParameters.ContainsKey('All') -and $PSBoundParameters['All'])) {
       $parameter.Mandatory = $true
     }
     $attributeCollection.Add($parameter)
@@ -369,7 +369,7 @@ function Stop-OllamaModel {
     }
     $attributeCollection = [Collection[Attribute]]::new()
     $parameter = [ParameterAttribute]::new()
-    if (-not $All) {
+    if (-not ($PSBoundParameters.ContainsKey('All') -and $PSBoundParameters['All'])) {
       $parameter.Mandatory = $true
     }
     $attributeCollection.Add($parameter)

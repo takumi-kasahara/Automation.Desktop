@@ -1,11 +1,11 @@
-﻿using namespace System.Collections.Generic
+﻿using module .\..\Automation.Desktop.psd1
+using namespace System.Collections.Generic
 
 [CmdletBinding()]
 param ()
-Import-Module -Name ($PSScriptRoot | Join-Path -ChildPath '..\Automation.Desktop.psm1') -Force
 Set-StrictMode -Version Latest
 
-InModuleScope 'Shell' {
+InModuleScope 'Automation.Desktop' {
   Describe 'Get-ItemDetail' {
     BeforeAll {
       Mock -CommandName Get-Item -MockWith { [PSCustomObject]@{ FullName = 'C:\dir\file.txt' } }
@@ -751,7 +751,7 @@ InModuleScope 'Shell' {
       It 'returns False when shortcut file is not found' {
         Mock -CommandName Get-Item -ParameterFilter { $Path -eq 'C:\dir\missing.lnk' } -MockWith {
 
-          throw [ItemNotFoundException]::new('Item not found')
+          throw [System.Management.Automation.ItemNotFoundException]::new('Item not found')
         }
 
         $result = Test-Shortcut -Path 'C:\dir\missing.lnk'
