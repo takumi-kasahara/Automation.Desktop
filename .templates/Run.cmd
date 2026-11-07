@@ -19,11 +19,11 @@ pwsh -NoLogo -NoProfile -ExecutionPolicy RemoteSigned -File "%~dp0Main.ps1" %*
 goto :end
 
 :runas_bat
-sudo --inline cmd /c "%~dp0Main.RunAs.cmd" %*
+sudo cmd /c "%~dp0Main.RunAs.cmd" %*
 goto :end
 
 :runas_ps1
-sudo --inline pwsh -NoLogo -NoProfile -ExecutionPolicy RemoteSigned -File "%~dp0Main.RunAs.ps1" %*
+sudo pwsh -NoLogo -NoProfile -ExecutionPolicy RemoteSigned -File "%~dp0Main.RunAs.ps1" %*
 goto :end
 
 :end
