@@ -4,7 +4,6 @@ using namespace System.Diagnostics.CodeAnalysis
 [CmdletBinding()]
 param ()
 Set-StrictMode -Version Latest
-$WhatIfPreference = $false
 
 InModuleScope 'Automation.Desktop' {
   BeforeAll {
