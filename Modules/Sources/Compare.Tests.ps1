@@ -32,7 +32,7 @@ InModuleScope 'Automation.Desktop' {
         $result[0].PSObject.Properties.Name | Should-ContainCollection 'Hash'
         $result[0].PSObject.Properties.Name | Should-ContainCollection 'Path'
         $result[0].PSObject.Properties.Name | Should-ContainCollection 'Lines'
-        $result[0].Path | Should-Be 'ref.csv'
+        $result[0].Path | Should-BeString 'ref.csv'
         $result[0].Lines | Should-BeCollection -Count 1
         $result[0].Lines | Should-ContainCollection 1
       }
@@ -71,7 +71,7 @@ InModuleScope 'Automation.Desktop' {
         $result = Compare-Csv -ReferencePath 'ref.csv' -DifferencePath 'diff.csv' -Delimiter ',' -OnlyDifference
 
         $result | Should-BeCollection -Count 1
-        $result[0].Path | Should-Be 'diff.csv'
+        $result[0].Path | Should-BeString 'diff.csv'
         $result[0].Lines | Should-BeCollection -Count 1
         $result[0].SimilarCandidates | Should-BeCollection -Count 1
       }
@@ -92,7 +92,7 @@ InModuleScope 'Automation.Desktop' {
         $result = Compare-Csv -ReferencePath 'ref.csv' -DifferencePath 'diff.csv' -Delimiter ',' -OnlyReference
 
         $result | Should-BeCollection -Count 1
-        $result[0].Path | Should-Be 'ref.csv'
+        $result[0].Path | Should-BeString 'ref.csv'
         $result[0].Hash | Should -Not -BeNullOrEmpty
       }
       It 'returns only difference-only mismatches when OnlyDifference is specified' {
@@ -112,7 +112,7 @@ InModuleScope 'Automation.Desktop' {
         $result = Compare-Csv -ReferencePath 'ref.csv' -DifferencePath 'diff.csv' -Delimiter ',' -OnlyDifference
 
         $result | Should-BeCollection -Count 1
-        $result[0].Path | Should-Be 'diff.csv'
+        $result[0].Path | Should-BeString 'diff.csv'
         $result[0].Hash | Should -Not -BeNullOrEmpty
       }
       It 'throws when OnlyReference and OnlyDifference are both specified' {
