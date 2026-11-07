@@ -415,7 +415,7 @@ function Move-ItemToRecycleBin {
       if (-not $PSCmdlet.ShouldProcess($target, 'Move to Recycle Bin')) {
         return
       }
-      # https://learn.microsoft.com/ja-jp/windows/win32/shell/folder-movehere
+      # https://learn.microsoft.com/en-us/windows/win32/shell/folder-movehere
       $RecycleBin.MoveHere($_.FullName)
       "Removed:`t$($_.FullName)" | Out-Host
     }
