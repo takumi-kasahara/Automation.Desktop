@@ -73,13 +73,13 @@ if (Test-Path -LiteralPath $startMenu) {
 } else {
   New-Item -Path $startMenu -ItemType Directory | Out-Null
 }
-'Scripts\Programs' |
+'.\Scripts\Programs' |
 Get-ChildItem -File -Recurse |
 ForEach-Object {
   Install-Shortcut -FileInfo $_ -Destination $startMenu
 }
 $sendTo = Get-SpecialFolder -Name SendTo
-'Scripts\SendTo' |
+'.\Scripts\SendTo' |
 Get-ChildItem -File -Recurse |
 ForEach-Object {
   Install-Shortcut -FileInfo $_ -Destination $sendTo

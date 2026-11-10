@@ -3,7 +3,7 @@ param ()
 Set-StrictMode -Version Latest
 Set-Location -LiteralPath $PSScriptRoot
 
-Get-ChildItem -LiteralPath 'Scripts' -File -Recurse -Include @(
+Get-ChildItem -LiteralPath '.\Scripts' -File -Recurse -Include @(
   '*.cmd'
   '*.ps1'
   '*.js'
@@ -15,19 +15,19 @@ ForEach-Object {
   if ($_.Name -eq 'Run.wsf') {
     return
   }
-  $directory = $_.Directory
+  $directoryName = $_.DirectoryName
   $arguments = switch -Exact -CaseSensitive ($_.Name) {
     { $_ -cin 'Main.cmd', 'Main.RunAs.cmd', 'Main.ps1', 'Main.RunAs.ps1' } {
       @{
         LiteralPath = '.\.templates\Run.cmd'
-        Destination = $directory | Join-Path -ChildPath 'Run.cmd'
+        Destination = $directoryName | Join-Path -ChildPath 'Run.cmd'
       }
     }
     { $_ -cin 'Main.js' } {
-      Copy-Item -LiteralPath '.\.templates\Run.js' -Destination $directory -Force -PassThru | Set-ItemProperty -Name IsReadOnly -Value $true
+      Copy-Item -LiteralPath '.\.templates\Run.js' -Destination $directoryName -Force -PassThru | Set-ItemProperty -Name IsReadOnly -Value $true
       @{
         LiteralPath = '.\.templates\Run.wsf'
-        Destination = $directory | Join-Path -ChildPath 'Run.wsf'
+        Destination = $directoryName | Join-Path -ChildPath 'Run.wsf'
       }
     }
     default {
@@ -43,7 +43,7 @@ ForEach-Object {
 Get-ChildItem -LiteralPath '.\Tools\src' -File -Filter '*.py' |
 ForEach-Object {
   $baseName = $_.BaseName
-  $destination = Join-Path -Path $_.DirectoryName -ChildPath "$baseName.cmd"
+  $destination = $_.DirectoryName | Join-Path -ChildPath "$baseName.cmd"
   $item = Copy-Item -LiteralPath '.\.templates\python.cmd' -Destination $destination -Force -PassThru
   $item | Set-ItemProperty -Name IsReadOnly -Value $true
   return $item
