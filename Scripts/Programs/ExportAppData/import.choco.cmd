@@ -1,6 +1,5 @@
 @echo off
-cd /d "%~dp0"
-setlocal
+setlocal enableextensions disabledelayedexpansion
 
 :begin
 if "%~1"=="" (
@@ -12,9 +11,9 @@ if errorlevel 1 goto :elevate
 goto :process
 
 :elevate
-where /q sudo >nul 2>&1
+where /Q sudo >nul 2>&1
 if errorlevel 1 goto :no_sudo
-sudo "%~0" %*
+sudo --disable-input "%~0" %*
 goto :end
 
 :no_sudo
@@ -26,4 +25,4 @@ choco install "%~1" --accept-license --pre --yes
 
 :end
 pause
-exit /b %errorlevel%
+exit /B %errorlevel%
