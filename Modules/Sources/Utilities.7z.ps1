@@ -44,12 +44,8 @@ function Get-ArchivedItem {
     Lists the contents of the specified archive with UTF-8 encoding.
 
   .OUTPUTS
-    ArchivedItem. Objects containing the relative path and timestamps of each archived item.
-
-  .NOTES
-    This function writes 7-Zip stderr output to a temporary log file and removes
-    the log file when it remains empty. It returns `$false` when the archive path
-    cannot be found.
+    ArchivedItem
+      Objects containing the relative path and timestamps of each archived item.
   #>
   [CmdletBinding(DefaultParameterSetName = 'PathSet')]
   [OutputType([ArchivedItem])]
@@ -163,9 +159,6 @@ function Sync-ArchivedItemDate {
     ```
 
     Shows how timestamps for items in the specified archive would be synchronized.
-
-  .OUTPUTS
-    None. Only updates archive file timestamps.
 
   .NOTES
     This function uses Get-ArchivedItem to read archive metadata and Set-ItemDate

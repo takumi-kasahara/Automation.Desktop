@@ -49,9 +49,6 @@ function Export-PdfDump {
 
     Exports metadata from a password-protected PDF file to a text dump.
 
-  .OUTPUTS
-    None. Only exports PDF metadata dump.
-
   .NOTES
     This function requires `pdftk.exe` to be available in the system PATH.
   #>
@@ -162,9 +159,6 @@ function Import-PdfDump {
     $userPw = ConvertTo-SecureString -String 'userpass' -AsPlainText -Force
     Import-PdfDump -Path 'C:\docs\manual.pdf' -Source 'C:\dir\meta.dump' -Destination 'C:\dir\updated.pdf' -OwnerPassword $ownerPw -UserPassword $userPw
     ```
-
-  .OUTPUTS
-    None. Only imports PDF metadata dump.
 
   .NOTES
     This function requires `pdftk.exe` to be available in the system PATH.
@@ -315,10 +309,6 @@ function Join-Pdf {
     ```
 
     Joins a password-protected PDF file.
-
-  .OUTPUTS
-    None.
-      Only creates a merged PDF file.
 
   .NOTES
     This function requires `pdftk.exe` to be available in the system PATH.
@@ -504,13 +494,11 @@ function Split-Pdf {
 
     Splits a password-protected PDF into numbered page files.
 
-  .OUTPUTS
-    None.
-      Only splits the PDF into page files.
-
   .NOTES
     This function requires `pdftk.exe` to be available in the system PATH.
-    Reference: https://www.pdflabs.com/docs/pdftk-man-page/#dest-op-burst
+
+  .LINK
+    https://www.pdflabs.com/docs/pdftk-man-page/#dest-op-burst
   #>
   [CmdletBinding(SupportsShouldProcess)]
   [OutputType([void])]

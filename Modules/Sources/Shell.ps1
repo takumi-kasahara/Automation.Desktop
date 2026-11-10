@@ -27,13 +27,12 @@ function Get-ItemDetail {
 
   .DESCRIPTION
     Resolves each specified item and enumerates shell metadata for the item using the Windows Shell.Application COM interface.
-    Returns `ItemDetail` objects containing the detail index, property name, and corresponding value.
 
   .PARAMETER Path
-    Specifies one or more item paths to search. Wildcards are supported.
+    Specifies one or more item paths to search. Supports wildcards.
 
   .PARAMETER LiteralPath
-    Specifies one or more literal item paths to search. Wildcards are not interpreted.
+    Specifies one or more literal item paths to search.
 
   .PARAMETER Min
     The minimum detail index to include. Defaults to 0.
@@ -49,8 +48,8 @@ function Get-ItemDetail {
     Retrieves shell detail fields 0 through 10 for the specified file.
 
   .OUTPUTS
-    ItemDetail.
-      Objects for all non-empty shell detail fields in the requested index range.
+    ItemDetail
+      Objects containing the detail index, property name, and corresponding value.
 
   .LINK
     https://learn.microsoft.com/en-us/windows/win32/shell/folder-getdetailsof
@@ -172,19 +171,20 @@ function Find-Application {
   }
 }
 function Get-Application {
-  [CmdletBinding()]
-  [OutputType([ShellFolder])]
-  param ()
   <#
   .SYNOPSIS
     Gets registered Windows applications from App Paths.
 
   .OUTPUTS
-    ShellFolder. Application name and path.
+    ShellFolder
+      Object containing the application name and path.
 
   .LINK
-    [Application Registration](https://learn.microsoft.com/en-us/windows/win32/shell/app-registration)
+    https://learn.microsoft.com/en-us/windows/win32/shell/app-registration
   #>
+  [CmdletBinding()]
+  [OutputType([ShellFolder])]
+  param ()
   dynamicparam {
     $parameter = [Parameter]::new()
     $attributeCollection = [Collection[Attribute]]::new()
@@ -247,11 +247,15 @@ function Get-SpecialFolder {
     Gets special Windows folders by known folder ID.
 
   .OUTPUTS
-    ShellFolder. Folder name and path.
-    System.String. Path string if found by name.
+    ShellFolder
+      Object containing the folder name and path.
+
+  .OUTPUTS
+    System.String
+      Path string if found by name.
 
   .LINK
-    [Known Folder IDs](https://learn.microsoft.com/en-us/windows/win32/shell/knownfolderid)
+    https://learn.microsoft.com/en-us/windows/win32/shell/knownfolderid
   #>
   [CmdletBinding()]
   [OutputType([ShellFolder], [string])]
@@ -308,7 +312,8 @@ function Get-Startup {
     Gets all startup items from Startup folders and registry.
 
   .OUTPUTS
-    StartupItem. Startup item name and command line.
+    StartupItem
+      Startup item name and command line.
   #>
   [CmdletBinding()]
   [OutputType([StartupItem])]
@@ -355,7 +360,7 @@ function Move-ItemToRecycleBin {
     Supports wildcards via `-Path` and literal paths via `-LiteralPath`.
 
   .PARAMETER Path
-    Specifies one or more paths to files or directories. Wildcards are supported.
+    Specifies one or more paths to files or directories. Supports wildcards.
 
   .PARAMETER LiteralPath
     Specifies one or more literal paths to files or directories.
@@ -376,10 +381,7 @@ function Move-ItemToRecycleBin {
 
   .NOTES
     This cmdlet moves items to the Recycle Bin and does not return any object on success.
-
-  .OUTPUTS
-    None.
-  #>
+#>
   [CmdletBinding(DefaultParameterSetName = 'PathSet', SupportsShouldProcess)]
   [OutputType([void])]
   param (
@@ -431,7 +433,7 @@ function Move-ItemToRecycleBin {
 function New-Shortcut {
   <#
   .SYNOPSIS
-    Creates a Windows shortcut file (.lnk).
+    Creates a Windows shortcut file (`.lnk`).
 
   .DESCRIPTION
     Creates a Windows Shell shortcut at the specified destination.
@@ -825,9 +827,6 @@ function New-NetworkDrive {
 
     Removes the existing mapping and creates a new one.
 
-  .OUTPUTS
-    None.
-
   .NOTES
     Creates a persistent drive mapping in the current user session.
   #>
@@ -880,8 +879,8 @@ function New-NetworkShortcut {
     Removes the existing network shortcut before creating a new one.
 
   .OUTPUTS
-  System.IO.DirectoryInfo
-    The created network shortcut folder.
+    System.IO.DirectoryInfo
+      The created network shortcut folder.
 
   .NOTES
   The created shortcut is placed in the Windows Network Shortcuts folder.

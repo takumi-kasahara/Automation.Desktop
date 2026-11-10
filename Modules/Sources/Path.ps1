@@ -33,7 +33,8 @@ function Compress-EnvironmentVariable {
     Replaces matching path values with environment-variable references.
 
   .OUTPUTS
-    System.String. The compressed string with environment variables replaced.
+    System.String
+      The compressed string with environment variables replaced.
 
   .NOTES
     Empty environment variable values are ignored.
@@ -164,7 +165,8 @@ function ConvertTo-NetworkPath {
     Converts the specified local path to its corresponding UNC path.
 
   .OUTPUTS
-    System.String. The converted UNC network path.
+    System.String
+      The converted UNC network path.
 
   .NOTES
     This function uses Win32 share information from Get-CimInstance.
@@ -254,7 +256,8 @@ function ConvertTo-WSLPath {
     conversion to WSL via `wsl.exe`.
 
   .OUTPUTS
-    String. The converted WSL path.
+    System.String
+      The converted WSL path.
   #>
   [CmdletBinding(DefaultParameterSetName = 'PathSet')]
   param (
@@ -325,11 +328,11 @@ function Get-NormalizedPath {
     Returns the normalized form of the specified path using compatibility normalization forms.
 
   .OUTPUTS
-    System.String. The normalized path.
+    System.String
+      The normalized path.
 
   .NOTES
-    This function uses Get-Item to resolve paths and only changes the final
-    path component when normalization is required.
+    This function uses Get-Item to resolve paths and only changes the final path component when normalization is required.
   #>
   [CmdletBinding(DefaultParameterSetName = 'PathSet')]
   [OutputType([string])]
@@ -460,10 +463,8 @@ function Move-NormalizedPath {
     Moves file.txt to its normalized path, bypassing confirmation if the file already exists.
 
   .OUTPUTS
-    PSObject when PassThru is specified; otherwise, none.
-
-  .NOTES
-    This function uses Get-NormalizedPath internally and supports `-WhatIf`.
+    System.Management.Automation.PSObject
+      When PassThru is specified.
   #>
   [CmdletBinding(DefaultParameterSetName = 'PathSet', SupportsShouldProcess)]
   [OutputType([void], [PSObject])]

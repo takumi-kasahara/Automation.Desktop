@@ -7,8 +7,7 @@ function Get-OllamaModel {
     Gets the list of Ollama models.
 
   .DESCRIPTION
-    The Get-OllamaModel cmdlet runs `ollama list` and returns the model information as an array of PSObjects.
-    Each object has Id and Name properties.
+    This cmdlet runs `ollama list` and returns the model information as an array.
 
   .EXAMPLE
     ```powershell
@@ -17,11 +16,11 @@ function Get-OllamaModel {
     Returns a list of installed Ollama models.
 
   .OUTPUTS
-    PSCustomObject[]
+    System.Management.Automation.PSObject[]
       Objects with Id and Name properties representing Ollama models.
   #>
   [CmdletBinding()]
-  [OutputType([PSCustomObject])]
+  [OutputType([PSCustomObject[]])]
   param ()
   try {
     $global:LASTEXITCODE = 0
@@ -156,9 +155,6 @@ function Update-OllamaModel {
     ```
 
     Updates all installed models.
-
-  .OUTPUTS
-    None.
   #>
   [CmdletBinding(SupportsShouldProcess)]
   param (
@@ -351,9 +347,6 @@ function Stop-OllamaModel {
     Stop-OllamaModel -All
     ```
     Stops all running models.
-
-  .OUTPUTS
-    None.
   #>
   [CmdletBinding(SupportsShouldProcess)]
   param (
