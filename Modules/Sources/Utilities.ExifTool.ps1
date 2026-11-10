@@ -41,10 +41,6 @@ function Get-ExifDate {
   .OUTPUTS
     System.Management.Automation.PathInfo.
       Objects containing the full path and Exif date metadata of each file.
-
-  .NOTES
-    This function writes ExifTool stderr output to a temporary log file and
-    removes the log file when it remains empty.
   #>
   [CmdletBinding(DefaultParameterSetName = 'PathSet')]
   [OutputType([System.Management.Automation.PathInfo])]
@@ -186,14 +182,6 @@ function Set-ExifDate {
     ```
 
     Shows the timestamp setting operation for a specific file without making actual changes.
-
-  .OUTPUTS
-    None.
-      Only sets Exif timestamps.
-
-  .NOTES
-    This function writes ExifTool stderr output to a temporary log file and
-    removes the log file when it remains empty.
   #>
   [CmdletBinding(DefaultParameterSetName = 'PathSet', SupportsShouldProcess)]
   [OutputType([void])]
@@ -291,14 +279,6 @@ function Remove-ExifDate {
     ```
 
     Shows the EXIF timestamp removal operation for a specific file without making actual changes.
-
-  .OUTPUTS
-    None.
-      Only removes Exif timestamps.
-
-  .NOTES
-    This function writes ExifTool stderr output to a temporary log file and
-    removes the log file when it remains empty.
   #>
   [CmdletBinding(DefaultParameterSetName = 'PathSet', SupportsShouldProcess)]
   [OutputType([void])]

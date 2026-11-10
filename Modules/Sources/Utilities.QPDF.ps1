@@ -56,9 +56,6 @@ function ConvertTo-Qdf {
     ```
 
     Converts an encrypted PDF to QDF format using the owner password.
-
-  .OUTPUTS
-    None. Only converts PDF to QDF.
   #>
   [OutputType([void])]
   [CmdletBinding(SupportsShouldProcess)]
@@ -166,9 +163,6 @@ function ConvertFrom-Qdf {
     ```
 
     Converts an encrypted QDF file back to PDF using the owner password.
-
-  .OUTPUTS
-    None. Only converts QDF to PDF.
   #>
   [CmdletBinding(SupportsShouldProcess)]
   [OutputType([void])]
@@ -281,10 +275,6 @@ function Unblock-Pdf {
 
     Removes encryption from a password-protected PDF file.
 
-  .OUTPUTS
-    None.
-      Only removes PDF encryption.
-
   .NOTES
     This function requires `qpdf.exe` to be available in the system PATH.
     Standard error output from QPDF is written to a temporary log file that is removed when it remains empty.
@@ -364,10 +354,9 @@ function Get-PdfPage {
 
   .DESCRIPTION
     Get-PdfPage reads PDF files specified by Path or LiteralPath and invokes
-    `qpdf.exe --show-npages` to obtain the number of pages in each file. It
-    returns objects containing the original file item and the parsed page count.
-    Standard error output from QPDF is written to a temporary log file that is
-    removed when it remains empty.
+    `qpdf.exe --show-npages` to obtain the number of pages in each file.
+    It returns objects containing the original file item and the parsed page count.
+    Standard error output from QPDF is written to a temporary log file that is removed when it remains empty.
 
   .PARAMETER Path
     Specifies wildcard-compatible PDF file paths to inspect.
@@ -405,6 +394,7 @@ function Get-PdfPage {
 
   .OUTPUTS
     PdfInfo
+      Object containing the PDF file item and its page count.
 
   .NOTES
     This function requires `qpdf.exe` to be available in the system PATH.
