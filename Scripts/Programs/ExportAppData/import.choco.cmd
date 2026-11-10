@@ -6,6 +6,10 @@ if "%~1"=="" (
   echo ERROR: No package specified.
   goto :end
 )
+if not exist "%~1" (
+  echo ERROR: File "%~1" does not exist.
+  goto :end
+)
 net session >nul 2>&1
 if errorlevel 1 goto :elevate
 goto :process
