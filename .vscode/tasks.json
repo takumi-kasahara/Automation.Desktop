@@ -31,19 +31,18 @@
       "problemMatcher": [],
       "hide": true
     },
-    {
-      "label": "cscript",
-      "type": "shell",
-      "command": "cscript.exe",
-      "args": ["//NoLogo", "//X", "${file}"],
-      "problemMatcher": []
-    },
+
     {
       "label": "pester",
       "type": "shell",
       "command": "cmd.exe",
       "args": [
-        "/c",
+        "/D",
+        "/E:ON",
+        "/V:OFF",
+        "/S",
+        "/C",
+        "call",
         ".agents\\skills\\powershell-7\\scripts\\pester.cmd",
         "-Path",
         "${file}"
@@ -59,7 +58,12 @@
       "type": "shell",
       "command": "cmd.exe",
       "args": [
-        "/c",
+        "/D",
+        "/E:ON",
+        "/V:OFF",
+        "/S",
+        "/C",
+        "call",
         ".agents\\skills\\powershell-7\\scripts\\analyze.cmd",
         "-Path",
         "${file}"
@@ -68,6 +72,13 @@
       "group": {
         "kind": "test"
       }
+    },
+    {
+      "label": "cscript",
+      "type": "shell",
+      "command": "cscript.exe",
+      "args": ["//B", "//NoLogo", "${file}"],
+      "problemMatcher": []
     }
   ]
 }
