@@ -37,3 +37,4 @@ ForEach-Object {
   }
 } |
 Export-Csv -LiteralPath $log
+Start-Process -FilePath $log

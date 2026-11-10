@@ -1,5 +1,5 @@
 @echo off
-setlocal
+setlocal enableextensions disabledelayedexpansion
 
 set "ROOT=HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Modules\GlobalSettings\Sizer"
 reg export "%ROOT%" "%TEMP%\Explorer.reg" /y

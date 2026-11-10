@@ -1,5 +1,5 @@
 @echo off
-setlocal
+setlocal enableextensions disabledelayedexpansion
 
 set "ROOT=HKCU\Software\Microsoft\Terminal Server Client"
 reg export "%ROOT%" "%TEMP%\Terminal Server Client.reg" /y
@@ -9,4 +9,4 @@ reg delete "%ROOT%\Default" /f
 reg delete "%ROOT%\LocalDevices" /f
 reg delete "%ROOT%\Servers" /f
 
-exit /b %errorlevel%
+exit /B %errorlevel%

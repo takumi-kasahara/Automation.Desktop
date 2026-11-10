@@ -1,5 +1,5 @@
 @echo off
-setlocal
+setlocal enableextensions disabledelayedexpansion
 
 :begin
 
@@ -8,4 +8,4 @@ uv run --project "%~dp0..\..\.." python "%~dp0%~n0.py" %*
 
 :end
 pause
-exit /b %errorlevel%
+exit /B %errorlevel%

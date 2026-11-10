@@ -1,5 +1,5 @@
 @echo off
-setlocal
+setlocal enableextensions disabledelayedexpansion
 
 :begin
 
@@ -13,7 +13,7 @@ ipconfig /flushdns
 Dism /Online /Cleanup-Image /StartComponentCleanup /ResetBase
 Dism /Online /Cleanup-Image /SPSuperseded
 
-where /q bleachbit_console && bleachbit_console --clean --preset --update-winapp2
+where /Q bleachbit_console && bleachbit_console --clean --preset --update-winapp2
 
 :end
-exit /b %errorlevel%
+exit /B %errorlevel%

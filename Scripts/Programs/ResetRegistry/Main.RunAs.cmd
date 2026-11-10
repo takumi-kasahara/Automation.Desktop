@@ -1,13 +1,13 @@
 @echo off
-setlocal
+setlocal enableextensions disabledelayedexpansion
 
 :begin
 
 :process
-for /r "%~dp0\Public" %%f in ("*.cmd") do (
+for /R "%~dp0\Public" %%f in ("*.cmd") do (
   echo call "%%~nxf"
   call "%%f"
 )
 
 :end
-exit /b %errorlevel%
+exit /B %errorlevel%

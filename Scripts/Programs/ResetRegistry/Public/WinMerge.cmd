@@ -1,5 +1,5 @@
 @echo off
-setlocal
+setlocal enableextensions disabledelayedexpansion
 
 set "ROOT=HKCU\Software\Thingamahoochie\WinMerge"
 reg export "%ROOT%" "%TEMP%\WinMerge.reg" /y
@@ -38,4 +38,4 @@ reg delete "%ROOT%\Settings-SCBar-32819" /f
 reg delete "%ROOT%\Settings-SCBar-32820" /f
 reg delete "%ROOT%\Settings-Summary" /f
 
-exit /b %errorlevel%
+exit /B %errorlevel%

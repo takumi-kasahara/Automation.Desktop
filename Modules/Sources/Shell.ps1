@@ -152,12 +152,12 @@ function Find-Application {
       return $found
     }
     Write-Progress -Activity 'Searching in Program Files (x64) directories'
-    $programFilesX64 = [string[]]@(where.exe /r $env:ProgramFiles $Name 2>$null)
+    $programFilesX64 = [string[]]@(where.exe /R $env:ProgramFiles $Name 2>$null)
     if ($programFilesX64.Count -gt 0) {
       return $programFilesX64
     }
     Write-Progress -Activity 'Searching in Program Files (x86) directories'
-    $programFilesX86 = [string[]]@(where.exe /r ${env:ProgramFiles(x86)} $Name 2>$null)
+    $programFilesX86 = [string[]]@(where.exe /R ${env:ProgramFiles(x86)} $Name 2>$null)
     if ($programFilesX86.Count -gt 0) {
       return $programFilesX86
     }
