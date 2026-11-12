@@ -1,11 +1,11 @@
-﻿using namespace System.Text
+﻿using module .\..\Automation.Desktop.psd1
+using namespace System.Text
 
 [CmdletBinding()]
 param ()
-Import-Module -Name ($PSScriptRoot | Join-Path -ChildPath '..\Automation.Desktop.psm1') -Force
 Set-StrictMode -Version Latest
 
-InModuleScope 'Utilities.7z' {
+InModuleScope 'Automation.Desktop' {
   Describe 'Get-ArchivedItem' {
     BeforeAll {
       Mock -CommandName Get-Content -MockWith { [string]::Empty }
