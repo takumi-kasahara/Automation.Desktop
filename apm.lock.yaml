@@ -5,7 +5,7 @@ dependencies:
     materialization_repo_url: takumi-kasahara/Dotfiles
     name: powershell-7
     host: github.com
-    resolved_commit: 9bfc7ef60b5ee10315c7fdfec14b69fbc8db6f43
+    resolved_commit: a50c7944d6e8695e815375568ee548737928501d
     version: unknown
     virtual_path: .apm/skills/powershell-7
     is_virtual: true
@@ -19,28 +19,34 @@ dependencies:
       - .agents/skills/powershell-7/references/powershell-pester.md
       - .agents/skills/powershell-7/scripts/analyze.cmd
       - .agents/skills/powershell-7/scripts/analyze.ps1
+      - .agents/skills/powershell-7/scripts/analyze.ps1.md
       - .agents/skills/powershell-7/scripts/parse.cmd
       - .agents/skills/powershell-7/scripts/parse.ps1
+      - .agents/skills/powershell-7/scripts/parse.ps1.md
       - .agents/skills/powershell-7/scripts/pester.cmd
       - .agents/skills/powershell-7/scripts/pester.ps1
+      - .agents/skills/powershell-7/scripts/pester.ps1.md
     deployed_file_hashes:
       .agents/skills/powershell-7/SKILL.md: sha256:b2eb9aec39cd31646657eeb6916777f618444c64ca6994293f6ffd99e34a8696
       .agents/skills/powershell-7/references/comment-based-help.md: sha256:32750b5e72423b4473e1b92df9969da594cc18a53a865d26025f2b419e3fe56b
       .agents/skills/powershell-7/references/csharp.md: sha256:98e745b6501c8855e58a8389de57e1f9d5b39c284947ad454d1a941531e3767b
-      .agents/skills/powershell-7/references/powershell-cmdlet.md: sha256:e9fef9df7928930ce2969321c98a2be743ef2277efc8885ac0f932415be9d12e
+      .agents/skills/powershell-7/references/powershell-cmdlet.md: sha256:decfddcf62571b53212406b76c79b632c70963a88fd3215b9a7c971ff825b45e
       .agents/skills/powershell-7/references/powershell-pester.md: sha256:16dcac5734a29b9904fd0c370ac2a88466e2c857f9245be11e790dd5b0266fcf
       .agents/skills/powershell-7/scripts/analyze.cmd: sha256:93c26394d0376bfcde1bc51d06c9c4722a8beda4c18b46baf85bf55b1e166dac
       .agents/skills/powershell-7/scripts/analyze.ps1: sha256:8c05d776ea492c4785d0de512e0b925b74c49fad9655a5f01a89e6863969a45c
+      .agents/skills/powershell-7/scripts/analyze.ps1.md: sha256:b7f6c4b962967de892bf485ea9b791f51adc8d340ab5641e34a7bc66ce714b8d
       .agents/skills/powershell-7/scripts/parse.cmd: sha256:93c26394d0376bfcde1bc51d06c9c4722a8beda4c18b46baf85bf55b1e166dac
-      .agents/skills/powershell-7/scripts/parse.ps1: sha256:1494e2c254e6bd77d0827c8761f1d60c751197f78fde0b146e3e2bae94693322
+      .agents/skills/powershell-7/scripts/parse.ps1: sha256:0a86598ab8027276fabd83e1b1f519c52b8ddf9365b1cf9ee9e3ad0c41a2eeef
+      .agents/skills/powershell-7/scripts/parse.ps1.md: sha256:6b53462b2d40708c02fc68888f9a6885a38e806a353f7f82ef3182fad65c59d2
       .agents/skills/powershell-7/scripts/pester.cmd: sha256:93c26394d0376bfcde1bc51d06c9c4722a8beda4c18b46baf85bf55b1e166dac
-      .agents/skills/powershell-7/scripts/pester.ps1: sha256:c64e36dd1cff8e53aca80f01ce0d691ee9370edbce356cb17f294a78f13d8255
-    content_hash: sha256:a3d3839e5c9849bd9a5d0e11caa22056e536e2d9ef822d2ffffb6834262e70be
+      .agents/skills/powershell-7/scripts/pester.ps1: sha256:3aad17bd8841108e1723f65b5bf0fdbb292211b7d03b7ad6c60d5aa311953609
+      .agents/skills/powershell-7/scripts/pester.ps1.md: sha256:9ca9c50f1cd1288890ecc8209651e90cfbb2b195b740087c966b9447403f6a86
+    content_hash: sha256:07c16af07ab8ec89b731acf39a2fbaa969dfb9f4e195b5baf93906173faadee9
   - repo_url: takumi-kasahara/dotfiles
     materialization_repo_url: takumi-kasahara/Dotfiles
     name: windows-command
     host: github.com
-    resolved_commit: 9bfc7ef60b5ee10315c7fdfec14b69fbc8db6f43
+    resolved_commit: a50c7944d6e8695e815375568ee548737928501d
     version: unknown
     virtual_path: .apm/skills/windows-command
     is_virtual: true
@@ -65,7 +71,7 @@ dependencies:
     materialization_repo_url: takumi-kasahara/Dotfiles
     name: windows-script-host
     host: github.com
-    resolved_commit: 9bfc7ef60b5ee10315c7fdfec14b69fbc8db6f43
+    resolved_commit: a50c7944d6e8695e815375568ee548737928501d
     version: unknown
     virtual_path: .apm/skills/windows-script-host
     is_virtual: true
@@ -149,7 +155,7 @@ deployments:
     owners:
       - takumi-kasahara/dotfiles/.apm/skills/powershell-7
     active_owner: takumi-kasahara/dotfiles/.apm/skills/powershell-7
-    content_hash: sha256:e9fef9df7928930ce2969321c98a2be743ef2277efc8885ac0f932415be9d12e
+    content_hash: sha256:decfddcf62571b53212406b76c79b632c70963a88fd3215b9a7c971ff825b45e
   - kind: project-relative
     target: copilot
     value: .agents/skills/powershell-7/references/powershell-pester.md
@@ -179,6 +185,15 @@ deployments:
     content_hash: sha256:8c05d776ea492c4785d0de512e0b925b74c49fad9655a5f01a89e6863969a45c
   - kind: project-relative
     target: copilot
+    value: .agents/skills/powershell-7/scripts/analyze.ps1.md
+    runtime: null
+    scope: project
+    owners:
+      - takumi-kasahara/dotfiles/.apm/skills/powershell-7
+    active_owner: takumi-kasahara/dotfiles/.apm/skills/powershell-7
+    content_hash: sha256:b7f6c4b962967de892bf485ea9b791f51adc8d340ab5641e34a7bc66ce714b8d
+  - kind: project-relative
+    target: copilot
     value: .agents/skills/powershell-7/scripts/parse.cmd
     runtime: null
     scope: project
@@ -194,7 +209,16 @@ deployments:
     owners:
       - takumi-kasahara/dotfiles/.apm/skills/powershell-7
     active_owner: takumi-kasahara/dotfiles/.apm/skills/powershell-7
-    content_hash: sha256:1494e2c254e6bd77d0827c8761f1d60c751197f78fde0b146e3e2bae94693322
+    content_hash: sha256:0a86598ab8027276fabd83e1b1f519c52b8ddf9365b1cf9ee9e3ad0c41a2eeef
+  - kind: project-relative
+    target: copilot
+    value: .agents/skills/powershell-7/scripts/parse.ps1.md
+    runtime: null
+    scope: project
+    owners:
+      - takumi-kasahara/dotfiles/.apm/skills/powershell-7
+    active_owner: takumi-kasahara/dotfiles/.apm/skills/powershell-7
+    content_hash: sha256:6b53462b2d40708c02fc68888f9a6885a38e806a353f7f82ef3182fad65c59d2
   - kind: project-relative
     target: copilot
     value: .agents/skills/powershell-7/scripts/pester.cmd
@@ -212,7 +236,16 @@ deployments:
     owners:
       - takumi-kasahara/dotfiles/.apm/skills/powershell-7
     active_owner: takumi-kasahara/dotfiles/.apm/skills/powershell-7
-    content_hash: sha256:c64e36dd1cff8e53aca80f01ce0d691ee9370edbce356cb17f294a78f13d8255
+    content_hash: sha256:3aad17bd8841108e1723f65b5bf0fdbb292211b7d03b7ad6c60d5aa311953609
+  - kind: project-relative
+    target: copilot
+    value: .agents/skills/powershell-7/scripts/pester.ps1.md
+    runtime: null
+    scope: project
+    owners:
+      - takumi-kasahara/dotfiles/.apm/skills/powershell-7
+    active_owner: takumi-kasahara/dotfiles/.apm/skills/powershell-7
+    content_hash: sha256:9ca9c50f1cd1288890ecc8209651e90cfbb2b195b740087c966b9447403f6a86
   - kind: project-relative
     target: copilot
     value: .agents/skills/windows-command

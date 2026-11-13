@@ -63,7 +63,7 @@ function Get-DuplicateFile {
     Specifies directory paths to search. Supports wildcards.
 
   .PARAMETER LiteralPath
-    Specifies literal directory paths to search. Wildcards are not interpreted.
+    Specifies literal directory paths to search.
 
   .PARAMETER Recurse
     Searches child directories recursively.
@@ -173,7 +173,7 @@ function Get-EmptyDirectory {
     Specifies directory paths to search. Supports wildcards.
 
   .PARAMETER LiteralPath
-    Specifies literal directory paths to search. Wildcards are not interpreted.
+    Specifies literal directory paths to search.
 
   .PARAMETER Recurse
     Searches child directories recursively.
@@ -245,10 +245,10 @@ function Measure-Directory {
     Supports wildcard-aware `-Path` input and exact `-LiteralPath` input.
 
   .PARAMETER Path
-    Specifies one or more directory paths to analyze. Wildcards are supported.
+    Specifies one or more directory paths to analyze. Supports wildcards.
 
   .PARAMETER LiteralPath
-    Specifies one or more exact directory paths. Wildcards are not interpreted.
+    Specifies one or more exact directory paths.
 
   .PARAMETER Recurse
     Searches child directories recursively.
@@ -300,9 +300,6 @@ function Measure-Directory {
   .OUTPUTS
     MeasureDirectoryInfo
       Objects containing requested directory statistics and metadata summaries.
-
-  .NOTES
-    Returns `MeasureDirectoryInfo` objects containing one or more statistics arrays.
   #>
   [CmdletBinding(DefaultParameterSetName = 'PathSet')]
   [OutputType([MeasureDirectoryInfo])]
@@ -444,10 +441,9 @@ function Set-ItemAttribute {
 
   .DESCRIPTION
     Updates the specified item's file attributes by adding the requested attribute flags.
-    Supports wildcards via `-Path` and literal paths via `-LiteralPath`.
 
   .PARAMETER Path
-    Specifies one or more paths to files or directories. Wildcards are supported.
+    Specifies one or more paths to files or directories. Supports wildcards.
 
   .PARAMETER LiteralPath
     Specifies one or more literal paths to files or directories.
@@ -471,9 +467,6 @@ function Set-ItemAttribute {
     ```
 
     Sets the Hidden attribute on file.txt and forces the update even if the file is read-only.
-
-  .OUTPUTS
-    None.
 
   .NOTES
     This cmdlet modifies file system object attributes and does not emit output when the operation succeeds.
@@ -534,10 +527,9 @@ function Remove-ItemAttribute {
 
   .DESCRIPTION
     Clears the specified attribute flags from the target item.
-    Supports wildcards via `-Path` and literal paths via `-LiteralPath`.
 
   .PARAMETER Path
-    Specifies one or more paths to files or directories. Wildcards are supported.
+    Specifies one or more paths to files or directories. Supports wildcards.
 
   .PARAMETER LiteralPath
     Specifies one or more literal paths to files or directories.
@@ -561,9 +553,6 @@ function Remove-ItemAttribute {
     ```
 
     Removes the Hidden attribute from file.txt and forces the update even if the file is read-only.
-
-  .OUTPUTS
-    None.
 
   .NOTES
     This cmdlet modifies file system object attributes and does not emit output when the operation succeeds.
@@ -629,7 +618,7 @@ function Set-ItemDate {
     Path(s) to the target file(s) or directory(ies). Wildcards supported.
 
   .PARAMETER LiteralPath
-    Literal path(s) to the target file(s) or directory(ies). Wildcards are not interpreted.
+    Literal path(s) to the target file(s) or directory(ies).
 
   .PARAMETER Date
     Sets all timestamps (CreationTime, LastWriteTime, LastAccessTime) to the specified date and time.
@@ -665,9 +654,6 @@ function Set-ItemDate {
     ```
 
     Sets timestamps of image.jpg from its EXIF metadata.
-
-  .OUTPUTS
-    None.
 
   .NOTES
     This function supports ShouldProcess and can be used with-WhatIf and -Confirm.
@@ -805,7 +791,7 @@ function Sync-DirectoryDate {
     Path(s) to target directories. Wildcards supported.
 
   .PARAMETER LiteralPath
-    Literal path(s) to target directories. Wildcards are not interpreted.
+    Literal path(s) to target directories.
 
   .PARAMETER Force
     Forces child enumeration and timestamp sync for protected files.
@@ -823,9 +809,6 @@ function Sync-DirectoryDate {
     ```
 
     Synchronizes the timestamp of subdir with its contents and suppresses confirmation prompts.
-
-  .OUTPUTS
-    None.
   #>
   [CmdletBinding(DefaultParameterSetName = 'PathSet', SupportsShouldProcess)]
   [OutputType([void])]
@@ -884,7 +867,7 @@ function Sync-ItemDate {
     Path(s) to the target file(s) or directory(ies). Wildcards supported.
 
   .PARAMETER LiteralPath
-    Literal path(s) to the target file(s) or directory(ies). Wildcards are not interpreted.
+    Literal path(s) to the target file(s) or directory(ies).
 
   .PARAMETER Force
     Forces timestamp synchronization for protected items and suppresses ShouldProcess confirmation.
@@ -902,9 +885,6 @@ function Sync-ItemDate {
     ```
 
     Bulk synchronizes and fixes timestamps for files and directories, updating file timestamps using EXIF data when available and synchronizing directory timestamps to match nested child items.
-
-  .OUTPUTS
-    None.
 
   .NOTES
     This function supports ShouldProcess and can be used with-WhatIf and -Confirm. When -Force is provided, the operation proceeds without confirmation.
@@ -1048,13 +1028,12 @@ function Export-ItemDate {
     Use `-Force` to overwrite an existing destination file, or `-NoClobber` to fail if the destination already exists.
 
   .PARAMETER Path
-    Path(s) to the target file(s) or directory(ies). Wildcards supported. When a directory is
-    specified, all files within it are exported recursively, including files in subfolders.
+    Path(s) to the target file(s) or directory(ies). Wildcards supported.
+    When a directory is specified, all files within it are exported recursively, including files in subfolders.
 
   .PARAMETER LiteralPath
-    Literal path(s) to the target file(s) or directory(ies). Wildcards are not interpreted.
-    When a directory is specified, all files within it are exported recursively, including
-    files in subfolders.
+    Literal path(s) to the target file(s) or directory(ies).
+    When a directory is specified, all files within it are exported recursively, including files in subfolders.
 
   .PARAMETER Destination
     Specifies the path of the JSON file to write the timestamp data to. When -Destination is

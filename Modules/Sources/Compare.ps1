@@ -224,6 +224,14 @@ function Compare-Csv {
   .PARAMETER DifferencePath
     The path to the difference CSV file to compare against the reference file.
 
+  .PARAMETER OnlyReference
+    Limits the output to mismatches involving reference-side rows.
+    When specified, difference-only mismatches are suppressed, and for differing occurrence counts the reference side is selected.
+
+  .PARAMETER OnlyDifference
+    Limits the output to mismatches involving difference-side rows.
+    When specified, reference-only mismatches are suppressed, and for differing occurrence counts the difference side is selected.
+
   .PARAMETER Delimiter
     The delimiter character used in both CSV files.
     The default delimiter is a comma (,).
@@ -254,8 +262,8 @@ function Compare-Csv {
     Compares two headerless CSV files using generated column names.
 
   .OUTPUTS
-    CompareCsvMismatch[].
-      Each object contains Path, Lines, Hash, and SimilarCandidates properties for a detected mismatch.
+    CompareCsvMismatch[]
+      Object containing Path, Lines, Hash, and SimilarCandidates properties for a detected mismatch.
 
   .NOTES
     One-sided mismatches include similarity candidates ordered by Levenshtein-based similarity.

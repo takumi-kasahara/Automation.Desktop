@@ -42,7 +42,7 @@
 
 .OUTPUTS
   System.Management.Automation.PSCustomObject
-    An object with Source, Destination, and Log properties.
+      Object containing the Source, Destination, and Log properties.
 
 .NOTES
   Uses /MIR, so files missing in the source are deleted from the destination.
