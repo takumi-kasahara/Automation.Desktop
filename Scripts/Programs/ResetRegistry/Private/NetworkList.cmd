@@ -19,8 +19,6 @@ echo ERROR: Access is denied.
 goto :end
 
 :process
-:: https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh
-netsh interface ip reset
 set "ROOT=HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkList"
 reg export "%ROOT%" "%TEMP%\NetworkList.reg" /y
 reg delete "%ROOT%" /f
