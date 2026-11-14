@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Backs up external drives to a designated backup location.
 
@@ -122,6 +122,17 @@ if (Test-Path -LiteralPath $root) {
   New-Item -Path $root -ItemType Directory | Out-Null
 }
 netsh.exe wlan export profile key=clear folder="$root"
+
+# https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-advfirewall
+# to restore:
+# netsh.exe advfirewall import "<path>"
+$root = $config | Join-Path -ChildPath 'firewall'
+if (Test-Path -LiteralPath $root) {
+  "$root\*" | Remove-Item
+} else {
+  New-Item -Path $root -ItemType Directory | Out-Null
+}
+netsh.exe advfirewall export "$($config | Join-Path -ChildPath 'firewall.wfw')"
 
 # https://learn.microsoft.com/en-us/windows-hardware/design/device-experiences/powercfg-command-line-options
 # to restore:
