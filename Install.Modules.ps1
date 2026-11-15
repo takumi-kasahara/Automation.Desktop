@@ -6,7 +6,7 @@ if ($PSEdition -ne 'Core') {
 Set-StrictMode -Version Latest
 Set-Location -LiteralPath $PSScriptRoot
 
-Get-ChildItem -LiteralPath 'Modules' -File -Filter '*.psd1' |
+Get-ChildItem -LiteralPath '.\Modules' -File -Filter '*.psd1' |
 ForEach-Object {
   $destination = [WildcardPattern]::Escape($PROFILE.CurrentUserAllHosts) |
   Split-Path -Parent |
