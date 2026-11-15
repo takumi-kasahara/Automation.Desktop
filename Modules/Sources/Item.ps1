@@ -988,14 +988,14 @@ function Sync-ItemDate {
     Where-Object { Test-Path -LiteralPath $_.Path } |
     ForEach-Object {
       if ($_.CreationTime -or $_.LastWriteTime) {
-        if (-not (Test-Path -LiteralPath $root.FullName -PathType Container)) {
-          $_.Path | Out-Host
-        } else {
-          Resolve-Path -LiteralPath $_.Path -Relative -RelativeBasePath ([WildcardPattern]::Escape($root.FullName)) | Out-Host
-        }
         Set-ItemDate -LiteralPath $_.Path -CreationTime $_.CreationTime -LastWriteTime $_.LastWriteTime -TimeFix -Force:$Force
+        if (-not (Test-Path -LiteralPath $root.FullName -PathType Container)) {
+          $_.Path
+        } else {
+          Resolve-Path -LiteralPath $_.Path -Relative -RelativeBasePath ([WildcardPattern]::Escape($root.FullName))
+        }
       }
-    }
+    } | Out-Host
     # Step 3: Update directory timestamps based on child item timestamps.
     $id++
     $count = 0

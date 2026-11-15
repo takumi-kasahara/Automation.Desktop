@@ -20,7 +20,9 @@ This repository is a collection of PowerShell modules and helper scripts for Win
 
 #### PSScriptAnalyzer Invocation
 
-Run PSScriptAnalyzer with `analyze.cmd`:
+Prefer the `psscriptanalyzer` task defined in `.vscode/tasks.json` when using VS Code.
+
+Run PSScriptAnalyzer with `analyze.cmd` only when invoking directly outside of VS Code tasks:
 
 ```bat
 ".agents\skills\powershell-7\scripts\analyze.cmd" -Path "Modules" -Recurse
@@ -32,7 +34,9 @@ Run PSScriptAnalyzer with `analyze.cmd`:
 
 #### Pester Invocation
 
-Run Pester with `Pester.cmd`:
+Prefer the `pester` task defined in `.vscode/tasks.json` when using VS Code.
+
+Run Pester with `Pester.cmd` only when invoking directly outside of VS Code tasks:
 
 ```bat
 ".agents\skills\powershell-7\scripts\pester.cmd" -Path "Modules\Sources" -Parallel
@@ -84,6 +88,6 @@ Run Pester with `Pester.cmd`:
 
 - Do not run one-line PowerShell commands directly for auditability and reproducibility.
 - Run PowerShell scripts only with:
-  - `pwsh.exe -NoLogo -NoProfile -ExecutionPolicy RemoteSigned -File ".\.temp\execute.ps1"`
+  - `pwsh.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -File ".\.temp\execute.ps1"`
 - Run Windows Script Host scripts with:
-  - `cscript.exe //NoLogo ".\.temp\execute.js"`
+  - `cscript.exe //B //NoLogo ".\.temp\execute.js"`
