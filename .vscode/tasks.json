@@ -19,7 +19,15 @@
       "label": "build: docs",
       "type": "shell",
       "command": "pwsh.exe",
-      "args": ["-NoLogo", "-NoProfile", "-File", "Docs.ps1"],
+      "args": [
+        "-NoLogo",
+        "-NoProfile",
+        "-NonInteractive",
+        "-ExecutionPolicy",
+        "RemoteSigned",
+        "-File",
+        "Docs.ps1"
+      ],
       "problemMatcher": [],
       "hide": true
     },
@@ -27,23 +35,30 @@
       "label": "build: runner",
       "type": "shell",
       "command": "pwsh.exe",
-      "args": ["-NoLogo", "-NoProfile", "-File", "Build.ps1"],
+      "args": [
+        "-NoLogo",
+        "-NoProfile",
+        "-NonInteractive",
+        "-ExecutionPolicy",
+        "RemoteSigned",
+        "-File",
+        "Build.ps1"
+      ],
       "problemMatcher": [],
       "hide": true
     },
-    {
-      "label": "cscript",
-      "type": "shell",
-      "command": "cscript.exe",
-      "args": ["//NoLogo", "//X", "${file}"],
-      "problemMatcher": []
-    },
+
     {
       "label": "pester",
       "type": "shell",
       "command": "cmd.exe",
       "args": [
-        "/c",
+        "/D",
+        "/E:ON",
+        "/V:OFF",
+        "/S",
+        "/C",
+        "call",
         ".agents\\skills\\powershell-7\\scripts\\pester.cmd",
         "-Path",
         "${file}"
@@ -59,7 +74,12 @@
       "type": "shell",
       "command": "cmd.exe",
       "args": [
-        "/c",
+        "/D",
+        "/E:ON",
+        "/V:OFF",
+        "/S",
+        "/C",
+        "call",
         ".agents\\skills\\powershell-7\\scripts\\analyze.cmd",
         "-Path",
         "${file}"
@@ -68,6 +88,13 @@
       "group": {
         "kind": "test"
       }
+    },
+    {
+      "label": "cscript",
+      "type": "shell",
+      "command": "cscript.exe",
+      "args": ["//B", "//NoLogo", "${file}"],
+      "problemMatcher": []
     }
   ]
 }

@@ -183,5 +183,4 @@ ForEach-Object {
   $destination = $root | Join-Path -ChildPath "$($_.Name).reg"
   [PSCustomObject]$_
   reg.exe export "$($_.Value)" "$destination" /y
-} |
-Out-Host
+} | Out-Host

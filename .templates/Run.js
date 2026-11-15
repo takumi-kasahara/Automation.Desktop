@@ -23,7 +23,7 @@ for (var j = 0; j < files.length; j++) {
   switch (FileSystemObject.GetFileName(path)) {
     case 'Main.cmd':
       WshShell.Run(
-        'cmd.exe /c "' +
+        'cmd.exe /D /E:ON /V:OFF /S /C "' +
           file +
           '"' +
           (args.length ? ' "' + args.join('" "') + '"' : ''),
@@ -33,7 +33,7 @@ for (var j = 0; j < files.length; j++) {
       break;
     case 'Main.ps1':
       WshShell.Run(
-        'pwsh.exe -NoLogo -NoProfile -ExecutionPolicy RemoteSigned -File "' +
+        'pwsh.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -File "' +
           file +
           '"' +
           (args.length ? ' "' + args.join('" "') + '"' : ''),
@@ -43,7 +43,7 @@ for (var j = 0; j < files.length; j++) {
       break;
     case 'Main.RunAs.cmd':
       WshShell.Run(
-        'sudo.exe cmd.exe /c "' +
+        'sudo.exe --disable-input cmd.exe /D /E:ON /V:OFF /S /C "' +
           file +
           '"' +
           (args.length ? ' "' + args.join('" "') + '"' : ''),
@@ -53,7 +53,7 @@ for (var j = 0; j < files.length; j++) {
       break;
     case 'Main.RunAs.ps1':
       WshShell.Run(
-        'sudo.exe pwsh.exe -NoLogo -NoProfile -ExecutionPolicy RemoteSigned -File "' +
+        'sudo.exe --disable-input pwsh.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -File "' +
           file +
           '"' +
           (args.length ? ' "' + args.join('" "') + '"' : ''),
