@@ -90,4 +90,4 @@ Run Pester with `Pester.cmd` only when invoking directly outside of VS Code task
 - Run PowerShell scripts only with:
   - `pwsh.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -File ".\.temp\execute.ps1"`
 - Run Windows Script Host scripts with:
-  - `cscript.exe //B //NoLogo ".\.temp\execute.js"`
+  - `cscript.exe //B //Nologo ".\.temp\execute.js"`

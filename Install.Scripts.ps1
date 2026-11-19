@@ -7,7 +7,7 @@ Set-Location -LiteralPath $PSScriptRoot
 function Install-Shortcut {
   [CmdletBinding()]
   param (
-    [Alias('Script')][Parameter(Mandatory)]
+    [Parameter(Mandatory)]
     [FileInfo]
     $FileInfo,
     [Parameter(Mandatory)]
@@ -21,12 +21,12 @@ function Install-Shortcut {
     }
   )
   if ($FileInfo.Name -eq 'Run.wsf') {
-    $config = $FileInfo.Directory | Join-Path -ChildPath 'Config.psd1'
+    $config = $FileInfo.DirectoryName | Join-Path -ChildPath 'Config.psd1'
     if (Test-Path -LiteralPath $config) {
       $shortcutDefinitions = (Import-PowerShellDataFile -LiteralPath $config).Shortcuts
     }
   }
-  $fullName = $FileInfo.FullName
+  $script = $FileInfo.FullName
   foreach ($shortcutDefinition in $shortcutDefinitions) {
     $path = $Destination | Join-Path -ChildPath "$($shortcutDefinition.Name)$($FileInfo.Extension).lnk"
     $arguments = switch -Exact -CaseSensitive ($FileInfo.Name) {
@@ -34,24 +34,24 @@ function Install-Shortcut {
         @{
           Path         = $path
           TargetPath   = 'wt.exe'
-          Arguments    = "`"$fullName`""
+          Arguments    = "`"$script`""
           IconLocation = 'cmd.exe,0'
         }
       }
       'Run.wsf' {
-        $wshArguments = @(
+        $wscript = @(
           '//B'
-          '//NoLogo'
-          '//Job:Run'
-          "`"$fullName`""
+          '//Nologo'
+          '//Job:Main'
+          "`"$script`""
         )
         if ($shortcutDefinition.Arguments) {
-          $wshArguments += $shortcutDefinition.Arguments
+          $wscript += $shortcutDefinition.Arguments
         }
         @{
           Path         = $path
           TargetPath   = 'wscript.exe'
-          Arguments    = $wshArguments -join ' '
+          Arguments    = $wscript -join ' '
           IconLocation = 'wscript.exe,1'
         }
       }
