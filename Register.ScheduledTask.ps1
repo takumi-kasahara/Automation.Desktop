@@ -19,21 +19,21 @@ ForEach-Object {
   if ($verb -notin 'Optimize') {
     return
   }
-  $destination = $_.Directory | Join-Path -ChildPath 'Run.wsf'
-  Copy-Item -LiteralPath '.templates\wsh.wsf' -Destination $destination -Force -PassThru | Set-ItemProperty -Name IsReadOnly -Value $true
+  Copy-Item -LiteralPath '.templates\Run.js' -Destination $_.DirectoryName -Force -PassThru | Set-ItemProperty -Name IsReadOnly -Value $true
+  Copy-Item -LiteralPath '.templates\Run.wsf' -Destination $_.DirectoryName -Force -PassThru | Set-ItemProperty -Name IsReadOnly -Value $true
+  $script = $_.DirectoryName | Join-Path -ChildPath 'Run.wsf'
   $arguments = @{
     TaskName = $name
     TaskPath = '\Automation.Desktop\'
     Action   = New-ScheduledTaskAction -Execute 'wscript.exe' -Argument (
       @(
         '//B'
-        '//NoLogo'
+        '//Nologo'
         '//Job:Run'
-        "`"$destination`""
+        "`"$script`""
       ) -join ' ')
     Settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -RunOnlyIfIdle -StartWhenAvailable -DontStopIfGoingOnBatteries -RestartOnIdle
     Trigger  = New-ScheduledTaskTrigger -AtLogOn
-    RunLevel = 'Highest'
   }
   Register-ScheduledTask @arguments -Force
 }
