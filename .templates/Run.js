@@ -5,6 +5,7 @@ var WshShell = WScript.CreateObject('WScript.Shell');
 var args = [];
 for (var i = 0; i < WScript.Arguments.Length; i++)
   args.push(WScript.Arguments.Item(i));
+var cmdArgs = args.length ? ' "' + args.join('" "') + '"' : '';
 
 WshShell.CurrentDirectory = FileSystemObject.GetParentFolderName(
   WScript.ScriptFullName
@@ -23,12 +24,9 @@ for (var j = 0; j < files.length; j++) {
   switch (FileSystemObject.GetFileName(path)) {
     case 'Main.cmd':
       WshShell.Run(
-        'cmd.exe /D /E:ON /V:OFF /S /C "' +
-          file +
-          '"' +
-          (args.length ? ' "' + args.join('" "') + '"' : ''),
+        'cmd.exe /D /E:ON /V:OFF /S /C call "' + file + '"' + cmdArgs,
         0,
-        true
+        false
       );
       break;
     case 'Main.ps1':
@@ -36,19 +34,19 @@ for (var j = 0; j < files.length; j++) {
         'pwsh.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -File "' +
           file +
           '"' +
-          (args.length ? ' "' + args.join('" "') + '"' : ''),
+          cmdArgs,
         0,
-        true
+        false
       );
       break;
     case 'Main.RunAs.cmd':
       WshShell.Run(
-        'sudo.exe --disable-input cmd.exe /D /E:ON /V:OFF /S /C "' +
+        'sudo.exe --disable-input cmd.exe /D /E:ON /V:OFF /S /C call "' +
           file +
           '"' +
-          (args.length ? ' "' + args.join('" "') + '"' : ''),
+          cmdArgs,
         0,
-        true
+        false
       );
       break;
     case 'Main.RunAs.ps1':
@@ -56,19 +54,16 @@ for (var j = 0; j < files.length; j++) {
         'sudo.exe --disable-input pwsh.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -File "' +
           file +
           '"' +
-          (args.length ? ' "' + args.join('" "') + '"' : ''),
+          cmdArgs,
         0,
-        true
+        false
       );
       break;
     case 'Main.js':
       WshShell.Run(
-        'wscript.exe //B //NoLogo "' +
-          file +
-          '"' +
-          (args.length ? ' "' + args.join('" "') + '"' : ''),
+        'wscript.exe //B //Nologo "' + file + '"' + cmdArgs,
         0,
-        true
+        false
       );
       break;
   }

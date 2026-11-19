@@ -11,7 +11,7 @@ if exist "%~dp0Main.RunAs.ps1" goto :runas_ps1
 goto :end
 
 :run_bat
-cmd /D /E:ON /V:OFF /S /C "%~dp0Main.cmd" %*
+cmd /D /E:ON /V:OFF /S /C call "%~dp0Main.cmd" %*
 goto :end
 
 :run_ps1
@@ -19,7 +19,7 @@ pwsh -NoLogo -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -File "%~d
 goto :end
 
 :runas_bat
-sudo --disable-input cmd /D /E:ON /V:OFF /S /C "%~dp0Main.RunAs.cmd" %*
+sudo --disable-input cmd /D /E:ON /V:OFF /S /C call "%~dp0Main.RunAs.cmd" %*
 goto :end
 
 :runas_ps1

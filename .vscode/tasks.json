@@ -93,7 +93,7 @@
       "label": "cscript",
       "type": "shell",
       "command": "cscript.exe",
-      "args": ["//B", "//NoLogo", "${file}"],
+      "args": ["//B", "//Nologo", "${file}"],
       "problemMatcher": []
     }
   ]

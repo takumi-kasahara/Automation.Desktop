@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <package xmlns="http://schemas.microsoft.com/WindowsScriptHost">
-  <job id="Run">
-    <script language="JScript" src="Run.js" />
+  <job id="Main">
+    <script language="JScript" src="Main.js" />
   </job>
 </package>
