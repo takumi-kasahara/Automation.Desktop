@@ -111,7 +111,7 @@ function Export-PdfDump {
     if (Test-Path -LiteralPath $log) {
       $content = Get-Content -LiteralPath $log
       if ($null -ne $content -and $content.Length -gt 0) {
-        "LOG:`t$log" | Out-Host
+        "Log: $log" | Out-Host
         $content | Out-Host
       } else {
         Remove-Item -LiteralPath $log -Force
@@ -217,7 +217,7 @@ function Import-PdfDump {
     if (Test-Path -LiteralPath $log) {
       $content = Get-Content -LiteralPath $log
       if ($null -ne $content -and $content.Length -gt 0) {
-        "LOG:`t$log" | Out-Host
+        "Log: $log" | Out-Host
         $content | Out-Host
       } else {
         Remove-Item -LiteralPath $log -Force
@@ -444,7 +444,7 @@ function Join-Pdf {
     if (Test-Path -LiteralPath $log) {
       $content = Get-Content -LiteralPath $log
       if ($null -ne $content -and $content.Length -gt 0) {
-        "LOG:`t$log" | Out-Host
+        "Log: $log" | Out-Host
         $content | Out-Host
       } else {
         Remove-Item -LiteralPath $log -Force
@@ -583,7 +583,7 @@ function Split-Pdf {
     if (Test-Path -LiteralPath $log) {
       $content = Get-Content -LiteralPath $log
       if ($null -ne $content -and $content.Length -gt 0) {
-        "LOG:`t$log" | Out-Host
+        "Log: $log" | Out-Host
         $content | Out-Host
       } else {
         Remove-Item -LiteralPath $log -Force

@@ -419,7 +419,7 @@ function Move-ItemToRecycleBin {
       }
       # https://learn.microsoft.com/en-us/windows/win32/shell/folder-movehere
       $RecycleBin.MoveHere($_.FullName)
-      "Removed:`t$($_.FullName)" | Out-Host
+      "Removed: $($_.FullName)" | Out-Host
     }
   }
   clean {
