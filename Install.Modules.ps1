@@ -13,7 +13,7 @@ ForEach-Object {
   Join-Path -ChildPath 'Modules' |
   Join-Path -ChildPath $_.BaseName
 
-  "Create:`t$destination" | Out-Host
+  "Create: $destination" | Out-Host
   if (-not (Test-Path -LiteralPath $destination)) {
     New-Item -Path $destination -ItemType Directory | Out-Null
   }
