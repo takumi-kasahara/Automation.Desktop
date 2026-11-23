@@ -3,7 +3,9 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 import globals from 'globals';
 
 export default defineConfig([
-  globalIgnores(['.venv', 'apm_modules', 'node_modules']),
+  globalIgnores(['.agents', 'apm_modules']),
+  globalIgnores(['.venv']),
+  globalIgnores(['node_modules']),
   {
     files: ['**/*.mjs'],
     plugins: {
