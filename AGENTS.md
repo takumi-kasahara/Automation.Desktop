@@ -4,25 +4,25 @@ This repository is a collection of PowerShell modules and helper scripts for Win
 
 ## Overview
 
-- `Modules\` contains PowerShell module manifests and implementation.
-- `Modules\*.psd1` exports commands from `Modules\Sources\*.psm1`.
-- `Modules\Sources\` contains modules and tests.
-- `Scripts\Programs\` contains standalone program helper scripts.
-- `Scripts\SendTo\` contains SendTo menu helper wrappers.
+- [Modules/](./Modules/) contains PowerShell module manifests and implementation.
+- [Modules/*.psd1](./Modules/) exports commands from [Modules/Functions/*.psm1](./Modules/Functions/).
+- [Modules/Functions/](./Modules/Functions/) contains modules and tests.
+- [Scripts/Programs/](./Scripts/Programs/) contains standalone program helper scripts.
+- [Scripts/SendTo/](./Scripts/SendTo/) contains SendTo menu helper wrappers.
 
 ## Workflow
 
 ### PowerShell module development cycle
 
-1. Edit files under `Modules\Sources\`.
-2. When editing `Modules\Sources\Module.psm1`, also update or create the corresponding test file `Modules\Sources\Module.Tests.ps1` and ensure tests cover your changes.
-3. When adding or removing cmdlets, also update the module manifest files (`Modules\*.psd1`) to reflect the changes.
+1. Edit files under [Modules/Functions/](./Modules/Functions/).
+2. When editing `Module.psm1`, also update or create the corresponding test file `Module.Tests.ps1` and ensure tests cover your changes.
+3. When adding or removing cmdlets, also update the module manifest files [Modules/*.psd1](./Modules/) to reflect the changes.
 
 #### PSScriptAnalyzer Invocation
 
-Prefer the `psscriptanalyzer` task defined in `.vscode/tasks.json` when using VS Code.
+Prefer the `psscriptanalyzer` task defined in [tasks.json](./.vscode/tasks.json) when using VS Code.
 
-Run PSScriptAnalyzer with `analyze.cmd` only when invoking directly outside of VS Code tasks:
+Run PSScriptAnalyzer with [analyze.cmd](./.agents/skills/powershell-7/scripts/analyze.cmd) only when invoking directly outside of VS Code tasks:
 
 ```bat
 ".agents\skills\powershell-7\scripts\analyze.cmd" -Path "Modules" -Recurse
@@ -34,27 +34,27 @@ Run PSScriptAnalyzer with `analyze.cmd` only when invoking directly outside of V
 
 #### Pester Invocation
 
-Prefer the `pester` task defined in `.vscode/tasks.json` when using VS Code.
+Prefer the `pester` task defined in [tasks.json](./.vscode/tasks.json) when using VS Code.
 
-Run Pester with `Pester.cmd` only when invoking directly outside of VS Code tasks:
+Run Pester with [pester.cmd](./.agents/skills/powershell-7/scripts/pester.cmd) only when invoking directly outside of VS Code tasks:
 
 ```bat
-".agents\skills\powershell-7\scripts\pester.cmd" -Path "Modules\Sources" -Parallel
+".agents\skills\powershell-7\scripts\pester.cmd" -Path "Modules\Functions" -Parallel
 ```
 
 ```powershell
-& '.\.agents\skills\powershell-7\scripts\pester.cmd' -Path '.\Modules\Sources\' -Parallel
+& '.\.agents\skills\powershell-7\scripts\pester.cmd' -Path '.\Modules\Functions\' -Parallel
 ```
 
 ### PowerShell script development cycle
 
-1. Edit files under `Scripts\`.
-2. Run `Build.ps1`.
+1. Edit files under [Scripts/](./Scripts/).
+2. Run [Build.ps1](./Build.ps1).
 
 ### Windows Script Host development cycle
 
-1. Edit Windows Script Host JScript under `Scripts\`. These `.js` files run in WSH, not in a browser or Node.js.
-2. Run `Build.ps1`.
+1. Edit Windows Script Host JScript under [Scripts](./Scripts/). These `.js` files run in WSH, not in a browser or Node.js.
+2. Run [Build.ps1](./Build.ps1).
 3. If a `Config.psd1` is present next to `Run.wsf`, define one or more shortcuts in its `Shortcuts` key. `Install.Scripts.ps1` reads this file to create multiple shortcuts for the same script.
 
    Example `Config.psd1`:

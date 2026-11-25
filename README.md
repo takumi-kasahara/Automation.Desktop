@@ -13,7 +13,7 @@ A collection of PowerShell modules and helper scripts for Windows file system, p
 
 ## Installation
 
-Run from the repository root:
+Run [Install.cmd](./Install.cmd) from the repository root:
 
 ```powershell
 .\Install.cmd

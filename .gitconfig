@@ -19,4 +19,4 @@
   command = .agents/skills/powershell-7/scripts/analyze.cmd -Path ./Scripts/ -Recurse && git update-index --again
 [hook "pester"]
   event = pre-commit
-  command = .agents/skills/powershell-7/scripts/pester.cmd -Path ./Modules/Sources/ -Parallel
+  command = .agents/skills/powershell-7/scripts/pester.cmd -Path ./Modules/Functions/ -Parallel

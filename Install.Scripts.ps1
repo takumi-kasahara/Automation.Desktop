@@ -1,6 +1,9 @@
 ﻿using namespace System.IO
 [CmdletBinding()]
 param ()
+if ($PSEdition -ne 'Core') {
+  return
+}
 Set-StrictMode -Version Latest
 Set-Location -LiteralPath $PSScriptRoot
 
