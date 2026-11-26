@@ -8,9 +8,5 @@
       Name      = 'CompareItemByFull'
       Arguments = '/m:Full'
     }
-    @{
-      Name      = 'CompareItemByQuick'
-      Arguments = '/m:Quick'
-    }
   )
 }
