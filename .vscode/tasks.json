@@ -13,7 +13,7 @@
         "kind": "build",
         "isDefault": true
       },
-      "dependsOn": ["build: docs", "build: runner"]
+      "dependsOn": ["build: docs", "build: modules", "build: scripts"]
     },
     {
       "label": "build: docs",
@@ -26,13 +26,13 @@
         "-ExecutionPolicy",
         "RemoteSigned",
         "-File",
-        "Docs.ps1"
+        "Build.Docs.ps1"
       ],
       "problemMatcher": [],
       "hide": true
     },
     {
-      "label": "build: runner",
+      "label": "build: modules",
       "type": "shell",
       "command": "pwsh.exe",
       "args": [
@@ -42,7 +42,23 @@
         "-ExecutionPolicy",
         "RemoteSigned",
         "-File",
-        "Build.ps1"
+        "Build.Modules.ps1"
+      ],
+      "problemMatcher": [],
+      "hide": true
+    },
+    {
+      "label": "build: scripts",
+      "type": "shell",
+      "command": "pwsh.exe",
+      "args": [
+        "-NoLogo",
+        "-NoProfile",
+        "-NonInteractive",
+        "-ExecutionPolicy",
+        "RemoteSigned",
+        "-File",
+        "Build.Scripts.ps1"
       ],
       "problemMatcher": [],
       "hide": true

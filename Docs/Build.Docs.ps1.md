@@ -1,26 +1,26 @@
 ---
 document type: cmdlet
-external help file: Build.ps1-Help.xml
+external help file: Build.Docs.ps1-Help.xml
 HelpUri: ''
 Locale: ja-JP
 Module Name: ''
 ms.date: 11/09/2026
 PlatyPS schema version: 2024-05-01
-title: Build.ps1
+title: Build.Docs.ps1
 ---
 
-# Build.ps1
+# Build.Docs.ps1
 
 ## SYNOPSIS
 
-{{ Fill in the Synopsis }}
+Generates Markdown command documentation for the repository PowerShell scripts.
 
 ## SYNTAX
 
 ### __AllParameterSets
 
 ```
-Build.ps1
+Build.Docs.ps1
 ```
 
 ## ALIASES
@@ -30,13 +30,11 @@ This cmdlet has the following aliases,
 
 ## DESCRIPTION
 
-{{ Fill in the Description }}
+Generates or refreshes Markdown help files using PlatyPS (New-MarkdownCommandHelp) for all *.ps1 scripts found in the repository root and in selected skill script folders.
+Then applies Prettier formatting and markdownlint-cli2 auto-fixes to the generated Markdown files.
+The script changes its working directory to the script root before processing.
 
 ## EXAMPLES
-
-### Example 1
-
-{{ Add example description here }}
 
 ## PARAMETERS
 
@@ -53,7 +51,9 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## NOTES
 
-{{ Fill in the Notes }}
+Requires the platyPS (New-MarkdownCommandHelp) command to be available.
+Requires Node.js tooling for Prettier and markdownlint-cli2.
+Regenerated files are written in-place and may overwrite existing help files.
 
 ## RELATED LINKS
 

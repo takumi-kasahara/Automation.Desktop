@@ -1,8 +1,9 @@
 ﻿@{
-  RootModule           = 'Automation.Desktop.psm1'
-  ModuleVersion        = '1.0.0'
-  CompatiblePSEditions = @('Core')
-  FunctionsToExport    = @(
+  RootModule        = 'Automation.Desktop.psm1'
+  ModuleVersion     = '1.0.0'
+  Author            = 'Kasahara Takumi'
+  Description       = 'A collection of PowerShell modules and helper scripts for Windows file system, path, shell, and utility automation.'
+  FunctionsToExport = @(
     #region Compare.psm1
     'Compare-Csv'
     #endregion
@@ -66,7 +67,7 @@
     'Stop-OllamaModel'
     #endregion
   )
-  CmdletsToExport      = @()
-  VariablesToExport    = @()
-  AliasesToExport      = @()
+  CmdletsToExport   = @()
+  VariablesToExport = @()
+  AliasesToExport   = @()
 }
