@@ -68,7 +68,7 @@ function Install-Shortcut {
   }
 }
 
-& '.\Build.ps1'
+& '.\Build.Scripts.ps1'
 
 $startMenu = Get-SpecialFolder -Name Programs | Join-Path -ChildPath '.Local\Scripts'
 if (Test-Path -LiteralPath $startMenu) {
